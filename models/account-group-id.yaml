@@ -5,7 +5,7 @@ x-tags:
   - account-group-id
 x-bpi-field-metadata:
   type: nuc
-description: 'Account group identification. To consult more information, use this id in the Customer Contracts API, with the account-groups operations.'
+description: 'Account group hbhidentification. To consult more information, use this id in the Customer Contracts API, with the account-groups operations.'
 type: string
 minLength: 7
 maxLength: 9
