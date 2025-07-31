@@ -1,0 +1,299 @@
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
+/*
+ * This gradle.build is for creating and managing APIs at BI
+ */
+
+buildscript {
+  ext {
+    apiMgrUsername = "${project.findProperty('apiMgrUsername') ?: System.getenv('APIMGR_CI_USERNAME')}"
+    apiMgrPassword = "${project.findProperty('apiMgrPassword') ?: System.getenv('APIMGR_CI_PASSWORD')}"
+    apiMgrEnv = "${project.findProperty('apiMgrEnv') ?: System.getenv('APIMGR_ENV')}"
+    exportFolderName = "${project.findProperty('exportFolderName') ?: System.getenv('exportFolderName')}"
+
+    if (apiMgrEnv == "null")
+        apiMgrEnv = "local"
+
+    if (apiMgrEnv != "local" && (apiMgrUsername == "null" || apiMgrPassword == "null")) {
+        throw new GradleException("Missing API Manager user and/or password")
+    }
+
+    if (exportFolderName == "null") {
+      def date = new Date()
+      def formattedDate = date.format('yyyyMMddHHmmss')
+      exportFolderName = './api/export-' + formattedDate
+    }
+  }  
+  repositories {
+      mavenCentral()
+  }
+  dependencies {
+      classpath 'de.undercouch:gradle-download-task:4.0.4'
+      classpath group: 'com.github.axway-api-management-plus.apim-cli', name: 'apimcli-apis', version: '[1.13.0,1.14.0)'
+  }
+}
+
+plugins {
+    id "base"
+}
+
+ext {
+  user = System.getenv('user')
+  pwd = System.getenv('pwd')
+  apiDomain = "IT M+S"
+  apiName = "Indirect Orders"
+  apiType = "Data"
+  apiVer = "1"
+  //apiDomain = "IT EDS|IT EFP|IT INF|IT M+S|IT OPS|IT RDM|AH|HP|BIO"
+  //apiName = "Incident [Management]|Product [Data]|Haufe [System]|Breezometer [Experience]"
+  //apiType = "Data|Management|Experience|System"
+  //apiVer = "1"
+}
+
+apply plugin: 'de.undercouch.download'
+
+task checkExtras {
+  if(apiDomain == "*Change Me*") {
+    throw new GradleException('Before running initApi all the build.gradle ext parameters need to be configured!')
+  } else {
+    println "API Domain:  	" + apiDomain
+    println "API Name:    	" + apiName
+    println "API Type:    	" + apiType
+    println "API Version: 	" + apiVer
+    println "API Full Name: " + "(" + apiDomain + ") " + apiName + " " + apiType + " API"
+  }
+}
+
+task initApi() {
+  dependsOn "copyApiTemplate"
+}
+
+task downloadApiArchive(type: Download) {
+    username user
+    password pwd
+    src 'https://bitbucket.biscrum.com/rest/api/latest/projects/APIM/repos/apim-template/archive?format=zip'
+    dest 'api-template.zip'
+}
+
+task unzipApiArchive(type: Copy) {
+
+    dependsOn "downloadApiArchive"
+
+    def zipFile = file('api-template.zip')
+    def outputDir = file("api-template")
+
+    from zipTree(zipFile)
+    into outputDir
+}
+
+task copyApiBase(type: Copy) {
+    
+    dependsOn "unzipApiArchive"
+
+    from "api-template/Jenkinsfile", "api-template/\\.gitignore"
+    into "/"
+
+}
+
+task copyApiTemplate(type: Copy) {
+    
+    dependsOn "copyApiBase"
+
+    from "api-template/api"
+    into "api"
+
+    project.delete(files("api-tailored") {})
+
+    def domain = apiDomain
+    def name = apiName
+    def type = apiType
+    def ver = apiVer
+
+    filesMatching("**/api-config.config/**/*") {
+      it.path = it.path.replace("api-config.config", "(${domain.replace(' ','-')})-${name.replace(' ','-')}-${type}-API.v${ver}.config")
+    }
+
+    rename { String filename ->
+      filename.replace("api-spec.json", "(${domain.replace(' ','-')})-${name.replace(' ','-')}-${type}-API.v${ver}.json")
+    }
+
+    rename { String filename ->
+      filename.replace("api-specific-policy.xml", "(${domain.replace(' ','-')})-${name.replace(' ','-')}-${type}-API.v${ver}.xml")
+    }
+
+    rename { String filename ->
+      filename.replace("API_Specification_Template.docx", "(${domain.replace(' ','-')})-${name.replace(' ','-')}-${type}-API.v${ver}_Spec.docx")
+    }
+
+    filesMatching("**/*.json") {
+      expand(domain: domain, name: name, type: type, ver: ver)
+    }
+
+    filesMatching("**/*.xml") {
+      expand(domain: domain, name: name, type: type, ver: ver, circuit_exception: "\${circuit.exception}")
+    }
+
+    finalizedBy 'updateJira','createWebhook','cleanUp'
+    //finalizedBy 'updateJira','cleanUp'
+}
+
+task updateJira {
+	def fullName = "(" + apiDomain + ") " + apiName + " " + apiType + " API"
+    doLast {
+        def body = [name : fullName]
+        def req = new URL('https://api-gw-dev.boehringer-ingelheim.com:8443/api-management-api/lifecycle/apis').openConnection()
+        req.setRequestMethod("POST")
+        req.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+        req.setRequestProperty("KeyId", "cdfceec4-dc49-421e-9449-7ab264d0b8a7")
+        req.setDoOutput(true)
+        req.getOutputStream().write(JsonOutput.toJson(body).getBytes("UTF-8"))
+        logger.quiet "Status code: ${req.getResponseCode()}" // HTTP request done on first read
+        def resp = new JsonSlurper().parseText(req.getInputStream().getText())
+        logger.quiet "Response: ${resp}"
+    }
+}
+
+task createWebhook {
+  doLast {
+    def proc = "git config --get remote.origin.url".execute()
+    def gitUrl = proc.text
+    // gitUrl could look like ssh://git@bitbucket.biscrum.com:7999/api/api-testega3.git
+    // or https://cd_user@bitbucket.biscrum.com/scm/api/apim-testega2.git
+    // We need to extract the project and the repo
+    def matcher = (gitUrl =~ /^.+\/(.+)\/([^.]+)\.git$/)[0]
+    def gitRepoProject = matcher[1]
+    def gitRepoName = matcher[2]
+  
+    def body = [
+      "branch": "master", 
+      "repository": "apim-be-api-promote",
+      "project": "apim",
+      "env": [
+        [
+            "name": "ACTION",
+            "value": "create_bitbucket_webhook"
+        ],
+        [
+            "name": "TARGET_PROJECT",
+            "value": "${gitRepoProject}"
+        ],
+        [
+            "name": "TARGET_REPO",
+            "value": "${gitRepoName}"
+        ]
+        /* 
+        Optional value, CD will use APIM-APIMCD-Webhook as default
+        {
+            "name": "TARGET_WEBHOOK_NAME",
+            "value": ""
+        }
+        */
+      ]
+    ]
+    // Create a trust manager that does not validate certificate chains
+    // to be able to work with wildcard certs
+    def nullTrustManager = [
+      checkClientTrusted: { chain, authType ->  },
+      checkServerTrusted: { chain, authType ->  },
+      getAcceptedIssuers: { null }
+    ]
+
+    def nullHostnameVerifier = [
+      verify: { hostname, session -> 
+          //true 
+          hostname.startsWith('webhook-proxy-apim-cd.inh-devapps.eu.boehringer.com')
+      }
+    ]
+
+    javax.net.ssl.SSLContext sc = javax.net.ssl.SSLContext.getInstance("SSL")
+    sc.init(null, [nullTrustManager as  javax.net.ssl.X509TrustManager] as  javax.net.ssl.X509TrustManager[], null)
+    javax.net.ssl.HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory())
+    javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(nullHostnameVerifier as javax.net.ssl.HostnameVerifier)
+
+    def req = new URL('https://webhook-proxy-apim-cd.inh-devapps.eu.boehringer.com/build?trigger_secret=lkjsdhf823hfahaf9asdf9asdkjasf81jkfas8999').openConnection()
+    req.setRequestMethod("POST")
+    req.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+    req.setDoOutput(true)
+    req.getOutputStream().write(JsonOutput.toJson(body).getBytes("UTF-8"))
+    logger.quiet "Webhook create Status code: ${req.getResponseCode()}" // HTTP request done on first read
+  }
+}
+
+
+task cleanUp(type: Delete) {
+  delete 'api/api-config.config'
+  delete 'api-template'
+  delete 'api-template.zip'
+  followSymlinks = true
+}
+
+task deployApi (type: JavaExec) {
+    classpath = buildscript.configurations.classpath
+    def apiConfigFile = "./api/(${apiDomain.replace(' ','-')})-${apiName.replace(' ','-')}-${apiType}-API.v${apiVer}.config/config.json"
+    def apiMgrHost;
+  
+    switch (apiMgrEnv) {
+        case "dev":
+            apiMgrHost = "api-manager-dev.eu.boehringer.com"
+            break;
+        case "local":
+            apiMgrHost = "localhost"
+            apiMgrUsername = "apiadmin"
+            apiMgrPassword = "changeme"
+            break;
+    }
+    println ("deployAPI: API mgr host => ${apiMgrHost}" ) 
+    println ("deployAPI: API mgr username length => ${apiMgrUsername.length()}" ) 
+    println ("deployAPI: API mgr password length => ${apiMgrPassword.length()}" ) 
+    println ("deployAPI: API config file => ${apiConfigFile}")
+    
+    main = "com.axway.apim.cli.APIManagerCLI"
+	args 'api', 'import'
+    args '-c', apiConfigFile 
+    args '-h', apiMgrHost
+    args '-u', apiMgrUsername
+    args '-p', apiMgrPassword
+    args '-force'
+    args '-returnCodeMapping', '10:0'
+    args '-retryDelay', '10000'  
+}
+
+task exportApi(type: JavaExec) {
+  classpath = buildscript.configurations.classpath
+  def apiConfigFile = "./api/(${apiDomain.replace(' ','-')})-${apiName.replace(' ','-')}-${apiType}-API.v${apiVer}.config/config.json"
+  def apiMgrHost;
+  def apiFullName = "API not initialized"
+
+  def configFile = new File(apiConfigFile)
+  if (configFile.exists()) { 
+    def jsonSlurper = new JsonSlurper()
+    def config = jsonSlurper.parse(configFile)
+    apiFullName = config['name']
+  }
+
+  switch (apiMgrEnv) {
+    case "dev":
+      apiMgrHost = "api-manager-dev.eu.boehringer.com"
+      break;
+    case "local":
+      apiMgrHost = "localhost"
+      apiMgrUsername = "apiadmin"
+      apiMgrPassword = "changeme"
+      break;
+  }   
+
+  println ("exportAPI: API mgr host => ${apiMgrHost}" ) 
+  println ("exportAPI: API mgr username length => ${apiMgrUsername.length()}" ) 
+  println ("exportAPI: API mgr password length => ${apiMgrPassword.length()}" ) 
+  println ("exportAPI: API Full name => ${apiFullName}")
+  println ("exportAPI: API Folder name => ${exportFolderName}")
+
+  main = "com.axway.apim.cli.APIManagerCLI"
+  args 'api', 'get'
+  args '-n', apiFullName
+  args '-h', apiMgrHost
+  args '-u', apiMgrUsername
+  args '-p', apiMgrPassword
+  args '-o', 'json'
+  args '-t', exportFolderName
+}

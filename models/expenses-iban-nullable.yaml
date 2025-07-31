@@ -1,0 +1,12 @@
+$ref: ./iban-nullable.yaml
+x-stoplight:
+  id: geo6rj2fk6prg
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: iban
+    - name: tipoUtilizacao
+      value: despesa
+x-tags:
+  - expenses-iban

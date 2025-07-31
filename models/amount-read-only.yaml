@@ -1,0 +1,12 @@
+title: amount-read-only
+x-stoplight:
+  id: rrtofpnwk4wlm
+type: number
+x-bpi-field-metadata:
+  type: montante
+description: Amount of a monetary value
+example: 23.25
+maximum: 999999999
+readOnly: true
+x-tags:
+  - amount

@@ -1,0 +1,80 @@
+{
+  "name": "(IT M+S) Indirect Orders Data API",
+  "path": "/indirect-orders-data-api",
+  "state": "published",
+  "version": "1.0",
+  "organization": "Information Technology",
+  "apiDefinition": "https://api-manager-dev.eu.boehringer.com:8065/stoplight-sys-api/projects/cHJqOjEzODI2Mw/branches/master/export/api%2F(IT-M+S)-Indirect-Orders-API.v1.json?KeyId=dfef5ae7-85e1-471a-8d82-4b4e00004805",
+  "summary": "(IT M+S) Indirect Orders Data API",
+  "image": "image.png",
+  "securityProfiles": [
+    {
+      "name": "_default",
+      "isDefault": true,
+      "devices": [
+        {
+          "name": "API Key",
+          "type": "apiKey",
+          "order": 0,
+          "properties": {
+            "apiKeyFieldName": "KeyId",
+            "takeFrom": "HEADER",
+            "removeCredentialsOnSuccess": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "API Key and OAUTH",
+      "isDefault": false,
+      "devices": [
+        {
+          "name": "API Key",
+          "type": "apiKey",
+          "order": 0,
+          "properties": {
+            "apiKeyFieldName": "KeyId",
+            "takeFrom": "HEADER",
+            "removeCredentialsOnSuccess": "true"
+          }
+        },
+        {
+          "name": "OAuth",
+          "type": "oauth",
+          "order": 1,
+          "properties": {
+            "tokenStore": "<key type='OAuth2StoresGroup'><id field='name' value='OAuth2 Stores'/><key type='AccessTokenStoreGroup'><id field='name' value='Access Token Stores'/><key type='AccessTokenPersist'><id field='name' value='OAuth Access Token Store'/></key></key></key>",
+            "accessTokenLocation": "HEADER",
+            "authorizationHeaderPrefix": "Bearer",
+            "accessTokenLocationQueryString": "",
+            "scopesMustMatch": "Any",
+            "scopes": "resource.WRITE, resource.READ",
+            "removeCredentialsOnSuccess": "true",
+            "implicitGrantEnabled": "true",
+            "implicitGrantLoginEndpointUrl": "https://api-gw-dev.boehringer-ingelheim.com:8443/api/oauth/authorize",
+            "implicitGrantLoginTokenName": "access_token",
+            "authCodeGrantTypeEnabled": "true",
+            "authCodeGrantTypeRequestEndpointUrl": "https://api-gw-dev.boehringer-ingelheim.com:8443/api/oauth/authorize",
+            "authCodeGrantTypeRequestClientIdName": "client_id",
+            "authCodeGrantTypeRequestSecretName": "client_secret",
+            "authCodeGrantTypeTokenEndpointUrl": "https://api-gw-dev.boehringer-ingelheim.com:8443/api/oauth/token",
+            "authCodeGrantTypeTokenEndpointTokenName": "access_code"
+          }
+        }
+      ]
+    }
+  ],
+  "inboundProfiles": {
+    "_default": {
+      "securityProfile": "API Key and OAUTH",
+      "corsProfile": "_default",
+      "monitorAPI": true,
+      "monitorSubject": "authentication.subject.id"
+    }
+  },
+  "outboundProfiles": {
+    "_default": {
+      "routePolicy": "indirect orders Internal router"
+    }
+  }
+}

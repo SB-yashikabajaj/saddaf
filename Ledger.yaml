@@ -1,0 +1,128 @@
+openapi: 3.1.0
+x-stoplight:
+  id: o0gfawhw3j6vo
+info:
+  title: Ledger
+  version: '1.0'
+  description: Endpoints for Flex's Ledger functionality
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+  contact:
+    name: Support
+    url: 'https://www.flex.one'
+    email: support@flex.one
+  summary: Permission
+servers:
+  - url: 'http://localhost:3000'
+    description: Local
+  - url: 'https://platform.flexbase.dev'
+    description: Development
+  - url: 'https://platform.flex.one'
+    description: Production
+paths:
+  /ledger/entry:
+    post:
+      summary: Create ledger entry
+      tags:
+        - Entries
+      responses:
+        '200':
+          description: OK
+      operationId: postLedgerEntry
+      x-stoplight:
+        id: cued4kbwbt4wf
+      description: create a ledger-entry in the ledger
+      requestBody:
+        $ref: '#/components/requestBodies/CreateLedgerEntryBody'
+components:
+  schemas:
+    CreditLithicAuthEntry:
+      title: CreditLithicAuthEntry
+      x-stoplight:
+        id: 1olp0bwmx0uuu
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - credit-lithic-auth
+      description: Credit Lithic Auth
+    CreditLithicAuthSettleEntry:
+      title: CreditLithicAuthSettle
+      x-stoplight:
+        id: upg6u0bhzlhsc
+      type: object
+      required:
+        - type
+        - details
+      properties:
+        type:
+          type: string
+          enum:
+            - credit-lithic-auth-settle
+      description: Credit Lithic Auth Settle
+    CreditLithicRepaymentEntry:
+      title: CreditLithicRepaymentEntry
+      x-stoplight:
+        id: 8ewx7wnq43veq
+      type: object
+      required:
+        - type
+        - details
+      properties:
+        type:
+          type: string
+          enum:
+            - credit-lithic-repayment
+      description: Credit Lithic Repayment
+  parameters:
+    accountId:
+      name: accountId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Identifier of the account
+  requestBodies:
+    CreateLedgerEntryBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - payload
+              - target
+              - amount
+            properties:
+              target:
+                type: object
+                required:
+                  - type
+                  - value
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - accountId
+                      - businessId
+                  value:
+                    type: string
+                    format: uuid
+              amount:
+                type: number
+              postedAt:
+                type: string
+                format: date-time
+              payload:
+                oneOf:
+                  - $ref: '#/components/schemas/CreditLithicAuthEntry'
+                  - $ref: '#/components/schemas/CreditLithicAuthSettleEntry'
+                  - $ref: '#/components/schemas/CreditLithicRepaymentEntry'
+                type: object
+tags:
+  - name: Entries
+    description: Getting and reading ledger entries

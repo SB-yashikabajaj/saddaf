@@ -1,0 +1,12 @@
+title: amount-nullable
+x-stoplight:
+  id: omdbvxd5rhwf0
+type: number
+nullable: true
+x-bpi-field-metadata:
+  type: montante
+description: Amount of a monetary value
+example: 23.25
+maximum: 999999999
+x-tags:
+  - amount

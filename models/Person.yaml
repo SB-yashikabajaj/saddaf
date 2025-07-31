@@ -1,0 +1,82 @@
+title: Person
+x-stoplight:
+  id: scy24jbeacolq
+type: object
+description: Represents a person
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Person identifier
+    readOnly: true
+    x-stoplight:
+      id: 55xccu6khxpec
+  accountId:
+    type: string
+    format: uuid
+    description: Account identifier
+    readOnly: true
+    x-stoplight:
+      id: 8d7qunz0p6077
+  active:
+    type: boolean
+    description: A value indicating if the person is enabled in the system
+    readOnly: true
+    x-stoplight:
+      id: hu7cybmbsni62
+  givenName:
+    type: string
+    x-stoplight:
+      id: ivu6le04w1a22
+    description: 'The given name of the person, or first name in most Western languages (e.g., ''Barbara'' given the full name ''Ms. Barbara J Jensen, III'').'
+  familyName:
+    type: string
+    x-stoplight:
+      id: mieyceabr4tv4
+    description: 'The family name of the person, or last name in most Western languages (e.g., ''Jensen'' given the full name ''Ms. Barbara J Jensen, III'').'
+  displayName:
+    type: string
+    description: 'The name of the person, suitable for display to end-users'
+    x-stoplight:
+      id: 41qhn7nz0lo4b
+  userType:
+    type: string
+    description: 'Used to identify the relationship between the organization and the person.  Typical values used might be ''Contractor'', ''Employee'', ''Intern'', ''Temp'', ''External'', and ''Unknown'', but any value may be used.'
+    x-stoplight:
+      id: 4j2l6mowi5cni
+  preferredLanguage:
+    type: string
+    description: 'Indicates the person''s preferred written or spoken language.  Generally used for selecting a localized user interface; e.g., ''en_US'' specifies the language English and country US'
+    x-stoplight:
+      id: v17f4dx273gqf
+  locale:
+    type: string
+    description: 'Used to indicate the person''s default location for purposes of localizing items such as currency, date time format, or numerical representations'
+    x-stoplight:
+      id: 7p0n0wxz6w04v
+  timezone:
+    type: string
+    description: 'The person''s time zone in the ''Olson'' time zone database format, e.g., ''America/Los_Angeles'''
+    x-stoplight:
+      id: aevc3st51cn01
+  dateOfBirth:
+    type: string
+    format: date
+    description: The person's date of birth
+    x-stoplight:
+      id: 8omktvdo3eunj
+  nationality:
+    type: string
+    description: The person's nationality
+    x-stoplight:
+      id: 6kol98v9nahi0
+  taxId:
+    type: string
+    description: The person's tax identifier
+    maxLength: 18
+    x-stoplight:
+      id: ufpnkocxo9do7
+required:
+  - id
+  - accountId
+  - active

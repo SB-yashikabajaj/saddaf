@@ -1,0 +1,42 @@
+title: Photo
+x-stoplight:
+  id: tlybjitbd9wgg
+type: object
+description: Represents a photo
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Photo identifier
+    readOnly: true
+    x-stoplight:
+      id: f0y5eqojyppt4
+  value:
+    type: string
+    description: URL of the photo
+    format: uri
+    x-stoplight:
+      id: 7nlqb3jouspfm
+  type:
+    type: string
+    description: A label indicating the photo type
+    enum:
+      - thumbnail
+      - photo
+    x-stoplight:
+      id: m72vfg85gdlcj
+  primary:
+    type: boolean
+    description: Indicates if this is the preferred photo or thumbnail
+    x-stoplight:
+      id: mcukjex78jgnd
+  display:
+    type: string
+    description: 'A human-readable name, primarily used for display purposes.'
+    x-stoplight:
+      id: uuegp4f83kmjx
+required:
+  - id
+  - value
+  - type
+  - primary

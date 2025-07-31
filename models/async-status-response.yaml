@@ -1,0 +1,43 @@
+title: async-status-response
+x-stoplight:
+  id: o3mzy5ru6x7fz
+allOf:
+  - $ref: ./common-body.yaml
+    x-stoplight:
+      id: pcs3as50y938p
+  - type: object
+    x-stoplight:
+      id: 9wvewyo4goauc
+    required:
+      - status
+    properties:
+      status:
+        x-stoplight:
+          id: sa4ognkzu6q3c
+        enum:
+          - waiting
+          - processing
+          - done
+          - error
+        type: string
+        description: Status of the async request.
+        readOnly: true
+      resourceId:
+        type: string
+        x-stoplight:
+          id: ubfff0c2ja5io
+        maxLength: 36
+        example: 10499532-8ae3-4f61-a97e-a9583d8dc2e4
+        description: Id of the created resource. It is only filled when the status is done.
+        readOnly: true
+      _links:
+        type: object
+        x-stoplight:
+          id: ug4tfwzsf0025
+        properties:
+          resource:
+            $ref: ./link-body.yaml
+            x-stoplight:
+              id: r4u5eeo86vlx9
+        readOnly: true
+description: Model that represents the responses for the async requests

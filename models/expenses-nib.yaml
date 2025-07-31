@@ -1,0 +1,12 @@
+$ref: ./nib.yaml
+x-stoplight:
+  id: jo98o19qfif8t
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: nib
+    - name: tipoUtilizacao
+      value: despesa
+x-tags:
+  - expenses-nib

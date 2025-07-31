@@ -1,0 +1,13 @@
+$ref: ./iban-nullable.yaml
+x-stoplight:
+  id: ib76ju36v0v8y
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: iban
+    - name: tipoUtilizacao
+      value: origem
+description: IBAN of the transaction's source account
+x-tags:
+  - source-iban

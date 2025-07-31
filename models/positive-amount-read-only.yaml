@@ -1,0 +1,13 @@
+title: positive-amount-read-only
+x-stoplight:
+  id: ihg7antmaar9y
+type: number
+x-bpi-field-metadata:
+  type: montante
+description: Positive amount of a monetary value
+example: 23.25
+maximum: 999999999
+minimum: 0
+readOnly: true
+x-tags:
+  - positive-amount

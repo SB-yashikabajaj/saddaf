@@ -1,0 +1,13 @@
+$ref: ./nib.yaml
+x-stoplight:
+  id: cwybft0cr12g0
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: nib
+    - name: tipoUtilizacao
+      value: origem
+description: NIB of the transaction's source account
+x-tags:
+  - source-nib

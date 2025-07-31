@@ -1,0 +1,128 @@
+description: Represents a Mercoa Invoice
+x-stoplight:
+  id: e7ma7xw9xysx1
+title: MercoaInvoice
+type: object
+properties:
+  id:
+    type: string
+    x-stoplight:
+      id: az4hki1v6jwyv
+  amount:
+    type: number
+    x-stoplight:
+      id: ep0ezffqkmixc
+  approvalPolicy:
+    type: string
+    x-stoplight:
+      id: 0ewt9rc2yccep
+  approvers:
+    type: string
+    x-stoplight:
+      id: gcg179kpxyq0i
+  asOf:
+    type: string
+    x-stoplight:
+      id: 5wqd7wwty1lw0
+  bankingPaymentsId:
+    type: string
+    x-stoplight:
+      id: rnr9x9mr7mhoq
+  byUser:
+    type: string
+    x-stoplight:
+      id: jnobdlneibwlz
+  companyId:
+    type: string
+    x-stoplight:
+      id: tpi0ycgoel9d9
+  createdAt:
+    type: string
+    x-stoplight:
+      id: 3oi5oay27q08o
+  createdBy:
+    type: string
+    x-stoplight:
+      id: 5lu3znlhht3cy
+  currency:
+    type: string
+    x-stoplight:
+      id: y83tekwlzkzqx
+  deductionDate:
+    type: string
+    x-stoplight:
+      id: cxylp2ug08fjg
+  dueDate:
+    type: string
+    x-stoplight:
+      id: kqf3mxuxkt9y8
+  failureType:
+    type: string
+    x-stoplight:
+      id: kfi1ekra6bd6x
+  fees:
+    type: string
+    x-stoplight:
+      id: ixidn65do4df9
+  foreignId:
+    type: string
+    x-stoplight:
+      id: 4r2sehwottiqt
+  hasDocuments:
+    type: boolean
+    x-stoplight:
+      id: kx4q39bnomblt
+  hasSourceEmail:
+    type: boolean
+    x-stoplight:
+      id: yi74904gn39xu
+  invoiceDate:
+    type: string
+    x-stoplight:
+      id: 1orlhrqfhs2xg
+  invoiceNumber:
+    type: string
+    x-stoplight:
+      id: oegm5o9mqvszo
+  lineItems:
+    type: string
+    x-stoplight:
+      id: kbj18k74aeabt
+  merInvoiceId:
+    type: string
+    x-stoplight:
+      id: oqkqxiri1e9pj
+  merUserCreated:
+    type: string
+    x-stoplight:
+      id: 3cqe8323hcvfc
+  metadata:
+    type: string
+    x-stoplight:
+      id: 9y2jv6hizon4a
+  payerId:
+    type: string
+    x-stoplight:
+      id: s7oztvfu9aurm
+  paymentDestinationId:
+    type: string
+    x-stoplight:
+      id: iad8xklf7nr6u
+  settlementDate:
+    type: string
+    x-stoplight:
+      id: mnr3d4d19bed7
+  status:
+    type: string
+    x-stoplight:
+      id: d5dpwk1njnl8h
+  vendorId:
+    type: string
+    x-stoplight:
+      id: 1pnuxevxkpyzi
+required:
+  - id
+  - amount
+  - companyId
+  - merInvoiceId
+  - status

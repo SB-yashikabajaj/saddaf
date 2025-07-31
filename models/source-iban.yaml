@@ -1,0 +1,13 @@
+$ref: ./iban.yaml
+x-stoplight:
+  id: alwxqkj0ddosq
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: iban
+    - name: tipoUtilizacao
+      value: origem
+description: IBAN of the transaction's source account
+x-tags:
+  - source-iban

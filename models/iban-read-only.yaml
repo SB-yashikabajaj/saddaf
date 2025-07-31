@@ -1,0 +1,16 @@
+title: iban-read-only
+x-stoplight:
+  id: h3em7jow6lgiq
+type: string
+example: PT50001000001234567000168
+minLength: 13
+maxLength: 34
+x-tags:
+  - iban
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: iban
+description: IBAN (International Bank Account Number)
+readOnly: true

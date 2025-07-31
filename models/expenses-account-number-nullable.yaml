@@ -1,0 +1,12 @@
+$ref: ./account-number-nullable.yaml
+x-stoplight:
+  id: tmszou1hbiaua
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: numeroConta
+    - name: tipoUtilizacao
+      value: despesa
+x-tags:
+  - expenses-account-number

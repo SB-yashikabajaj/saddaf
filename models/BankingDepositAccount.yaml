@@ -1,0 +1,134 @@
+title: BankingDepositAccount
+x-stoplight:
+  id: z0hztkh8a53ti
+type: object
+description: 'Banking Deposit Account; stubbed from Unit Co Docs - https://github.com/unit-finance/openapi-unit-sdk/tree/main'
+properties:
+  id:
+    type: string
+    x-stoplight:
+      id: hwzwlua1y8yd0
+  type:
+    type: string
+    enum:
+      - depositAccount
+    x-stoplight:
+      id: cw2gw6pxbrfpb
+  createdAt:
+    type: string
+    format: date-time
+    x-stoplight:
+      id: k25vx1retzigt
+  name:
+    type: string
+    x-stoplight:
+      id: 75zehf2wxophc
+  depositProduct:
+    type: string
+    x-stoplight:
+      id: 7r1t353v4ewec
+  routingNumber:
+    type: string
+    x-stoplight:
+      id: g8hzluozq9bss
+  accountNumber:
+    type: string
+    x-stoplight:
+      id: xx6iynphdo1ae
+  secondaryAccountNumber:
+    type: object
+    properties:
+      routingNumber:
+        type: string
+        x-stoplight:
+          id: 6jmcnnkuhulaq
+      accountNumber:
+        type: string
+        x-stoplight:
+          id: 3ehe508io3j0l
+    required:
+      - routingNumber
+      - accountNumber
+    x-stoplight:
+      id: v182v49i9lu61
+  currency:
+    type: string
+    x-stoplight:
+      id: g0kvo2iyyknsh
+  balance:
+    type: integer
+    x-stoplight:
+      id: kur3c6g86ohcy
+  overdraftLimit:
+    type: integer
+    minimum: 0
+    x-stoplight:
+      id: vszjxlhhvku8i
+  hold:
+    type: integer
+    x-stoplight:
+      id: fgzrtejfxr9dk
+  available:
+    type: integer
+    x-stoplight:
+      id: rbdne687b7knu
+  status:
+    enum:
+      - Open
+      - Closed
+      - Frozen
+    x-stoplight:
+      id: tbvqtunnmpubm
+  closeReason:
+    type: string
+    enum:
+      - ByCustomer
+      - Fraud
+      - NegativeBalance
+      - ByBank
+      - BreachOfTermsAndConditions
+      - NoAccountActivity
+      - ProgramChange
+    x-stoplight:
+      id: ckq9bm1e4u8c3
+  fraudReason:
+    type: string
+    enum:
+      - ACHActivity
+      - CardActivity
+      - CheckActivity
+      - ApplicationHistory
+      - AccountActivity
+      - ClientIdentified
+      - IdentityTheft
+      - LinkedToFraudulentCustomer
+    x-stoplight:
+      id: vzjwb60023alb
+  closeReasonText:
+    type: string
+    maxLength: 255
+    x-stoplight:
+      id: dhl8gpzxdqx0l
+  freezeReason:
+    type: string
+    x-stoplight:
+      id: icu46fa2wfuu7
+  maskedAccountNumber:
+    type: string
+    x-stoplight:
+      id: id527t7khmzkp
+  isOverdrawnWithinLimit:
+    type: boolean
+    x-stoplight:
+      id: njiefnv9jib0o
+  dacaStatus:
+    enum:
+      - Activated
+      - Entered
+    x-stoplight:
+      id: 1w2kisyun7jii
+  updatedAt:
+    type: string
+    format: date-time
+    x-stoplight:
+      id: aj9vjml3rox21

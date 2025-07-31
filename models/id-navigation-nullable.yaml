@@ -1,0 +1,14 @@
+$ref: ./id-nullable.yaml
+x-stoplight:
+  id: r3xu7p0qwxjn4
+description: Unique identifier for MarketBank token
+x-bpi-field-metadata:
+  type: identificador
+  properties:
+    - name: integridade
+      value: elevada
+    - name: tipoIdentificador
+      value: navegacao
+x-tags:
+  - id-navigation
+title: id-navigation-nullable

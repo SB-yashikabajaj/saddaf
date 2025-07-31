@@ -1,0 +1,13 @@
+$ref: ./account-number-nullable.yaml
+x-stoplight:
+  id: csq4lalds2sc9
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: numeroConta
+    - name: tipoUtilizacao
+      value: origem
+description: 'Account number of the transaction''s source checking account. To consult more information, use this id in the Checking Accounts API.'
+x-tags:
+  - source-account-number

@@ -1,0 +1,13 @@
+title: currency
+x-stoplight:
+  id: 3zmqn6rwu4bqx
+type: string
+x-bpi-field-metadata:
+  type: moeda
+description: "Currency for a monetary value ISO 4217 alpha 3 code \r\n\r\n(https://www.iso.org/iso-4217-currency-codes.html)"
+example: EUR
+maxLength: 3
+minLength: 3
+pattern: '[A-Z]{3}'
+x-tags:
+  - currency

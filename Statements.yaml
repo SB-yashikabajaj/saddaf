@@ -1,0 +1,272 @@
+openapi: 3.1.0
+x-stoplight:
+  id: opbnlbl4qb9sm
+info:
+  title: Statements
+  version: '1.0'
+  description: Endpoints for Flex's statement functionality
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+  contact:
+    name: Support
+    url: 'https://www.flex.one'
+    email: support@flex.one
+  summary: Statement Generation
+servers:
+  - url: 'http://localhost:3000'
+    description: Local
+  - url: 'https://platform.flexbase.dev'
+    description: Development
+  - url: 'https://platform.flex.one'
+    description: Production
+paths:
+  '/pdf/accounts/{accountId}/businesses/{businessId}/generate':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/businessId'
+    post:
+      summary: Generate a pdf from html
+      operationId: generatePdfFromHtml
+      responses:
+        '200':
+          description: OK
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+      x-stoplight:
+        id: rvhshc9passtk
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                documentHtml:
+                  type: string
+                  x-stoplight:
+                    id: u0bkh0f7zx505
+              required:
+                - documentHtml
+      description: Generates a pdf from html content
+      x-internal: true
+      tags:
+        - Statements
+    get:
+      summary: Get account monthly statement
+      responses:
+        '200':
+          description: OK
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+      operationId: generateMonthlyStatement
+      x-stoplight:
+        id: r0xvle73w8oyt
+      description: generates a monthly statement for the given account
+      parameters:
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: startDate
+          description: start date of the statement
+          required: true
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: endDate
+          description: end date of the statement
+          required: true
+      tags:
+        - Statements
+  '/statements/accounts/{accountId}/businesses/{businessId}/transactions':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/businessId'
+    get:
+      summary: Get statement transactions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/xml:
+              schema:
+                type: string
+      operationId: generateTransactionDownload
+      x-stoplight:
+        id: r0xvle73w8oyt
+      description: 'generates an arbitrary export of formatted transactions.  If no startDate or endDate is defined, all transactions for the business will be returned.'
+      parameters:
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: startDate
+          description: start date of the transactions
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: endDate
+          description: end date of the transactions
+        - $ref: '#/components/parameters/format'
+      tags:
+        - Statements
+  '/accounts/{accountId}/statements':
+    parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The Account Identifier
+    get:
+      summary: Get statements list
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                x-examples:
+                  Example 1:
+                    - type: credit
+                      ucAccountId: '44678319'
+                      period: 2024-05
+                      accountId: 54c9598b-e88e-44d6-bb58-1ddaa935f4a5
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatementInfo'
+      operationId: getStatements
+      x-stoplight:
+        id: r0xvle73w8oyt
+      description: gets a list of statements for a given business.
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - credit
+              - banking
+          in: query
+          name: type
+          description: maps to credit or deposit accounts
+        - schema:
+            type: string
+          in: query
+          name: accountId
+          description: flex uuid associated to the credit or banking account in question
+      tags:
+        - Statements
+  '/accounts/{accountId}/statements/{statementId}':
+    parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The Account Identifier
+      - schema:
+          type: string
+        name: statementId
+        in: path
+        required: true
+        description: short term this will need to be the vendor specific ID for the statement. Vendor generates this async on their side.
+    get:
+      summary: Get Statement by ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            text/html:
+              schema:
+                type: string
+              examples:
+                happy path:
+                  value: '"<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <title>Statement</title>\n  <meta content=\"width=device-width, initial-scale=1\" name=\"viewport\" />\n  <meta charset=\"UTF-8\"/>\n \n                                                                                   <style>\n  @font-face {\n            font-family: custom-font;\n            src: url(''https://dev.flexbase.app/assets/PPNeueMontreal-Regular-0a032dea.woff2'');\n        }\nbody {\n  font-family: custom-font, \"Open Sans\", sans-serif;\n  line-height: 1.25;\n  margin: 32px;\n}\n\n.row {\n      display: flex;\n      flex-direction: row;\n      margin-top: 50px;\n      max-width: 50%;\n      break-inside: avoid;\n  }\n\ntable {\n  border-collapse: collapse;\n  margin: 0;\n  padding: 0;\n  width: 100%;\n  table-layout: fixed;\n}\n\ntable caption {\n  font-size: 1.5em;\n  margin: .5em 0 .75em;\n  text-align: left;\n}\n\ntable tr {\n  background-color: white;\n  border-bottom: 1px solid #ddd;\n  padding: .35em;\n}\n\ntable th,\ntable td {\n  padding: .625em;\n  text-align: left;\n}\n\ntable th {\n  color: black;\n  font-size: .85em;\n  letter-spacing: .1em;\n  text-transform: uppercase;\n}\n.column {\n  float: left;\n  width: 50%;\n}\n\n/* Clear floats after the columns */\n.row:after {\n  content: \"\";\n  display: table;\n  clear: both;\n}\n\n@media screen and (max-width: 900px) {\n.row {\n   max-width: none;\n }\n\n  table {\n    border: 0;\n  }\n\n  table caption {\n    font-size: 1.3em;\n  }\n\n  table thead {\n    border: none;\n    clip: rect(0 0 0 0);\n    height: 1px;\n    margin: -1px;\n    overflow: hidden;\n    padding: 0;\n    position: absolute;\n    width: 1px;\n  }\n\n  table tr {\n    border-bottom: 3px solid #ddd;\n    display: block;\n    margin-bottom: .625em;\n  }\n\n  table td {\n    border-bottom: 1px solid #ddd;\n    display: block;\n    font-size: .8em;\n    text-align: right;\n    min-height: 1em;\n  }\n\n  table td::before {\n    /*\n    * aria-label has no advantage, it won''t be read inside a table\n    content: attr(aria-label);\n    */\n    content: attr(data-label);\n    float: left;\n    font-weight: bold;\n    text-transform: uppercase;\n  }\n\n  table td:last-child {\n    border-bottom: 0;\n  }\n\n  .column {\n    width: 100%;\n  }\n\n}\n\n.customer-name {\n  margin: 1.5rem 0;\n  font-size: 1.8em;\n  min-height: 2.5rem;\n  font-weight: 600;\n  display: flex;\n  align-items: start;\n}\n\n.address {\n  white-space: pre-line;\n}\n\n.account-number {\n  border-left: 1px solid #C4C4C4;\n  margin-left: 1rem;\n  padding-left: 1rem;\n  font-size: 1rem;\n  font-weight: 700;\n}\n\n.account-number > div {\n  font-weight: 400;\n  font-size: 0.75em;\n}\n\n.details-row {\n  display: flex;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  border-top: 1px solid #ddd;\n  margin-top: 20px;\n}\n\n.header-row {\n  display: flex;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  align-items: center;\n}\n\n.statement-period, .bank-column {\n  width: 18rem;\n}\n\n.bank-column {\n  margin: 4.5rem 0 1.8rem;\n}\n\n@media screen and (max-width: 600px) {\n  .statement-period, .bank-column {\n    width: initial;\n  }\n}\n\n.statement-period-title {\n  font-size: 0.75em;\n}\n\n.statement-period-dates {\n  font-size: 1em;\n  font-weight: 700;\n}\n\n.transaction-table {\n  margin-top: 1rem;\n}\n  </style>\n\n\n\n</head>\n<body>\n   <div class=\"header-row\">\n \n  <img alt=\"logo\" src=\"data:image/png;base64,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\" height=\"60\"/>\n \n     <div class=\"statement-period\">\n       <div class=\"statement-period-title\">Statement Period</div>\n       <div class=\"statement-period-dates\">\n                 Apr 01 2023 -\n                 Apr 30 2023\n      </div>\n     </div>\n \n   </div>\n   <div class=\"details-row\">\n     <div class=\"customer-column\">\n\n \n\n       <div class=\"customer-name\">\n \n          The Test Store 10\n \n          \n<div class=\"account-number\">\n  <div class=\"account-number-label\">Account</div>\n  <span style=\"font-family: monospace;\">10XXXX4639\n  </span>\n</div>\n\n          \n        </div>\n        <p>\n          <b>Address</b>\n          <br/>\n          <span class=\"address\">1506 Wainwright Dr Se\nAtlanta, GA, 30316\nUS</span>\n        </p>\n     </div>\n \n     <div class=\"bank-column\">\n \n       <div>\n         <p>\n           <b>Bank</b>\n           <br/>\n          <span class=\"address\">1600 Pennsylvania Avenue Northwest\nWashington, CA, 20500\nUS</span>\n         </p>\n \n       </div>\n     </div>\n   </div>\n   <table class=\"transaction-table\">\n    <caption>Statement Summary</caption>\n    <thead>\n      <tr>\n        <th scope=\"col\">Date</th>\n        <th scope=\"col\" style=\"width: 35%;\">Description</th>\n        <th scope=\"col\">Withdrawals / Debit</th>\n        <th scope=\"col\">Deposits / Credit</th>\n        <th scope=\"col\">Balance</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr class=\"open-row\">\n        <td data-label=\"Date\">Apr 01</td>\n        <td data-label=\"Description\"><b>Opening Balance</b></td>\n        <td data-label=\"Withdrawals / Debit\"></td>\n        <td data-label=\"Deposits / Credit\"></td>\n        <td data-label=\"Balance\"><b>0.00</b></td>\n      </tr>\n      \n      <tr class=\"close-row\">\n        <td data-label=\"Date\">Apr 30</td>\n        <td data-label=\"Description\"><b>Closing Balance</b></td>\n        <td data-label=\"Withdrawals / Debit\"></td>\n        <td data-label=\"Deposits / Credit\"></td>\n        <td data-label=\"Balance\"><b>0.00</b></td>\n      </tr>\n    </tbody>\n  </table>\n  <div class=\"row\">\n    <table class=\"fee-table\">\n    <caption>Fees Summary</caption>\n    <thead>\n      <tr>\n      <th scope=\"col\">Type</th>\n      <th scope=\"col\">Total for this period</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td data-label=\"Type\">Fees</td>\n        <td data-label=\"Total for this period\">0.00</td>\n      </tr>\n    </tbody>\n    </table>\n  </div>\n   <div class=\"row\"  style=\"display: none;\" >\n    <table class=\"fee-table\">\n    <caption>Interest</caption>\n    <thead>\n      <tr>\n      <th scope=\"col\">Type</th>\n      <th scope=\"col\">Total for this period</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td data-label=\"Type\">Interest Accrued This Period</td>\n        <td data-label=\"Interest Accrued This Period\">0.00</td>\n      </tr>\n      <tr>\n        <td data-label=\"Type\">Days In Period</td>\n        <td data-label=\"Days In Period\">30</td>\n      </tr>\n      <tr>\n        <td data-label=\"Type\">Annual Percentage Yield Earned</td>\n        <td data-label=\"Annual Percentage Yield Earned\">0.00%</td>\n      </tr>\n    </tbody>\n    </table>\n  </div>\n <div style=\"clear:both; margin-top: 50px;\">\n     <h5>FOR CONSUMER ACCOUNTS ONLY - IN CASE OF ERRORS OR QUESTIONS ABOUT YOUR CONSUMER ELECTRONIC TRANSFERS</h5>\n<p>In case of errors or questions about your electronic transfers, please call us at (415) 840-8721\n   or email us at support@flex.one as soon as possible, if you think your statement or receipt is wrong, or\n   if you need more information about a transfer on the statement or receipt. We must hear from you no\n   later than 60 days after we sent you the FIRST statement on which the error or problem appeared.\n</p>\n<p>\n   We will need the following information:\n<ol type=\"1\">\n   <li>Your name and account number (if any)</li>\n   <li>A description of the error or the transfer you are unsure about. Please explain as clearly as you\n      can why you believe it is an error or why you need additional information.\n   </li>\n   <li>The dollar amount of the suspected error.</li>\n</ol>\n</p>\n<p>\n   If you inform us by phone, we may require that you send us your complaint or question in writing within\n   10 business days.\n</p>\n<p>\n   We will determine whether an error occurred within 10 business days after we hear from you and will\n   correct any error promptly. If we need more time, however, we may take up to 45 days to investigate\n   your complaint or question. If we decide to do this, we will credit your account within 10 business days\n   for the amount you think is in error, so that you will have the money during the time it takes us to complete\n   our investigation. If we ask you to put your complaint or question in writing and we do not receive it within\n   10 business days, we may not credit your account.\n</p>\n<p>\n   For errors involving new accounts, point-of-sale, or foreign-initiated transactions, we may take up to 90\n   days to investigate your complaint or question. For new accounts, we make take up to 20 business days\n   to credit your account for the amount you think is in error.\n</p>\n<p>\n   We will tell you the results within three business days after completing our investigation. If we determine\n   that there was no error, we will send you a written explanation. You may ask for copies of the documents\n   that we used in our investigation.\n</p>\n<h5>\n   FOR CONSUMER ACCOUNTS THAT ENABLE CHECK DEPOSIT SERVICES ONLY - CHECK 21 NOTIFICATION\n</h5>\n<p>\n   If you request the return of your original checks, you may receive a \"Substitute Check\" in response. The\n   Substitute Check is the legal equivalent of an original check, and you have rights that apply when you\n   believe in good faith that a Substitute Check was not properly charged to your account. Contact us at\n   support@flex.one to request a Check 21 disclosure.\n</p>\n </div>\n</body>\n</html>"'
+          headers:
+            Content-disposition:
+              schema:
+                type: string
+              description: how client should interact and suggested name
+      operationId: getStatementsById
+      x-stoplight:
+        id: r0xvle73w8oyt
+      description: get a specific statement in either html or PDF format
+      parameters: []
+      tags:
+        - Statements
+components:
+  parameters:
+    accountId:
+      name: accountId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The Account Identifier
+    businessId:
+      name: businessId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The Business Identifier
+    format:
+      name: format
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - pdf
+          - csv
+          - qbo
+          - ofx
+        default: pdf
+      description: describes the file format to be returned
+  securitySchemes:
+    token:
+      type: http
+      scheme: bearer
+  schemas:
+    StatementInfo:
+      title: StatementInfo
+      x-stoplight:
+        id: g2knyqoa4wu60
+      type: object
+      properties:
+        type:
+          type: string
+          x-stoplight:
+            id: 4lr6chqmc3tjk
+          enum:
+            - banking
+            - credit
+            - unknown
+          example: credit
+        vendorStatementId:
+          type: string
+          x-stoplight:
+            id: hqi705r166bx7
+          description: Unit ID for a statement resource
+        period:
+          type: string
+          x-stoplight:
+            id: ffdnvhh24qd9c
+        accountId:
+          type: string
+          x-stoplight:
+            id: s60l2vczbley7
+          format: uuid
+tags:
+  - name: Statements

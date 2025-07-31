@@ -1,0 +1,15 @@
+title: nib
+x-stoplight:
+  id: 0qdf6p44vms6u
+type: string
+example: 763495735996402800
+minLength: 21
+maxLength: 21
+x-tags:
+  - nib
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: nib
+description: NIB (banking identification number/numero de identificação bancário)

@@ -1,0 +1,17 @@
+type: object
+x-stoplight:
+  id: blv0qg8rvla0o
+title: link-body
+description: 'Reference to the address, based on Hypertext Application Language (HAL) specification.'
+x-tags:
+  - v1
+properties:
+  href:
+    type: string
+    format: uri
+    example: 'https://examplehost/exampleapi/v1/example-resource/1'
+    description: URL to reach the next step
+    maxLength: 250
+    readOnly: true
+    x-stoplight:
+      id: 1eutvd60d6w3z

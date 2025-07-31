@@ -1,0 +1,16 @@
+title: iban-nullable
+x-stoplight:
+  id: xnsocmk4w25nr
+type: string
+nullable: true
+example: PT50001000001234567000168
+minLength: 13
+maxLength: 34
+x-tags:
+  - iban
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: iban
+description: IBAN (International Bank Account Number)

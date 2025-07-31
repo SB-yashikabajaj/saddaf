@@ -1,0 +1,14 @@
+$ref: ./id-read-only.yaml
+x-stoplight:
+  id: g8btv7s11ec79
+description: Unique identifier for MarketBank token
+x-bpi-field-metadata:
+  type: identificador
+  properties:
+    - name: integridade
+      value: elevada
+    - name: tipoIdentificador
+      value: navegacao
+x-tags:
+  - id-navigation
+title: id-navigation-read-only

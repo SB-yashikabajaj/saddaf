@@ -1,0 +1,772 @@
+openapi: 3.1.0
+x-stoplight:
+  id: 43ky77fie1uw0
+info:
+  title: Cards
+  version: '1.0'
+  description: Endpoints for Flex's cards
+  contact:
+    name: Support
+    url: 'https://www.flex.one'
+    email: support@flex.one
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+  summary: Cards
+servers:
+  - url: 'https://platform.flexbase.dev'
+    description: Development
+  - url: 'https://platform.flex.one'
+    description: Production
+  - url: 'http://localhost:3000'
+    description: Local
+paths:
+  '/accounts/{accountId}/cards':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+    get:
+      summary: List Cards
+      tags:
+        - Cards
+      responses:
+        '200':
+          $ref: '#/components/responses/CardList'
+      operationId: list-cards
+      description: Retrieve a list of cards for the specified account
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/cardState'
+        - $ref: '#/components/parameters/fulfillmentState'
+  '/accounts/{accountId}/cards/programs':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+    get:
+      summary: Get Programs
+      tags:
+        - Cards
+      responses:
+        '200':
+          $ref: '#/components/responses/CardProgramList'
+      operationId: get-account-programs
+      description: Retrieve a list of available card programs for the specified account
+    post:
+      summary: Assign Card Program
+      operationId: assign-account-card-program
+      responses:
+        '200':
+          $ref: '#/components/responses/CardProgram'
+      tags:
+        - Cards
+      description: Assigned a card program to the specified account
+      x-internal: true
+      requestBody:
+        $ref: '#/components/requestBodies/AssignCardProgram'
+  '/accounts/{accountId}/cards/programs/{programId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/programId'
+    get:
+      summary: Get Account Card Program
+      tags:
+        - Cards
+      responses:
+        '200':
+          $ref: '#/components/responses/CardProgram'
+      operationId: get-account-card-program
+      description: Retrieve the specified account card program
+    post:
+      summary: Update Account Card Program
+      operationId: update-account-card-program
+      responses:
+        '200':
+          $ref: '#/components/responses/CardProgram'
+      tags:
+        - Cards
+      description: Update the specified account card program
+      x-internal: true
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateCardProgram'
+  '/accounts/{accountId}/persons/{personId}/cards':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/personId'
+    get:
+      summary: List Person Cards
+      tags:
+        - Cards
+      responses:
+        '200':
+          $ref: '#/components/responses/CardList'
+      operationId: list-cards-person
+      description: Retrieve a list of cards for the specified person
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/cardState'
+        - $ref: '#/components/parameters/fulfillmentState'
+    post:
+      summary: Issue Card
+      operationId: issue-card
+      responses:
+        '200':
+          description: OK
+      description: Issue a new card for the specified person
+      tags:
+        - Cards
+  '/accounts/{accountId}/persons/{personId}/cards/{cardId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/cardId'
+      - $ref: '#/components/parameters/personId'
+    get:
+      summary: Get Card
+      tags:
+        - Cards
+      responses:
+        '200':
+          $ref: '#/components/responses/Card'
+      operationId: get-card
+      description: Retrieve the specified card information
+    patch:
+      summary: Update Card
+      operationId: update-card
+      responses:
+        '200':
+          $ref: '#/components/responses/Card'
+      tags:
+        - Cards
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateCard'
+      description: Updates the specified card details
+    delete:
+      summary: Terminate Card
+      operationId: terminate-card
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - Cards
+      description: Card will no longer approve authorizations. Terminating a card cannot be undone.
+  '/accounts/{accountId}/persons/{personId}/cards/{cardId}/activate':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/personId'
+      - $ref: '#/components/parameters/cardId'
+    post:
+      summary: Activate Card
+      responses:
+        '204':
+          description: No Content
+      operationId: activate-card
+      tags:
+        - Cards
+      description: Activate the specified card
+  /cards/webhook/events:
+    post:
+      summary: Card Events
+      operationId: cards-webhook-events
+      responses:
+        '204':
+          description: No Content
+      x-internal: true
+      description: Listens for card events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/GcpPubSubMessage.yaml
+      tags:
+        - Webhooks
+      parameters: []
+  /cards/programs:
+    get:
+      summary: List Card Programs
+      tags:
+        - Programs
+      responses:
+        '200':
+          $ref: '#/components/responses/FullCardProgramList'
+      operationId: list-cards-programs
+      description: Retrieve a list of card programs
+      x-internal: true
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/active'
+    post:
+      summary: Create Card Program
+      operationId: create-card-program
+      responses:
+        '200':
+          $ref: '#/components/responses/FullCardProgram'
+      tags:
+        - Programs
+      description: Create a card program
+      x-internal: true
+      requestBody:
+        $ref: '#/components/requestBodies/FullCardProgram'
+  '/cards/programs/{programId}':
+    parameters:
+      - $ref: '#/components/parameters/programId'
+    get:
+      summary: Get Card Program
+      tags:
+        - Programs
+      responses:
+        '200':
+          $ref: '#/components/responses/FullCardProgram'
+      operationId: get-card-program
+      description: Retrieve the specified card program
+    post:
+      summary: Update Card Program
+      operationId: update-card-program
+      responses:
+        '200':
+          $ref: '#/components/responses/FullCardProgram'
+      tags:
+        - Programs
+      description: Update the specified card program
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateCardProgram'
+components:
+  schemas:
+    Card:
+      title: Card
+      x-stoplight:
+        id: u7t50wk3vepuj
+      description: Represents a debit or credit card
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The card identifier
+          readOnly: true
+        accountId:
+          type: string
+          x-stoplight:
+            id: b5zk3pzksrq5x
+          format: uuid
+          description: The account identifier
+          readOnly: true
+        personId:
+          type: string
+          x-stoplight:
+            id: fi79nd7gzo9c0
+          format: uuid
+          description: The person identifier
+          readOnly: true
+        programId:
+          type: string
+          x-stoplight:
+            id: mtptiehm3pv6i
+          format: uuid
+          description: The card program identifier
+          readOnly: true
+        form:
+          $ref: '#/components/schemas/CardForms'
+          x-stoplight:
+            id: vc1tlzeti06zw
+        state:
+          $ref: '#/components/schemas/CardStates'
+          x-stoplight:
+            id: gtaty1o4qwxqa
+        mode:
+          type: array
+          x-stoplight:
+            id: ofhrgqg5w85xp
+          description: Represents the operational modes
+          items:
+            $ref: '#/components/schemas/CardModes'
+            x-stoplight:
+              id: 9sxur71ncm970
+          readOnly: true
+        fulfillmentState:
+          $ref: '#/components/schemas/FulfillmentStates'
+          x-stoplight:
+            id: tprv7iysr0wal
+        name:
+          type: string
+          x-stoplight:
+            id: 1hwg90u35h6g7
+          description: The name of this card
+          maxLength: 100
+        expiration:
+          type: string
+          x-stoplight:
+            id: rgkx88mamp49w
+          format: date-time
+          description: The expiration date
+          readOnly: true
+        last4:
+          type: string
+          x-stoplight:
+            id: e0ftoppvtitvd
+          maxLength: 4
+          minLength: 4
+          description: The last 4 digits of a card
+          readOnly: true
+        cardHolder:
+          $ref: '#/components/schemas/CardHolder'
+          x-stoplight:
+            id: 8p0g0i518t9jq
+      required:
+        - id
+        - accountId
+        - personId
+        - programId
+        - form
+        - state
+        - mode
+        - fulfillmentState
+        - expiration
+        - last4
+        - cardHolder
+    CardStates:
+      title: CardStates
+      x-stoplight:
+        id: 55p2ho5n6wv88
+      type: string
+      enum:
+        - inactive
+        - active
+        - suspended
+        - terminated
+      description: Represents the state of a card
+      readOnly: true
+    CardForms:
+      title: CardForms
+      x-stoplight:
+        id: mwk78j6qxs7br
+      type: string
+      enum:
+        - virtual
+        - physical
+      description: Represents the form of a card
+      readOnly: true
+    CardModes:
+      title: Card Modes
+      x-stoplight:
+        id: 9k09abbbhuuqh
+      type: string
+      enum:
+        - credit
+        - debit
+      description: Represents the mode of a card
+    FulfillmentStates:
+      title: FulfillmentStates
+      x-stoplight:
+        id: uidl4xkbosghf
+      type: string
+      enum:
+        - issued
+        - ordered
+        - reordered
+        - rejected
+        - shipped
+        - delivered
+      description: Represents the card fulfillment state
+      readOnly: true
+    CardProgram:
+      title: Card Program
+      x-stoplight:
+        id: tp08v8vr5kym9
+      type: object
+      description: Represents a card program
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The card program identifier
+          readOnly: true
+        supportedForms:
+          x-stoplight:
+            id: omxnl46t4w1gt
+          type: array
+          items:
+            $ref: '#/components/schemas/CardForms'
+            x-stoplight:
+              id: 8zeqet1jzylpp
+        supportedModes:
+          type: array
+          x-stoplight:
+            id: vywjkvx934ced
+          items:
+            $ref: '#/components/schemas/CardModes'
+            x-stoplight:
+              id: fcmzfqy2xr4ba
+      required:
+        - id
+        - supportedForms
+        - supportedModes
+    CardHolder:
+      title: CardHolder
+      x-stoplight:
+        id: dl06frwm7zb2e
+      type: object
+      description: Represents the card holder details
+      properties:
+        givenName:
+          type: string
+          x-stoplight:
+            id: k4n60c88i6r40
+          description: 'The given name of the person, or first name in most Western languages (e.g., ''Barbara'' given the full name ''Ms. Barbara J Jensen, III'').'
+        familyName:
+          type: string
+          x-stoplight:
+            id: b8y22e039lo36
+          description: 'The family name of the person, or last name in most Western languages (e.g., ''Jensen'' given the full name ''Ms. Barbara J Jensen, III'').'
+        displayName:
+          type: string
+          x-stoplight:
+            id: wrhjptx2oqgxl
+          description: 'The name of the person, suitable for display to end-users'
+      required:
+        - givenName
+        - familyName
+    FullCardProgram:
+      title: Full Card Program
+      x-stoplight:
+        id: 3iftjvnnlzi09
+      type: object
+      description: Represents a card program
+      x-internal: true
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The card program identifier
+          readOnly: true
+        active:
+          type: boolean
+          x-stoplight:
+            id: fxen0mkgw4uea
+          description: A value indicating if the card program is enabled in the system
+        issuingBank:
+          $ref: '#/components/schemas/IssuingBanks'
+          x-stoplight:
+            id: ytkavgrhjfxsp
+          description: The issuing bank
+        network:
+          $ref: '#/components/schemas/Networks'
+          x-stoplight:
+            id: 4hrkx3xewggl5
+          description: The card network
+        processor:
+          $ref: '#/components/schemas/Processors'
+          x-stoplight:
+            id: 2v2hk1etma8y7
+          description: The card processor
+        configuration:
+          x-stoplight:
+            id: 8drdq9mkf3la4
+          description: A json configuration
+          type: object
+        supportsCredit:
+          type: boolean
+          x-stoplight:
+            id: ip3n9krfzsyt1
+          description: A value indicating if the card program supports credit
+        supportsDebit:
+          type: boolean
+          x-stoplight:
+            id: 2a59fxayjt4ir
+          description: A value indicating if the card program supports debit
+      required:
+        - id
+        - active
+        - issuingBank
+        - network
+        - processor
+        - configuration
+        - supportsCredit
+        - supportsDebit
+    Networks:
+      title: Networks
+      x-stoplight:
+        id: s738xjcriz1u8
+      type: string
+      description: Represents the card networks
+      enum:
+        - visa
+        - mastercard
+    IssuingBanks:
+      title: IssuingBanks
+      x-stoplight:
+        id: z45nxhmzzlond
+      type: string
+      description: Represents the card issuing banks
+      enum:
+        - patriot
+        - thread
+    Processors:
+      title: Processors
+      x-stoplight:
+        id: 88lg32ulewde5
+      type: string
+      description: Represents the card processors
+      enum:
+        - lithic
+        - unit
+        - marqeta
+    UpdateCardProgram:
+      title: UpdateCardProgram
+      x-stoplight:
+        id: 8j683eoel2th5
+      type: object
+      description: Represents a card program update
+      properties:
+        active:
+          type: boolean
+          x-stoplight:
+            id: 3zdejuzp40ym9
+          description: A value indicating if the card program is enabled in the system
+        configuration:
+          type: object
+          x-stoplight:
+            id: 1j6xsneztsq6g
+          description: A json configuration
+        supportsCredit:
+          type: boolean
+          x-stoplight:
+            id: xpx13z56k2xlc
+          description: A value indicating if the card program supports credit
+        supportsDebit:
+          type: boolean
+          x-stoplight:
+            id: v0dldxejb7i2t
+          description: A value indicating if the card program supports debit
+    AssignCardProgram:
+      title: Assign Card Program
+      x-stoplight:
+        id: xhgnpsq59aesc
+      type: object
+      properties:
+        programId:
+          type: string
+          x-stoplight:
+            id: bp2vcvm4ssvef
+          format: uuid
+          description: The card program identifier
+        configuration:
+          type: object
+          x-stoplight:
+            id: prvai03gyzxyd
+          description: An optional program configuration
+      required:
+        - programId
+      description: Represents an account card program assignment
+      x-internal: true
+  securitySchemes:
+    token:
+      type: http
+      scheme: bearer
+      description: Bearer token
+  parameters:
+    accountId:
+      name: accountId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The account identifier
+    nextToken:
+      name: nextToken
+      in: query
+      schema:
+        type: string
+      description: A token to retrieve the next set of results
+    page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: Which page of results to request
+    pageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 100
+        default: 25
+        exclusiveMinimum: 0
+      description: The number of resources returned per page
+    sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: asc
+      description: The sort order of results
+    personId:
+      name: personId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The person identifier
+    cardState:
+      name: cardState
+      in: query
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/CardStates'
+      description: The state of a card
+      style: form
+      explode: true
+      allowEmptyValue: true
+    fulfillmentState:
+      name: fulfillmentState
+      in: query
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/FulfillmentStates'
+      description: Represents the card fulfillment state
+      style: form
+      explode: true
+      allowEmptyValue: true
+    cardId:
+      name: cardId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The card identifier
+    active:
+      name: active
+      in: query
+      required: false
+      schema:
+        type: boolean
+      description: Filters based on active status
+    programId:
+      name: programId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The program identifier
+  responses:
+    CardList:
+      description: Represents a list of cards
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+                x-stoplight:
+                  id: jqt2fnfsf0mye
+              data:
+                type: array
+                x-stoplight:
+                  id: 0lypd5zlomvh8
+                description: Card results
+                items:
+                  $ref: '#/components/schemas/Card'
+                  x-stoplight:
+                    id: 0rd4bpkpzem55
+            required:
+              - metadata
+              - data
+    Card:
+      description: Represents a card response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Card'
+    CardProgramList:
+      description: Represents a list of card programs
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/CardProgram'
+    FullCardProgramList:
+      description: Represents the list of card programs
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+                x-stoplight:
+                  id: 7twlx1elxsi05
+              data:
+                type: array
+                x-stoplight:
+                  id: p1khojc5u9lks
+                items:
+                  $ref: '#/components/schemas/FullCardProgram'
+                  x-stoplight:
+                    id: s7tkyrhlm0shl
+            required:
+              - metadata
+              - data
+    FullCardProgram:
+      description: Represents a card program
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FullCardProgram'
+    CardProgram:
+      description: Represents a card program response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CardProgram'
+  requestBodies:
+    UpdateCard:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Card'
+      description: Represents a card update
+    FullCardProgram:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FullCardProgram'
+    UpdateCardProgram:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateCardProgram'
+      description: Represents a card program update request
+    AssignCardProgram:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AssignCardProgram'
+      description: Represents an account card program assignment request
+security:
+  - token: []
+tags:
+  - name: Cards
+    description: Cards
+  - name: Programs
+    description: Card Programs
+  - name: Webhooks
+    description: Webhooks

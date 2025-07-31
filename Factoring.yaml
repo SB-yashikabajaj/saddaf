@@ -1,0 +1,384 @@
+openapi: 3.1.0
+x-stoplight:
+  id: p2d1cy7k32lac
+info:
+  title: Factoring
+  version: '1.0'
+  summary: Factoring
+  description: Endpoints for Flex's factoring product
+  contact:
+    name: Support
+    url: 'https://www.flex.one'
+    email: support@flex.one
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+servers:
+  - url: 'https://platform.flexbase.dev'
+    description: Development
+  - url: 'https://platform.flex.one'
+    description: Production
+  - url: 'http://localhost:3000'
+    description: Local
+components:
+  securitySchemes:
+    token:
+      type: http
+      scheme: bearer
+      description: Bearer token
+  schemas:
+    AccountTerms:
+      title: Account Terms
+      x-stoplight:
+        id: 7wsh007mhbby2
+      type: object
+      properties:
+        termId:
+          type: string
+          format: uuid
+          description: The term identifier
+          readOnly: true
+        accountId:
+          type: string
+          format: uuid
+          description: The account identifier
+          readOnly: true
+        advancedRate:
+          type: number
+          description: The advanced rate percentage
+        feeRate:
+          type: number
+          description: The fee rate percentage
+      required:
+        - termId
+        - accountId
+        - advancedRate
+        - feeRate
+      description: Represents the factoring terms for an account
+    Invoice:
+      title: Invoice
+      x-stoplight:
+        id: olm7auh9vio2u
+      type: object
+      description: Represents an invoice
+      properties:
+        invoiceId:
+          type: string
+          format: uuid
+          description: The invoice identifier
+          readOnly: true
+        accountId:
+          type: string
+          format: uuid
+          description: The account identifier
+          readOnly: true
+        amount:
+          $ref: ./models/Money.yaml
+        counterparty:
+          type: string
+        issuedDate:
+          type: string
+          format: date-time
+        dueDate:
+          type: string
+          format: date-time
+        invoiceNumber:
+          type: string
+        notes:
+          type: string
+        assignmentId:
+          type: string
+          format: uuid
+      required:
+        - invoiceId
+        - accountId
+        - amount
+        - counterparty
+        - issuedDate
+        - dueDate
+        - invoiceNumber
+    InvoiceDecision:
+      title: InvoiceDecision
+      x-stoplight:
+        id: geslmsfaxycgf
+      type: object
+      description: Represents a factoring decision for an invoice
+      properties:
+        decisionId:
+          type: string
+          format: uuid
+          description: The decision identifier
+          readOnly: true
+        invoiceId:
+          type: string
+          format: uuid
+          description: The invoice identifier
+          readOnly: true
+        expirationDate:
+          type: string
+          format: date-time
+          description: The expiration date for this decision
+        advancedAmount:
+          $ref: ./models/Money.yaml
+          description: The calculated advanced amount
+        feeAmount:
+          $ref: ./models/Money.yaml
+          description: The calculated fee amount
+        acceptance:
+          type: boolean
+          description: A value indicating whether this decision has been accepted
+      required:
+        - decisionId
+        - invoiceId
+        - expirationDate
+        - advancedAmount
+        - feeAmount
+        - acceptance
+    InvoiceAndDecision:
+      allOf:
+        - $ref: '#/components/schemas/Invoice'
+        - type: object
+          properties:
+            decision:
+              $ref: '#/components/schemas/InvoiceDecision'
+  responses:
+    AccountTerms:
+      description: Represents the account terms
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccountTerms'
+    InvoiceList:
+      description: Represents a paginated list of invoices
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvoiceAndDecision'
+    CreatedInvoice:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Invoice'
+      headers:
+        location:
+          schema:
+            type: string
+            format: uri
+          description: The url location to retrieve the created invoice
+    Invoice:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvoiceAndDecision'
+  parameters:
+    accountId:
+      name: accountId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The account identifier
+    page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: Which page of results to request
+    pageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 100
+        default: 25
+        exclusiveMinimum: 0
+      description: The number of resources returned per page
+    sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: asc
+      description: The sort order of results
+    nextToken:
+      name: nextToken
+      in: query
+      schema:
+        type: string
+      description: A token to retrieve the next set of results
+    invoiceId:
+      name: invoiceId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The invoice identifier
+  requestBodies:
+    SubmitInvoice:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Invoice'
+paths:
+  '/factoring/{accountId}/terms':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+    get:
+      summary: Get Terms
+      tags:
+        - Terms
+      operationId: get-account-terms
+      description: Get the factoring terms for the specified account
+      responses:
+        '200':
+          $ref: '#/components/responses/AccountTerms'
+  '/factoring/{accountId}/invoices':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+    get:
+      summary: List Invoices
+      tags:
+        - Invoices
+      responses:
+        '200':
+          $ref: '#/components/responses/InvoiceList'
+      operationId: list-account-invoices
+      description: List invoices for the specified account
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+    post:
+      summary: Create Invoice
+      operationId: create-account-invoices
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedInvoice'
+      tags:
+        - Invoices
+      description: Create an invoice for factoring
+      requestBody:
+        $ref: '#/components/requestBodies/SubmitInvoice'
+  '/factoring/{accountId}/invoices/{invoiceId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/invoiceId'
+    get:
+      summary: Get an Invoice
+      tags:
+        - Invoices
+      responses:
+        '200':
+          $ref: '#/components/responses/Invoice'
+      operationId: get-account-invoice
+      description: Get the specified invoice details
+  '/factoring/{accountId}/invoices/{invoiceId}/attachment':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/invoiceId'
+    get:
+      summary: Retrieve Attachment
+      tags:
+        - Invoices
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  attachment:
+                    type: string
+                    format: uri
+                    description: A pre-signed url for the attachment
+                required:
+                  - attachment
+      operationId: get-invoices-attachment
+      description: Get a pre-signed url for the specified invoice attachment
+    post:
+      summary: Upload Attachment
+      operationId: upload-account-invoices
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - Invoices
+      description: Upload an attachment for the specified invoice
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+        description: ''
+  /factoring/invoices:
+    get:
+      summary: List Invoices
+      tags:
+        - Servicing
+      responses:
+        '200':
+          $ref: '#/components/responses/InvoiceList'
+      operationId: list-factoring-invoices
+      x-internal: true
+      description: List all factoring invoices
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+  '/factoring/{accountId}/invoices/{invoiceId}/decision':
+    parameters:
+      - schema:
+          type: string
+        name: accountId
+        in: path
+        required: true
+        description: account identifier
+      - schema:
+          type: string
+        name: invoiceId
+        in: path
+        required: true
+        description: invoice to decision
+    post:
+      summary: Create Invoice Decision
+      tags:
+        - Servicing
+      operationId: post-factoring-accountId-invoices-invoiceId-decision
+      responses:
+        '200':
+          description: OK
+      x-stoplight:
+        id: gdm8lj9c4cxek
+      description: Create invoice decision for factoring
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceDecision'
+tags:
+  - name: Invoices
+    description: Invoices
+  - name: Servicing
+    description: Servicing
+  - name: Terms
+    description: Terms

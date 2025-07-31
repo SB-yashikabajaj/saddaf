@@ -1,0 +1,13 @@
+$ref: ./account-number-nullable.yaml
+x-stoplight:
+  id: m3l5wxgj8rw9x
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: numeroConta
+    - name: tipoUtilizacao
+      value: contrapartida
+description: 'Account number of the target checking account in a transaction. To consult more information, use this id in the Checking Accounts API.'
+x-tags:
+  - target-account-number

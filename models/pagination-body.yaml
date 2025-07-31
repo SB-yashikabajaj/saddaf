@@ -1,0 +1,53 @@
+title: pagination-body
+x-stoplight:
+  id: 3yh9hmh10n2tv
+description: 'Pagination links to indicate the next steps possible in paginated responses, based on Hypertext Application Language (HAL) specification.'
+x-tags:
+  - v1
+allOf:
+  - properties:
+      totalItems:
+        type: integer
+        description: The total number of items
+        minimum: 0
+        example: 100
+        readOnly: true
+        x-stoplight:
+          id: x028jmm1k7jid
+      currentPage:
+        type: integer
+        description: The current page
+        minimum: 0
+        example: 2
+        readOnly: true
+        x-stoplight:
+          id: 4haer0l98j3we
+      totalPages:
+        type: integer
+        description: The total number pages
+        minimum: 0
+        example: 5
+        readOnly: true
+        x-stoplight:
+          id: yg28qvgmqgmf5
+      _links:
+        type: object
+        description: Pagination linking area
+        properties:
+          prev:
+            $ref: ./link-body.yaml
+            x-stoplight:
+              id: s42rt9rizxwyy
+          next:
+            $ref: ./link-body.yaml
+            x-stoplight:
+              id: uomwrg4ppijpm
+          self:
+            $ref: ./link-body.yaml
+            x-stoplight:
+              id: hk5p7e2ela5q8
+        x-stoplight:
+          id: i6cuf8b1savkn
+    x-stoplight:
+      id: 4uek83fd3mvx6
+type: object

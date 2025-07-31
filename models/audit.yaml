@@ -1,0 +1,39 @@
+title: audit
+x-stoplight:
+  id: fehz0bwpaqfrc
+x-tags:
+  - v1
+type: object
+properties:
+  createdBy:
+    type: string
+    description: Who created the resource
+    maxLength: 12
+    example: '657891'
+    readOnly: true
+    x-stoplight:
+      id: qg8dlwfnv9pzb
+  createdDate:
+    type: string
+    description: Date when the resource was created
+    format: date-time
+    example: '2022-08-24T14:15:22Z'
+    readOnly: true
+    x-stoplight:
+      id: g9245rzkwplmy
+  alteredBy:
+    type: string
+    description: Who altered the resource
+    maxLength: 12
+    example: '657891'
+    readOnly: true
+    x-stoplight:
+      id: 8aw2lvxghpthu
+  alteredDate:
+    type: string
+    description: Date when the resource was altered
+    format: date-time
+    example: '2022-08-24T14:15:22Z'
+    readOnly: true
+    x-stoplight:
+      id: yi5b8qrljbite

@@ -1,0 +1,100 @@
+title: HubspotCompany
+x-stoplight:
+  id: xu2jro9k5mv0f
+type: object
+description: Fields to be written from Flex to the Hubspot Company Entity
+properties:
+  id:
+    type: string
+    x-stoplight:
+      id: rhznupzs3hull
+  flexCompanyId:
+    type: string
+    x-stoplight:
+      id: egmlhb6p2mvae
+    format: uuid
+  availableCredit:
+    type: number
+    x-stoplight:
+      id: fjm12ofar135a
+  creditBalance:
+    type: number
+    x-stoplight:
+      id: x0zqyzx5u16fd
+  creditLimit:
+    type: number
+    x-stoplight:
+      id: d63xm0itatkfi
+  lithicId:
+    type: string
+    x-stoplight:
+      id: db9jl6itaejbl
+    format: uuid
+  unitId:
+    type: string
+    x-stoplight:
+      id: o60x3gwhevw2c
+    format: uuid
+  bankDeposits:
+    type: number
+    x-stoplight:
+      id: z4tl2gc13bexz
+  creditCashbackRebateBalance:
+    type: number
+    x-stoplight:
+      id: hy5ojicdad89y
+  creditCashbackNearTermDays:
+    type: number
+    x-stoplight:
+      id: 8tp9xlcot24k0
+  creditCashbackFarTermDays:
+    type: number
+    x-stoplight:
+      id: rau3pe4yyabmt
+  creditCashbackNearTermPct:
+    type: number
+    x-stoplight:
+      id: jks1t0oytolkx
+  creditCashbackFarTermPct:
+    type: number
+    x-stoplight:
+      id: s2929240xhldc
+  customerStartDate:
+    type: string
+    x-stoplight:
+      id: 8b3wv3tmgu83l
+    format: date
+  creditLineApproved:
+    type: string
+    x-stoplight:
+      id: qb0lwv0rh4v6g
+    format: date-time
+  monthlySpend:
+    type: number
+    x-stoplight:
+      id: e2zum8ak8pwzg
+  firstTransactionDate:
+    type: string
+    x-stoplight:
+      id: fw7yh8n78b330
+    format: date-time
+  creditUtilization:
+    type: number
+    x-stoplight:
+      id: 1taiuuhyi6ece
+  annualRevenue:
+    type: string
+    x-stoplight:
+      id: pn0xlpvtnu8cv
+  alfredUrl:
+    type: string
+    x-stoplight:
+      id: gifsitkqe2z2d
+  foundedYear:
+    type: string
+    x-stoplight:
+      id: xwd3516mnkh8s
+  dbaName:
+    type: string
+    x-stoplight:
+      id: d8o9d5ylsyuk3

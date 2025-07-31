@@ -1,0 +1,27 @@
+title: common-body
+x-stoplight:
+  id: irywohit7q9nt
+description: 'Self links to the resource itself, based on Hypertext Application Language (HAL) specification.'
+x-tags:
+  - v1
+allOf:
+  - properties:
+      id:
+        type: string
+        description: Resource's unique identification
+        example: 10499532-8ae3-4f61-a97e-a9583d8dc2e4
+        maxLength: 36
+        readOnly: true
+        x-stoplight:
+          id: qot6fw2polk0j
+      kind:
+        type: string
+        description: Resource's full name
+        example: api-name.bancobpi.pt/v1/resource-name
+        maxLength: 100
+        readOnly: true
+        x-stoplight:
+          id: 40rzpz3ar9yr9
+    x-stoplight:
+      id: ux0rmvdfdsll8
+type: object

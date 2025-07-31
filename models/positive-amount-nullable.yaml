@@ -1,0 +1,13 @@
+title: positive-amount-nullable
+x-stoplight:
+  id: 58ngu522lemjx
+type: number
+nullable: true
+x-bpi-field-metadata:
+  type: montante
+description: Positive amount of a monetary value
+example: 23.25
+maximum: 999999999
+minimum: 0
+x-tags:
+  - positive-amount

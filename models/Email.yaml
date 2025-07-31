@@ -1,0 +1,61 @@
+allOf:
+  - type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: Email identifier
+        readOnly: true
+        x-stoplight:
+          id: 7o4ottsth9ipu
+      value:
+        type: string
+        description: Email address
+        format: email
+        x-stoplight:
+          id: wus89niaso4nk
+      type:
+        type: string
+        description: A label indicating the email's type
+        enum:
+          - work
+          - home
+          - other
+        x-stoplight:
+          id: hisu0d7hv3lje
+      isPrimary:
+        type: boolean
+        description: Indicates if this is the preferred email or primary email
+        default: true
+        x-stoplight:
+          id: 2uy8c3iu2se54
+      verificationDate:
+        type: string
+        format: date-time
+        description: The date this email was verified
+        readOnly: true
+        x-stoplight:
+          id: qwurjppj43r9l
+      verificationMethod:
+        type: string
+        description: The method used to verify this email
+        readOnly: true
+        x-stoplight:
+          id: 2v0crzmk5k46s
+      active:
+        type: boolean
+        description: A value indicating if the email is enabled in the system
+        x-stoplight:
+          id: ppkfhrktf562f
+    required:
+      - id
+      - value
+    x-stoplight:
+      id: 2fzzpq7mx7vq7
+  - $ref: ./CoreModel.yaml
+    x-stoplight:
+      id: 79fup6w0ofdk9
+x-stoplight:
+  id: bml7rsjh5pczx
+title: Email
+description: Represents an email

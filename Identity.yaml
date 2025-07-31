@@ -1,0 +1,4904 @@
+openapi: 3.1.0
+x-stoplight:
+  id: d1co6xlwdb0dg
+info:
+  title: Identity
+  version: '1.0'
+  description: Endpoints for Flex's platform identity
+  summary: Identity
+  contact:
+    name: Support
+    url: 'https://www.flex.one'
+    email: support@flex.one
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+servers:
+  - url: 'https://platform.flexbase.dev'
+    description: Development
+  - url: 'https://platform.flex.one'
+    description: Production
+  - url: 'http://localhost:3000'
+    description: Local
+paths:
+  /identity/accounts:
+    post:
+      summary: Create an account
+      operationId: create-account
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedAccount'
+      description: Create an account and an initial authorization associated with the account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRegistration'
+        description: ''
+      tags:
+        - Accounts
+      security: []
+    get:
+      summary: List Accounts
+      operationId: list-accounts
+      responses:
+        '200':
+          $ref: '#/components/responses/AccountList'
+      tags:
+        - Accounts
+      description: Retrieve a list of accounts
+      x-internal: true
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/active'
+  /identity/accounts/search:
+    post:
+      summary: Account Search
+      operationId: accounts-search
+      responses:
+        '200':
+          $ref: '#/components/responses/AccountSearchList'
+      tags:
+        - Accounts
+      description: |-
+        Retrieve a list of accounts that match one of the search criteria
+
+        - Account, Person, or Business Id
+        - Business Name
+        - Business DBA
+        - Business EIN
+        - Person or Business Phone
+        - Person or Business Email (`me@gmail.com`) or Email Domain (`@gmail.com`)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                value:
+                  type: string
+                  x-stoplight:
+                    id: 8payprmww40bd
+                  description: The value to search for
+                  maxLength: 100
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+        - schema:
+            type: string
+            default: created
+            enum:
+              - created
+              - creditLimit
+          in: query
+          name: sortBy
+          description: The criteria the results are sorted by
+      x-internal: true
+  /identity/accounts/migrate:
+    post:
+      summary: Migrate
+      operationId: accounts-migrate
+      responses:
+        '200':
+          $ref: '#/components/responses/AccountMigration'
+      tags:
+        - Accounts
+      description: Migrate an api account to platform
+      x-internal: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: list of company identifiers
+              maxItems: 100
+              items:
+                x-stoplight:
+                  id: jk8zg685gnczz
+                type: string
+                format: uuid
+      x-validation: false
+      parameters: []
+  '/identity/accounts/{accountId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+    delete:
+      summary: Deactivate Account
+      operationId: delete-account
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - Accounts
+      description: Deactivates the specified account
+    put:
+      summary: Update Account
+      operationId: update-account
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - Accounts
+      description: Update the specified account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                active:
+                  type: boolean
+                  description: Specifies whether this account is active or not
+                name:
+                  type: string
+                  description: The name for the specified account
+    get:
+      summary: Get Account
+      operationId: get-account
+      responses:
+        '200':
+          $ref: '#/components/responses/Account'
+      tags:
+        - Accounts
+      description: Gets the specified account details
+  '/identity/accounts/{accountId}/products':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+    get:
+      summary: List Products
+      responses:
+        '200':
+          $ref: '#/components/responses/ProductList'
+      operationId: list-accounts-products
+      description: List the products for the specified account
+      tags:
+        - Accounts
+      x-stoplight:
+        id: 1xe9ew8967u1j
+  '/identity/accounts/{accountId}/applications/{applicationId}/withdraw':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/applicationId'
+    post:
+      summary: Withdraw Application
+      operationId: withdrawApplication
+      tags:
+        - Applications
+      responses:
+        '200':
+          description: OK
+      x-stoplight:
+        id: vcrgu1rz2dpeg
+      description: User Withdraws the specified application
+  '/identity/accounts/{accountId}/referrals':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+    get:
+      summary: List Account Referrals
+      tags:
+        - Accounts
+      responses:
+        '200':
+          $ref: '#/components/responses/ReferralList'
+      operationId: list-account-referrals
+      description: Retrieve the list of referrals for this account
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+      x-internal: true
+  '/identity/accounts/{accountId}/referred':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+    get:
+      summary: List Referred Accounts
+      tags:
+        - Accounts
+      responses:
+        '200':
+          $ref: '#/components/responses/AccountList'
+      operationId: list-referred-accounts
+      description: Retrieve the list of accounts referred by the specified account
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+      x-internal: true
+  '/identity/accounts/{accountId}/promocodes':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+    get:
+      summary: List Account PromoCodes
+      tags:
+        - Accounts
+      responses:
+        '200':
+          $ref: '#/components/responses/PromoCodeList'
+      operationId: list-account-promocodes
+      description: Retrieve the list of promotional codes for this account
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+  '/identity/accounts/{accountId}/invite':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+    post:
+      summary: Invite Person
+      tags:
+        - Accounts
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedPerson'
+      operationId: invite-accounts-person
+      description: Invite a person to the specified account
+      requestBody:
+        $ref: '#/components/requestBodies/AccountInvitation'
+      parameters:
+        - $ref: '#/components/parameters/invitationType'
+    get:
+      summary: List Invitations
+      operationId: list-accounts-invites
+      responses:
+        '200':
+          $ref: '#/components/responses/AccountInvitationList'
+      tags:
+        - Accounts
+      description: Retrieve the list of invitations for the specified account
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+        - schema:
+            type: boolean
+          in: query
+          name: accepted
+          description: Filter whether the invite has been accepted
+  '/identity/accounts/{accountId}/invite/{personId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/personId'
+    post:
+      summary: Resend Invitation
+      operationId: resend-accounts-invite
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - Accounts
+      description: Resend an invitation to the specified person
+  '/identity/accounts/{accountId}/persons':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+    get:
+      summary: List Persons
+      tags:
+        - Persons
+      responses:
+        '200':
+          $ref: '#/components/responses/PersonList'
+      operationId: list-accounts-persons
+      description: List persons associated with the specified account
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/active'
+    post:
+      summary: Create Person
+      operationId: register-accounts-persons
+      tags:
+        - Persons
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedPerson'
+      description: Register a person with the specified account
+      requestBody:
+        $ref: '#/components/requestBodies/PersonRegistration'
+  '/identity/accounts/{accountId}/persons/{personId}':
+    get:
+      summary: Get Person
+      operationId: get-person
+      tags:
+        - Persons
+      description: Get persons info
+      responses:
+        '200':
+          $ref: '#/components/responses/CompletePerson'
+      parameters: []
+      x-stoplight:
+        id: mna19gehzgf71
+    parameters:
+      - $ref: '#/components/parameters/personId'
+      - $ref: '#/components/parameters/accountId'
+    patch:
+      summary: Update Person
+      operationId: patch-person
+      responses:
+        '200':
+          $ref: '#/components/responses/Person'
+      tags:
+        - Persons
+      description: Update a person
+      requestBody:
+        $ref: '#/components/requestBodies/PersonUpdate'
+      x-stoplight:
+        id: yewa10ys7oda6
+      x-mfa: 0
+    delete:
+      summary: Deactivate Person
+      operationId: delete-person
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - Persons
+      description: Deactivates a person
+      x-stoplight:
+        id: 1dc3uk1sds31r
+  '/identity/accounts/{accountId}/persons/{personId}/prefill':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/personId'
+    post:
+      summary: Request Prefill
+      responses:
+        '200':
+          description: No Content
+          $ref: '#/components/responses/PrefilledPersonResponse'
+      operationId: prefill-persons
+      x-stoplight:
+        id: e390fonkoqdx5
+      description: Attempt to prefill the specified person's information
+      requestBody:
+        $ref: '#/components/requestBodies/Prefill'
+        id: 1dc3uk1sds31r
+      tags:
+        - Persons
+    get:
+      summary: Person can access prefill
+      description: Check if a person can access the prefill product. True indicates a high enough trust score to use prefill
+      responses:
+        '200':
+          $ref: '#/components/responses/CanPrefill'
+      operationId: prefill-persons-access
+      tags:
+        - Persons
+  '/identity/accounts/{accountId}/persons/{personId}/business-prefill':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/personId'
+    get:
+      summary: Get prefill business data for person
+      description: Retrieve business prefill data for the given person and account. Uses stored phone and SSN to make retrieve the data.
+      responses:
+        '200':
+          $ref: '#/components/responses/PersonBusinessPrefill'
+      operationId: get-prefill-person-business
+      tags:
+        - Persons
+  '/identity/accounts/{accountId}/persons/{personId}/phones':
+    get:
+      summary: List Person Phones
+      operationId: list-persons-phones
+      tags:
+        - Persons
+      description: Retrieve a list of phones for the specified person
+      responses:
+        '200':
+          $ref: '#/components/responses/PhoneList'
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/active'
+      x-stoplight:
+        id: 2mm8ui2fgs0dj
+    parameters:
+      - $ref: '#/components/parameters/personId'
+      - $ref: '#/components/parameters/accountId'
+    post:
+      summary: Create a Persons Phone
+      operationId: post-persons-phones
+      description: Create a phone for a person
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/Phone.yaml
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedPhone'
+      tags:
+        - Persons
+      x-stoplight:
+        id: bvu4cycgtio0a
+      x-mfa: 0
+  '/identity/accounts/{accountId}/persons/{personId}/phones/{phoneId}':
+    get:
+      summary: Get a person's individual phone info
+      operationId: get-person-phone
+      tags:
+        - Persons
+      description: Retrieve a single phone number info
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./models/Phone.yaml
+      parameters: []
+      x-stoplight:
+        id: zl0w6nxsflda5
+    parameters:
+      - $ref: '#/components/parameters/personId'
+      - $ref: '#/components/parameters/phoneId'
+      - $ref: '#/components/parameters/accountId'
+    delete:
+      summary: Deactivate a persons phone
+      operationId: delete-person-single-phone
+      description: deactivate a persons phone
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - Persons
+      x-stoplight:
+        id: ni4xok3bi96di
+    patch:
+      summary: Update a person's phone
+      operationId: patch-person-single-phone
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./models/Phone.yaml
+      description: Update a person's phone
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/PhonePatch.yaml
+      tags:
+        - Persons
+      x-stoplight:
+        id: oq8141a2n36p1
+  '/identity/accounts/{accountId}/persons/{personId}/addresses':
+    get:
+      summary: List a Person's Addresses
+      operationId: get-persons-addresses
+      tags:
+        - Persons
+      description: Retrieve a list of addresses for a person
+      responses:
+        '200':
+          $ref: '#/components/responses/AddressList'
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/active'
+      x-stoplight:
+        id: mzuvlf0gzpfz1
+    parameters:
+      - $ref: '#/components/parameters/personId'
+      - $ref: '#/components/parameters/accountId'
+    post:
+      summary: Create a Persons Address
+      operationId: post-persons-addresses
+      description: Create an address for a person
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/Address.yaml
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedAddress'
+      tags:
+        - Persons
+      x-stoplight:
+        id: 57n5pg0972xl8
+  '/identity/accounts/{accountId}/persons/{personId}/addresses/{addressId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/personId'
+      - $ref: '#/components/parameters/addressId'
+    get:
+      summary: Get Person Address
+      tags:
+        - Persons
+      responses:
+        '200':
+          $ref: '#/components/responses/Address'
+      operationId: get-persons-address
+      description: Retrieve the specified address for a person
+    patch:
+      summary: Update Person's Address
+      operationId: patch-persons-address
+      responses:
+        '200':
+          $ref: '#/components/responses/Address'
+      tags:
+        - Persons
+      description: Update the specified address for a person
+      requestBody:
+        $ref: '#/components/requestBodies/AddressUpdate'
+    delete:
+      summary: Deactivate Person's Address
+      operationId: delete-persons-address
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - Persons
+      description: Deactivates the specified address for a person
+  '/identity/accounts/{accountId}/persons/{personId}/emails':
+    get:
+      summary: List a Person's Emails
+      operationId: get-persons-emails
+      tags:
+        - Persons
+      description: Retrieve a list of emails for a person
+      responses:
+        '200':
+          $ref: '#/components/responses/EmailList'
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/active'
+      x-stoplight:
+        id: unynrqicdfwb2
+    parameters:
+      - $ref: '#/components/parameters/personId'
+      - $ref: '#/components/parameters/accountId'
+    post:
+      summary: Create a Persons Address
+      operationId: post-persons-emails
+      description: Create an email for a person
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/Email.yaml
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedEmail'
+      tags:
+        - Persons
+      x-stoplight:
+        id: 27ldxrg7nyr90
+  '/identity/accounts/{accountId}/persons/{personId}/documents':
+    parameters:
+      - $ref: '#/components/parameters/personId'
+      - $ref: '#/components/parameters/accountId'
+    get:
+      summary: List Person Documents
+      tags:
+        - Persons
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metadata:
+                    $ref: ./models/PaginationMetadata.yaml
+                    x-stoplight:
+                      id: 1oz9rd1hzaqti
+                  data:
+                    type: array
+                    x-stoplight:
+                      id: o12ciz5fp1ise
+                    items:
+                      $ref: '#/components/schemas/PersonDocument'
+                      x-stoplight:
+                        id: hdzcp7s592xpf
+      operationId: listDocumentsForPerson
+      x-stoplight:
+        id: f3am7ioi0dh9u
+      description: List Documents stored for a person
+      parameters:
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+    post:
+      summary: Create Person Document
+      tags:
+        - Persons
+      operationId: createPersonsDocument
+      responses:
+        '200':
+          description: OK
+      x-stoplight:
+        id: ija1sx5oxtssj
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              format: binary
+              additionalProperties: false
+              properties:
+                doc:
+                  type: string
+                  x-stoplight:
+                    id: fjnue6yrl94lr
+                  format: binary
+              required:
+                - doc
+        description: Multipart data containing document to upload
+      description: Upload a document to be uploaded and stored for a Person.
+  '/identity/accounts/{accountId}/persons/{personId}/documents/{documentId}':
+    parameters:
+      - $ref: '#/components/parameters/personId'
+      - schema:
+          type: string
+        name: documentId
+        in: path
+        required: true
+        description: The document Identifier
+      - $ref: '#/components/parameters/accountId'
+    get:
+      summary: Get Person Document
+      tags:
+        - Persons
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  attachment:
+                    type: string
+                    x-stoplight:
+                      id: 7d0k15dmbl98o
+                    format: uri
+                required:
+                  - attachment
+      operationId: getPersonsDocumentReference
+      x-stoplight:
+        id: 3q3qbxbl94xru
+      description: Retrieve a pre-signed url referencing a stored Person Document
+  '/identity/accounts/{accountId}/businesses':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+    get:
+      summary: List Businesses
+      responses:
+        '200':
+          $ref: '#/components/responses/BusinessList'
+      operationId: list-businesses
+      description: List businesses associated with the specified account
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/active'
+      tags:
+        - Businesses
+    post:
+      summary: Create Business
+      operationId: register-businesses
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedBusiness'
+      description: Register a business with the specified account
+      requestBody:
+        $ref: '#/components/requestBodies/BusinessRegistration'
+      tags:
+        - Businesses
+      x-mfa: 0
+  '/identity/accounts/{accountId}/businesses/{businessId}':
+    parameters:
+      - $ref: '#/components/parameters/businessId'
+      - $ref: '#/components/parameters/accountId'
+    get:
+      summary: Get Business
+      tags:
+        - Businesses
+      responses:
+        '200':
+          $ref: '#/components/responses/Business'
+      operationId: get-business
+      description: Gets the specified business details
+      x-stoplight:
+        id: i0fvc0tv0s0uq
+    patch:
+      summary: Update Business
+      tags:
+        - Businesses
+      operationId: patch-business
+      requestBody:
+        $ref: '#/components/requestBodies/BusinessUpdate'
+      responses:
+        '200':
+          $ref: '#/components/responses/Business'
+      x-stoplight:
+        id: fb9rx0adue7ae
+      description: Update the specified business
+  '/identity/accounts/{accountId}/businesses/{businessId}/phones':
+    parameters:
+      - $ref: '#/components/parameters/businessId'
+      - $ref: '#/components/parameters/accountId'
+    get:
+      summary: List Business Phones
+      tags:
+        - Businesses
+      responses:
+        '200':
+          $ref: '#/components/responses/PhoneList'
+      operationId: list-businesses-phones
+      x-stoplight:
+        id: f1o5l76vmsl6t
+      parameters:
+        - $ref: '#/components/parameters/active'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+      description: Retrieve a list of phones for the specified business
+    post:
+      summary: Create Business Phone
+      tags:
+        - Businesses
+      operationId: post-businesses-phones
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedPhone'
+      x-stoplight:
+        id: vbf2kg5wz1r6z
+      description: Create a phone for the specified business
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/Phone.yaml
+  '/identity/accounts/{accountId}/businesses/{businessId}/addresses':
+    parameters:
+      - $ref: '#/components/parameters/businessId'
+      - $ref: '#/components/parameters/accountId'
+    post:
+      summary: Create Business Address
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedAddress'
+      operationId: post-business-address
+      tags:
+        - Businesses
+      requestBody:
+        $ref: '#/components/requestBodies/CreateAddress'
+      description: Create and associate an address with the specified business
+      x-stoplight:
+        id: hxksnuiunluaf
+    get:
+      summary: List Business Addresses
+      operationId: list-businesses-addresses
+      responses:
+        '200':
+          $ref: '#/components/responses/AddressList'
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/active'
+      tags:
+        - Businesses
+      description: Retrieve a list of addresses for the specified business
+  '/identity/accounts/{accountId}/businesses/{businessId}/addresses/{addressId}':
+    parameters:
+      - $ref: '#/components/parameters/addressId'
+      - $ref: '#/components/parameters/businessId'
+      - $ref: '#/components/parameters/accountId'
+    get:
+      summary: Get Business Address
+      responses:
+        '200':
+          $ref: '#/components/responses/Address'
+      operationId: get-business-address
+      description: Retrieve the specified address for a business
+      tags:
+        - Businesses
+      x-stoplight:
+        id: oyro8rbb1xbsa
+    delete:
+      summary: Deactivate Business Address
+      operationId: delete-business-address
+      responses:
+        '204':
+          description: No Content
+      description: Deactivates the specified address for a business
+      tags:
+        - Businesses
+      x-stoplight:
+        id: nhehnnxea3icx
+    patch:
+      summary: Update Business Address
+      operationId: update-businesses-addresses
+      responses:
+        '200':
+          $ref: '#/components/responses/Address'
+      tags:
+        - Businesses
+      description: Update the specified address for a business
+      requestBody:
+        $ref: '#/components/requestBodies/AddressUpdate'
+  '/identity/accounts/{accountId}/businesses/{businessId}/owners':
+    get:
+      summary: List Business Owners
+      tags:
+        - Businesses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ./models/BusinessOwner.yaml
+      operationId: list-business-owners
+      description: Retrieve a list of owners for the specified business
+      x-stoplight:
+        id: mdka6ymx7847y
+    parameters:
+      - $ref: '#/components/parameters/businessId'
+      - $ref: '#/components/parameters/accountId'
+    post:
+      summary: Create Business Owner
+      operationId: post-businesses-owners
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedBusinessOwner'
+      tags:
+        - Businesses
+      description: Associate a person as an owner for the specified business
+      requestBody:
+        $ref: '#/components/requestBodies/CreateBusinessOwner'
+  '/identity/accounts/{accountId}/businesses/{businessId}/owners/{personId}':
+    parameters:
+      - $ref: '#/components/parameters/businessId'
+      - $ref: '#/components/parameters/personId'
+      - $ref: '#/components/parameters/accountId'
+    patch:
+      summary: Update Business Owner
+      tags:
+        - Businesses
+      responses:
+        '200':
+          $ref: '#/components/responses/CreatedBusinessOwner'
+      operationId: patch-business-owner
+      requestBody:
+        $ref: '#/components/requestBodies/BusinessOwner'
+      x-stoplight:
+        id: 16hdzce4icidn
+      description: Update the specified owner for a business
+    delete:
+      summary: Deactivate Business Owner
+      tags:
+        - Businesses
+      responses:
+        '204':
+          description: No Content
+      operationId: delete-business-owner
+      x-stoplight:
+        id: 97tobzquftq5k
+      description: Deactivates the specified owner for a business
+  '/identity/accounts/{accountId}/businesses/{businessId}/employees':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/businessId'
+    get:
+      summary: List Employees
+      tags:
+        - Businesses
+      responses:
+        '200':
+          $ref: '#/components/responses/EmployeeList'
+      operationId: list-business-employees
+      x-stoplight:
+        id: rh98j5vls0op1
+      parameters:
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/active'
+      description: Retrieve a list of employees for the specified business
+    post:
+      summary: Create Employee
+      tags:
+        - Businesses
+      responses:
+        '201':
+          $ref: '#/components/responses/Employee'
+      operationId: create-business-employee
+      x-stoplight:
+        id: kdqahxywf8bts
+      description: Associate a person as an employee for the specified business
+      requestBody:
+        $ref: '#/components/requestBodies/CreateBusinessEmployee'
+  '/identity/accounts/{accountId}/businesses/{businessId}/employees/{personId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/businessId'
+      - $ref: '#/components/parameters/personId'
+    get:
+      summary: Get Employee
+      tags:
+        - Businesses
+      responses:
+        '200':
+          $ref: '#/components/responses/Employee'
+      operationId: get-business-employee
+      x-stoplight:
+        id: wam5o4gebmlk0
+      description: Gets the specified employee details
+    patch:
+      summary: Update Employee
+      tags:
+        - Businesses
+      responses:
+        '200':
+          $ref: '#/components/responses/Employee'
+      operationId: update-business-employee
+      x-stoplight:
+        id: 8appnug9ubce9
+      description: Update the specified employee
+      requestBody:
+        $ref: '#/components/requestBodies/Employee'
+    delete:
+      summary: Deactivate Employee
+      tags:
+        - Businesses
+      responses:
+        '204':
+          description: No Content
+      operationId: delete-business-employee
+      x-stoplight:
+        id: 8518euuneudvz
+      description: Deactivates the specified employee
+  '/identity/accounts/{accountId}/businesses/{businessId}/groups':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/businessId'
+    get:
+      summary: List Groups
+      tags:
+        - Businesses
+      responses:
+        '200':
+          $ref: '#/components/responses/BusinessGroupList'
+      operationId: list-business-groups
+      x-stoplight:
+        id: 2g2r5k0yk4dc6
+      description: List the groups of the specified business
+      parameters:
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/active'
+    post:
+      summary: Create Group
+      operationId: create-business-group
+      responses:
+        '201':
+          $ref: '#/components/responses/BusinessGroup'
+      x-stoplight:
+        id: q9eucpoxuh1s6
+      description: Create a group for the specified business
+      tags:
+        - Businesses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessGroup'
+  '/identity/accounts/{accountId}/businesses/{businessId}/groups/{groupId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/businessId'
+      - $ref: '#/components/parameters/groupId'
+    get:
+      summary: Get Group
+      tags:
+        - Businesses
+      responses:
+        '200':
+          $ref: '#/components/responses/BusinessGroup'
+      operationId: get-business-group
+      x-stoplight:
+        id: rrqprxvoa38xm
+      description: Gets the specified business group
+    patch:
+      summary: Update Group
+      tags:
+        - Businesses
+      responses:
+        '200':
+          $ref: '#/components/responses/BusinessGroup'
+      operationId: update-business-group
+      x-stoplight:
+        id: arr5ifxt65pdq
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessGroup'
+      description: Updates the specified business group
+    delete:
+      summary: Deactivate Group
+      tags:
+        - Businesses
+      responses:
+        '204':
+          description: No Content
+      operationId: delete-business-group
+      x-stoplight:
+        id: g6lldqgr4qs0e
+      description: Deactivate the specified business group
+  '/identity/accounts/{accountId}/businesses/{businessId}/groups/{groupId}/members':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/businessId'
+      - $ref: '#/components/parameters/groupId'
+    get:
+      summary: List Group Members
+      tags:
+        - Businesses
+      responses:
+        '200':
+          $ref: '#/components/responses/BusinessGroupMembershipList'
+      operationId: list-businesses-groups-members
+      description: List persons associated with the specified business group
+      parameters:
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/active'
+  '/identity/accounts/{accountId}/businesses/{businessId}/groups/{groupId}/members/{personId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/businessId'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/personId'
+    post:
+      summary: Add Person to Business Group
+      tags:
+        - Businesses
+      responses:
+        '201':
+          description: Created
+      operationId: add-person-business-group
+      x-stoplight:
+        id: 6a3dnvslgwpr2
+      description: Register a person with the specified business group
+    delete:
+      summary: Remove Person from Business Group
+      tags:
+        - Businesses
+      responses:
+        '204':
+          description: No Content
+      operationId: remove-person-business-group
+      x-stoplight:
+        id: oj42k6n1gpmyf
+      description: Remove a person from the specified business group
+  '/identity/accounts/{accountId}/businesses/{businessId}/documents':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/businessId'
+    get:
+      summary: List Business Documents
+      tags:
+        - Businesses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    x-stoplight:
+                      id: ci05oxinp05yn
+                    items:
+                      $ref: '#/components/schemas/BusinessDocument'
+                      x-stoplight:
+                        id: zttum4sb7o73f
+                  metadata:
+                    $ref: ./models/PaginationMetadata.yaml
+                    x-stoplight:
+                      id: 8jjyyzco2kbaj
+                required:
+                  - data
+                  - metadata
+      operationId: listBusinessDocuments
+      x-stoplight:
+        id: 65to3n8mlbe6d
+      parameters:
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+      description: Retrieve a list of documents for the specified business
+    post:
+      summary: Create Business Document
+      tags:
+        - Businesses
+      responses:
+        '200':
+          description: OK
+      operationId: createBusinessDocument
+      x-stoplight:
+        id: p86tiv86d3igq
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                doc:
+                  type: string
+                  x-stoplight:
+                    id: 3hbhc74jbihb2
+                  format: binary
+              required:
+                - doc
+        description: The multipart form containing the Business Document to upload
+      description: Upload a document to be uploaded and stored for a Business
+  '/identity/accounts/{accountId}/businesses/{businessId}/documents/{documentId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/businessId'
+      - schema:
+          type: string
+        name: documentId
+        in: path
+        required: true
+        description: The document identifier
+    get:
+      summary: Get Business Document
+      tags:
+        - Businesses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  attachment:
+                    type: string
+                    x-stoplight:
+                      id: 3x555l53xi4os
+                    format: uri
+                required:
+                  - attachment
+      operationId: getBusinessDocumentReference
+      x-stoplight:
+        id: cmcgrp277ctyu
+      description: Retrieve a pre-signed url referencing a stored Business Document
+    delete:
+      summary: Delete Business Document
+      tags:
+        - Businesses
+      responses:
+        '204':
+          description: No Content
+      operationId: deleteBusinessDocument
+      x-stoplight:
+        id: 9t82ycqyraaux
+      description: Delete the specified business document
+      x-internal: false
+    patch:
+      summary: Update Business Document
+      tags:
+        - Businesses
+      responses:
+        '200':
+          description: OK
+      operationId: updateBusinessDocument
+      x-stoplight:
+        id: nz7xt311vk3gi
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessDocumentMetadata'
+      description: Update the specified business document
+  '/identity/accounts/{accountId}/businesses/{businessId}/functions':
+    parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: The account identifier
+      - name: businessId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: The business identifier
+    get:
+      summary: List Functions
+      tags:
+        - Businesses
+      responses:
+        '200':
+          $ref: '#/components/responses/BusinessFunctionList'
+      operationId: list-businesses-functions
+      x-stoplight:
+        id: 6pwmrrvn8fc0f
+      description: List persons assigned to the specified business function
+      parameters:
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/functionName'
+        - $ref: '#/components/parameters/active'
+  '/identity/accounts/{accountId}/businesses/{businessId}/functions/{personId}':
+    parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: The account identifier
+      - name: businessId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: The business identifier
+      - name: personId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: The person identifier
+    post:
+      summary: Assign Function
+      tags:
+        - Businesses
+      responses:
+        '201':
+          $ref: '#/components/responses/BusinessFunction'
+      operationId: assign-business-function
+      x-stoplight:
+        id: kzasjx067g984
+      description: Assigns a business function to the specified person
+      requestBody:
+        $ref: '#/components/requestBodies/AssignBusinessFunction'
+    patch:
+      summary: Update Function
+      tags:
+        - Businesses
+      responses:
+        '200':
+          $ref: '#/components/responses/BusinessFunction'
+      operationId: update-business-function
+      x-stoplight:
+        id: eafrewmfy8dch
+      description: Update a business function for the specified person
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessFunction'
+    get:
+      summary: List Person's Functions
+      operationId: list-businesses-functions-person
+      responses:
+        '200':
+          $ref: '#/components/responses/BusinessFunctionList'
+      tags:
+        - Businesses
+      description: List the business functions assigned to the specified person
+      parameters:
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/active'
+  '/identity/accounts/{accountId}/trust':
+    get:
+      summary: List trust scores for all persons associated with the given account
+      tags:
+        - Accounts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metadata:
+                    $ref: ./models/PaginationMetadata.yaml
+                    x-stoplight:
+                      id: yo0i9lmm2v12d
+                  data:
+                    type: array
+                    x-stoplight:
+                      id: uxt5hemxxmr9v
+                    items:
+                      $ref: '#/components/schemas/PersonTrustScore'
+                required:
+                  - metadata
+                  - data
+      operationId: listTrustScoresByCompanyId
+      x-stoplight:
+        id: xqw9c9bhn232v
+      description: List trust scores for all persons associated with the given company
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/sort'
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+  /identity/me:
+    get:
+      summary: My Details
+      tags:
+        - Accounts
+      responses:
+        '200':
+          $ref: '#/components/responses/CompletePerson'
+      operationId: get-identity-me
+      x-internal: false
+      description: Get the details of the requester
+  /identity/me/accounts:
+    get:
+      summary: My Accounts
+      tags:
+        - Accounts
+      responses:
+        '200':
+          $ref: '#/components/responses/AccountList'
+      operationId: get-identity-me-accounts
+      x-internal: false
+      description: Get the associated accounts of the requester
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/active'
+  /identity/authorize/token:
+    post:
+      summary: Request token
+      operationId: authorize-token
+      responses:
+        '200':
+          $ref: '#/components/responses/AuthenticationToken'
+      security: []
+      description: Retrieve authorized bearer token
+      requestBody:
+        $ref: '#/components/requestBodies/Authentication'
+      tags:
+        - Authorize
+      x-validation: false
+    parameters: []
+  /identity/authorize/token/exchange:
+    post:
+      summary: Exchange Token
+      operationId: authorize-token-exchange
+      responses:
+        '200':
+          $ref: '#/components/responses/AuthenticationToken'
+      tags:
+        - Authorize
+      description: Exchange an authorized bearer token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                personId:
+                  type: string
+                  x-stoplight:
+                    id: gqyjebycebr1p
+                  format: uuid
+              required:
+                - personId
+      parameters: []
+  /identity/authorize/analytics:
+    post:
+      summary: Request Analytics Guest Token
+      tags:
+        - Authorize
+      responses:
+        '200':
+          $ref: '#/components/responses/AnalyticsGuestToken'
+      operationId: request-analytics-guest-token
+      description: Returns a guest token to use with internal analytics tooling
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                personId:
+                  type: string
+                  x-stoplight:
+                    id: fpqrv93k20k1p
+                  format: uuid
+                resourceId:
+                  type: string
+                  x-stoplight:
+                    id: jv4qfj5j8goqd
+                  format: uuid
+              required:
+                - personId
+                - resourceId
+    parameters: []
+  /identity/authorize/start:
+    post:
+      summary: Start a Passwordless flow
+      tags:
+        - Authorize
+      responses:
+        '200':
+          $ref: '#/components/responses/AuthenticationPasswordless'
+        '204':
+          description: No Content
+      operationId: start-passwordless
+      description: Initiates a passwordless authentication flow
+      security: []
+      requestBody:
+        $ref: '#/components/requestBodies/AuthenticationPasswordless'
+      x-validation: false
+    parameters: []
+  /identity/authorize/factors:
+    post:
+      summary: Register factor
+      operationId: register-factor
+      responses:
+        '200':
+          $ref: '#/components/responses/CreatedAuthenticationFactor'
+      tags:
+        - Authorize
+      description: Register an authentication factor
+      requestBody:
+        $ref: '#/components/requestBodies/RegisterAuthenticationFactor'
+      x-mfa: 0
+      x-validation: false
+    parameters: []
+    get:
+      summary: Get Factors
+      operationId: get-authorize-factor
+      responses:
+        '200':
+          $ref: '#/components/responses/AuthenticationFactorList'
+      description: Returns authentication factors for the user
+      tags:
+        - Authorize
+      x-mfa: 0
+    delete:
+      summary: Remove Factor
+      operationId: delete-authorize-factor
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - Authorize
+      description: Remove an authentication factor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                methodId:
+                  type: string
+                  x-stoplight:
+                    id: 88moif6cyo1i0
+                  description: The method identifier of the factor
+              required:
+                - methodId
+      x-mfa: 5
+    put:
+      summary: Request Factor Options
+      operationId: request-factor-options
+      responses:
+        '200':
+          $ref: '#/components/responses/RegisterAuthenticationFactorOptions'
+      tags:
+        - Authorize
+      requestBody:
+        $ref: '#/components/requestBodies/RegisterAuthenticationFactorOptions'
+      x-mfa: 0
+      x-validation: false
+      description: Request factor initialization options for the specified method
+  /identity/authorize/factors/issue:
+    post:
+      summary: Issue Challenge
+      operationId: issue-authorize-challenge
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - Authorize
+      description: Issue an authentication factor challenge
+      requestBody:
+        $ref: '#/components/requestBodies/AuthenticationChallenge'
+      x-validation: false
+      x-mfa: 0
+    parameters: []
+  /identity/authorize/reset:
+    post:
+      summary: Initiate Password Reset
+      operationId: initiate-password-reset
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - Authorize
+      description: Initiate a password reset using a magic link email
+      security: []
+      requestBody:
+        $ref: '#/components/requestBodies/InitatePasswordReset'
+    put:
+      summary: Update Password
+      operationId: update-password-from-link
+      responses:
+        '200':
+          $ref: '#/components/responses/AuthenticationToken'
+      tags:
+        - Authorize
+      description: Updates a password using a magic link
+      security: []
+      requestBody:
+        $ref: '#/components/requestBodies/PasswordUpdate'
+  /identity/authorize/redirect:
+    get:
+      summary: MagicLink Redirect
+      tags:
+        - Authorize
+      responses:
+        '200':
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: object
+                properties: {}
+      operationId: magiclink-redirect
+      x-internal: true
+      description: |-
+        This is an internal endpoint handling the redirect routing for magic links. When the user follows the link the browser will direct the user to this endpoint which renders as a blank page, and then the user will be redirected to the provided magic link url.
+
+        This step in the flow serves to detect and stop bot traffic. In some cases, like email addresses tied to an employer, additional email security may run before the email lands in the user's inbox.
+
+        These security bots will follow every link inside an email to detect threats. Without bot detection, a bot would follow the magic link, go to your site, and the magic link token would be authenticated. Since a magic link token can only be authenticated once now the link is no longer valid. When the actual user goes to click the link, they are unable to login.
+      security: []
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: token
+          required: true
+          description: The magic link token
+        - schema:
+            type: string
+          in: query
+          name: token_type
+          required: true
+          description: The type of magic link
+  /identity/authorize/sessions:
+    get:
+      summary: Retrieve Sessions
+      tags:
+        - Authorize
+      responses:
+        '200':
+          $ref: '#/components/responses/AuthenticationSessionList'
+      operationId: get-authorize-sessions
+      description: Get a list of currently active sessions
+  '/identity/authorize/sessions/{sessionId}':
+    parameters:
+      - schema:
+          type: string
+        name: sessionId
+        in: path
+        required: true
+        description: The session identifier
+    delete:
+      summary: Revoke Session
+      tags:
+        - Authorize
+      responses:
+        '204':
+          description: No Content
+      operationId: delete-authorize-sessions
+      description: Removes the specified session from being active
+  /identity/applications:
+    get:
+      summary: List Applications
+      tags:
+        - Applications
+      responses:
+        '200':
+          $ref: '#/components/responses/ApplicationList'
+      operationId: list-applications
+      description: Retrieve a list of applications
+      x-internal: true
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/product'
+        - $ref: '#/components/parameters/applicationStatus'
+        - $ref: '#/components/parameters/reviewer'
+  '/identity/accounts/{accountId}/applications/{applicationId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/applicationId'
+    get:
+      summary: Get Application
+      tags:
+        - Applications
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      operationId: getApplication
+      x-stoplight:
+        id: xx8qq2a5o24a5
+      description: Get Application
+  '/identity/accounts/{accountId}/applications':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+    post:
+      summary: Create Application
+      tags:
+        - Applications
+      responses:
+        '200':
+          description: OK
+      operationId: createApplication
+      x-stoplight:
+        id: h37bhy78qvtkm
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product:
+                  x-stoplight:
+                    id: i5ila86fiz4e9
+                  type: string
+                  enum:
+                    - credit
+                    - banking
+                    - treasury
+                    - factoring
+                  description: The lower-cased product name being applied for
+              required:
+                - product
+      description: Create an application for the given product type
+  '/identity/accounts/{accountId}/applications/{applicationId}/documents':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/applicationId'
+    get:
+      summary: List Application Requested Documents
+      tags:
+        - Applications
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  x-stoplight:
+                    id: 6qc0xodk30wjv
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      x-stoplight:
+                        id: t5lcwoue7k3up
+                      format: uuid
+                    state:
+                      type: string
+                      x-stoplight:
+                        id: gbrzgbq6sdija
+                    type:
+                      type: string
+                      x-stoplight:
+                        id: c5st8o0zkupwe
+                    note:
+                      type: string
+                      x-stoplight:
+                        id: 3f7280yrvrtml
+                    documentUrl:
+                      type: string
+                      x-stoplight:
+                        id: ttbjg1rfq9yc0
+                  required:
+                    - id
+                    - state
+                    - type
+                    - note
+      operationId: listApplicationRequestedDocuments
+      x-stoplight:
+        id: qgbukk03zte03
+      description: Retrieve a list of documents for the specified application
+  '/identity/accounts/{accountId}/applications/{applicationId}/documents/{documentId}/upload':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/applicationId'
+      - schema:
+          type: string
+        name: documentId
+        in: path
+        required: true
+        description: The Application Requested Document Identifier
+    post:
+      summary: Upload an Application Requested Document
+      tags:
+        - Applications
+      responses:
+        '200':
+          description: OK
+      operationId: uploadApplicationRequestedDocument
+      x-stoplight:
+        id: 7qkzd77sbrrkj
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                doc:
+                  type: string
+                  x-stoplight:
+                    id: zi2pnjuhcleeo
+                  format: binary
+              required:
+                - doc
+        description: Multipart form data including a document for upload
+      description: Upload a requested document for the specified application
+  /identity/events/handle:
+    post:
+      summary: Handle event notification
+      operationId: identity-events-notify
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - Events
+      x-internal: true
+      description: An internal endpoint to accept pub/sub push subscriptions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/GcpPubSubMessage.yaml
+      x-validation: true
+components:
+  schemas:
+    AuthenticationCore:
+      title: Authentication Core
+      x-stoplight:
+        id: e3kbww2sow6os
+      type: object
+      x-internal: true
+      properties:
+        grant_type:
+          type: string
+          enum:
+            - client_credentials
+            - password
+            - refresh_token
+            - link
+            - otp
+            - totp
+            - api
+            - fido
+          description: Denotes the authorization flow to use
+        scope:
+          type: string
+          description: Denotes the requested scopes
+          maxLength: 100
+        client_id:
+          type: string
+          x-stoplight:
+            id: 6z49ko8cn1388
+          description: The application's client identifier
+          maxLength: 100
+      required:
+        - grant_type
+    ClientCredentialsAuthentication:
+      allOf:
+        - type: object
+          properties:
+            client_id:
+              type: string
+              description: Your application's Client ID
+            client_secret:
+              type: string
+              description: Your application's Client Secret
+            grant_type:
+              type: string
+              x-stoplight:
+                id: zfpdzixyhtkok
+              enum:
+                - client_credentials
+          required:
+            - client_id
+            - client_secret
+            - grant_type
+        - $ref: '#/components/schemas/AuthenticationCore'
+      description: Represents an application authentication request
+      title: Client Credentials
+    PasswordAuthentication:
+      allOf:
+        - type: object
+          properties:
+            username:
+              type: string
+              description: 'User''s identifier, either an email or phone number in e164 format'
+            password:
+              type: string
+              format: password
+              minLength: 8
+              description: User's password
+            grant_type:
+              type: string
+              x-stoplight:
+                id: y16hean69930h
+              enum:
+                - password
+          required:
+            - username
+            - password
+            - grant_type
+        - $ref: '#/components/schemas/AuthenticationCore'
+      description: Represents an authentication password request
+      title: Password
+    RefreshAuthentication:
+      allOf:
+        - type: object
+          properties:
+            refresh_token:
+              type: string
+              description: The refresh token previously issued
+            grant_type:
+              type: string
+              x-stoplight:
+                id: 3xefbb8lcl9gt
+              enum:
+                - refresh_token
+          required:
+            - refresh_token
+            - grant_type
+        - $ref: '#/components/schemas/AuthenticationCore'
+      description: Represents an authentication refresh request
+      title: Refresh
+    CodeAuthentication:
+      allOf:
+        - type: object
+          properties:
+            code:
+              type: string
+              description: A otp or totp value
+              maxLength: 10
+            methodId:
+              type: string
+              description: The method identifier
+              format: uuid
+            codeVerifier:
+              type: string
+              description: A base64url encoded one time secret used to validate that the request starts and ends on the same device
+              x-stoplight:
+                id: 2axe0jv0l8pof
+              maxLength: 128
+              minLength: 43
+            grant_type:
+              type: string
+              x-stoplight:
+                id: 8kr6n70ncngdu
+              enum:
+                - otp
+                - totp
+          required:
+            - code
+            - methodId
+            - grant_type
+        - $ref: '#/components/schemas/AuthenticationCore'
+      title: Code
+      description: Represents an authentication code request
+    LinkAuthentication:
+      allOf:
+        - type: object
+          properties:
+            token:
+              type: string
+              description: A magic link token
+              x-stoplight:
+                id: 7dzmu8yota8c1
+            codeVerifier:
+              type: string
+              x-stoplight:
+                id: azb18b574c5pr
+              description: A base64url encoded one time secret used to validate that the request starts and ends on the same device
+              minLength: 43
+              maxLength: 128
+              example: zFxuEU-hl73PBQhfc98SRhVw6fMoF2IivgbIB2btaKA
+            grant_type:
+              type: string
+              x-stoplight:
+                id: 9ccq3iwvs5pz9
+              enum:
+                - link
+          required:
+            - token
+            - grant_type
+        - $ref: '#/components/schemas/AuthenticationCore'
+      title: Link
+      description: Represents an authentication magic link request
+    ApiAuthentication:
+      allOf:
+        - type: object
+          properties:
+            username:
+              type: string
+              description: User's email
+              format: email
+            password:
+              type: string
+              format: password
+              minLength: 8
+              description: User's password
+            code:
+              type: string
+            grant_type:
+              type: string
+              x-stoplight:
+                id: lvz3q4tgp02eh
+              enum:
+                - api
+          required:
+            - username
+            - password
+            - grant_type
+        - $ref: '#/components/schemas/AuthenticationCore'
+      title: Api
+    AuthenticationToken:
+      title: Authentication Token
+      x-stoplight:
+        id: ht7l390xmxz2r
+      type: object
+      description: Represents an authentication token
+      properties:
+        access_token:
+          type: string
+          description: The access token string as issued by the authorization server
+        token_type:
+          type: string
+          description: 'The type of token this is, typically just the string *Bearer*'
+        expires_in:
+          type: number
+          description: The duration of time the access token is granted for
+        refresh_token:
+          type: string
+          description: A refresh token which applications can use to obtain another access token
+        scope:
+          type: string
+          description: The scopes the token is granted
+        challenge_phone_number_last_four:
+          type: string
+          x-stoplight:
+            id: ruhcuvarva5w8
+          description: 'When a phone challenge is issued, provide the last 4 digits of the challenged phone number'
+          deprecated: true
+      required:
+        - access_token
+        - token_type
+        - expires_in
+        - scope
+    AnalyticsGuestToken:
+      title: Analytics Guest Token
+      x-stoplight:
+        id: f02lr01pfpql2
+      type: object
+      description: Represents an authentication token
+      properties:
+        access_token:
+          type: string
+          description: The access token string as issued by the authorization server
+        token_type:
+          type: string
+          description: 'The type of token this is, typically just the string *Bearer*'
+        expires_in:
+          type: number
+          description: The duration of time the access token is granted for
+        refresh_token:
+          type: string
+          description: A refresh token which applications can use to obtain another access token
+        scope:
+          type: string
+          description: The scopes the token is granted
+      required:
+        - access_token
+    AccountRegistration:
+      title: Account Registration
+      x-stoplight:
+        id: cq378vza6cljn
+      type: object
+      description: Represents an account registration
+      properties:
+        userName:
+          type: string
+          description: Either an email or phone number in e164 format
+          maxLength: 320
+        password:
+          type: string
+          format: password
+          minLength: 8
+          description: An optional password to set. **Note** `userName` must be an email if password is defined
+        referral:
+          $ref: '#/components/schemas/Referral'
+          description: A referral to associate with the account
+        promoCode:
+          type: string
+          description: A promotion code to apply to the account
+          maxLength: 100
+        name:
+          type: string
+          x-stoplight:
+            id: jd4yi7eyey7j3
+          description: An optional name to associate to the account
+          maxLength: 100
+        client_id:
+          type: string
+          x-stoplight:
+            id: weabmt6p66qf8
+          description: The application's client identifier
+          maxLength: 100
+      required:
+        - userName
+    Referral:
+      allOf:
+        - type: object
+          properties:
+            accountId:
+              type: string
+              format: uuid
+              description: The account identifier
+              readOnly: true
+            referrerId:
+              type: string
+              format: uuid
+              description: The referring account identifier
+            personId:
+              type: string
+              format: uuid
+              description: The referring person identitifer
+            businessId:
+              type: string
+              format: uuid
+              description: The referring business identifier
+          required:
+            - accountId
+            - referrerId
+        - $ref: ./models/CoreModel.yaml
+      description: Represents an account referral
+      title: Referral
+    AuthenticationPasswordless:
+      title: Authentication Passwordless
+      x-stoplight:
+        id: m45my8fugt2bb
+      description: Represents the information needed to initialize a passwordless authentication
+      oneOf:
+        - $ref: '#/components/schemas/AuthenticationPasswordlessEmail'
+          x-stoplight:
+            id: 0ga7du03jqke5
+        - $ref: '#/components/schemas/AuthenticationPasswordlessFido'
+          x-stoplight:
+            id: 62ztvz6c6e3vr
+    AuthenticatorFactorSetup:
+      title: Authenticator Factor Setup
+      x-stoplight:
+        id: b2b9bff11e45f
+      type: object
+      description: Represents the information needed to finalize a factor registration
+      properties:
+        methodId:
+          type: string
+          description: The factor method identifier
+        secret:
+          type: string
+          description: The TOTP secret key shared between the authenticator app and the server used to generate TOTP codes
+        qrCode:
+          type: string
+          description: The QR code image encoded in base64
+        recoveryCodes:
+          type: array
+          description: The recovery codes used to authenticate the user without an authenticator app.
+          items:
+            type: string
+      required:
+        - methodId
+    AuthenticationFactor:
+      allOf:
+        - $ref: '#/components/schemas/AuthenticationFactorMethod'
+        - type: object
+          properties:
+            methodId:
+              type: string
+              description: The method identifier of the factor
+            verified:
+              type: boolean
+              description: Determines if this factor method has been verified
+              readOnly: true
+            value:
+              type: string
+              description: The value of the factor
+              readOnly: true
+      title: Authentication Factor
+      description: Represents an authentication factor
+    AuthenticationFactorMethod:
+      title: Authentication Factor Method
+      x-stoplight:
+        id: 3e890a56335d4
+      type: object
+      description: Represents authentication factor methods
+      properties:
+        method:
+          $ref: '#/components/schemas/AuthenticationFactorMethodTypes'
+      required:
+        - method
+    AuthenticationFactorChannel:
+      title: Authentication Factor Channel
+      x-stoplight:
+        id: 71bgzq9j8hoyu
+      type: object
+      description: Represents authentication factor channels
+      properties:
+        channel:
+          $ref: '#/components/schemas/AuthenticationFactorChannelTypes'
+          x-stoplight:
+            id: qija1m44xdpg1
+      required:
+        - channel
+    AuthenticationFactorList:
+      title: Authentication Factor List
+      x-stoplight:
+        id: slvan42w6l95m
+      type: object
+      properties:
+        knowledge:
+          type: array
+          description: The list of knowledge based factors
+          items:
+            $ref: '#/components/schemas/AuthenticationFactor'
+        biometric:
+          type: array
+          description: The list of biometric based factors
+          items:
+            $ref: '#/components/schemas/AuthenticationFactor'
+        possession:
+          type: array
+          description: The list of possession based factors
+          items:
+            $ref: '#/components/schemas/AuthenticationFactor'
+      required:
+        - knowledge
+        - biometric
+        - possession
+      description: Represents a list of authentication factors
+    AuthenticationChallenge:
+      type: object
+      description: Represents an authentication challenge
+      title: Authentication Challenge
+      properties:
+        methodId:
+          type: string
+          description: The method identifier to use
+        type:
+          type: string
+          enum:
+            - otp
+            - link
+            - passkey
+          description: The challenge type to issue
+      required:
+        - methodId
+        - type
+    OtpAuthenticationChallenge:
+      x-stoplight:
+        id: f9s2jdapyvj1d
+      description: Represents an OTP authentication challenge
+      title: OtpAuthenticationChallenge
+      allOf:
+        - $ref: '#/components/schemas/AuthenticationChallenge'
+        - type: object
+          properties:
+            type:
+              type: string
+              x-stoplight:
+                id: 07w5s7hbbhpwq
+              enum:
+                - otp
+            codeChallenge:
+              type: string
+              x-stoplight:
+                id: 4iswr9idfy6ov
+              maxLength: 100
+              description: A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device
+          required:
+            - type
+            - codeChallenge
+    MagicLinkAuthenticationChallenge:
+      title: MagicLinkAuthenticationChallenge
+      x-stoplight:
+        id: yt99sfgncgbjr
+      allOf:
+        - $ref: '#/components/schemas/AuthenticationChallenge'
+        - type: object
+          x-stoplight:
+            id: 9ipjosybrouor
+          properties:
+            codeChallenge:
+              type: string
+              x-stoplight:
+                id: l7b785on9pmwt
+              description: A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device
+              maxLength: 100
+            type:
+              type: string
+              x-stoplight:
+                id: 5u72g6aia22s4
+              enum:
+                - link
+          required:
+            - codeChallenge
+            - type
+      description: Represents a magic link authentication challenge
+    PasswordReset:
+      title: Password Reset
+      x-stoplight:
+        id: 341264d626f6d
+      type: object
+      description: Represents a password reset
+      properties:
+        email:
+          type: string
+          format: email
+          description: The email associated with the password to reset
+        codeChallenge:
+          type: string
+          description: A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device
+        client_id:
+          type: string
+          x-stoplight:
+            id: 6pxa1l14iwuza
+          description: The application's client identifier
+          maxLength: 100
+      required:
+        - email
+        - codeChallenge
+    PasswordUpdate:
+      title: PasswordUpdate
+      x-stoplight:
+        id: xefjegkjr8tq7
+      type: object
+      description: Represents a password update
+      properties:
+        token:
+          type: string
+          description: The magic link token to authenticate the update
+          x-stoplight:
+            id: i4yf27ml7fomc
+        password:
+          type: string
+          format: password
+          minLength: 8
+          description: The password value to set
+        codeVerifier:
+          type: string
+          description: A base64url encoded one time secret used to validate that the request starts and ends on the same device.
+          minLength: 43
+          maxLength: 128
+      required:
+        - token
+        - password
+        - codeVerifier
+    Application:
+      title: Application
+      x-stoplight:
+        id: 5i3e1ocrsad73
+      type: object
+      description: Represents a product application
+      properties:
+        applicationId:
+          type: string
+          format: uuid
+          description: The application identifier
+          readOnly: true
+        accountId:
+          type: string
+          format: uuid
+          description: The account identifier
+          readOnly: true
+        product:
+          type: string
+          enum:
+            - credit
+            - banking
+            - treasury
+            - factoring
+          description: The product identifier
+        status:
+          type: string
+          enum:
+            - incomplete
+            - submitted
+            - review
+            - pending
+            - denied
+            - offer
+            - withdrawn
+            - accepted
+            - declined
+            - expired
+          description: The status of the application
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          description: The created timestamp
+          readOnly: true
+        submittedBy:
+          type: string
+          format: uuid
+          description: The person identifier who submitted this application
+          readOnly: true
+        submittedAt:
+          type: string
+          format: date-time
+          description: The submitted timestamp
+          readOnly: true
+        reviewer:
+          type: string
+          format: uuid
+          description: Internal usage
+          readOnly: true
+      required:
+        - applicationId
+        - accountId
+        - product
+        - status
+        - createdAt
+    Product:
+      title: Product
+      x-stoplight:
+        id: 27zgd2us6xv0y
+      type: object
+      description: Represents a product
+      properties:
+        name:
+          type: string
+          enum:
+            - credit
+            - banking
+            - treasury
+            - factoring
+          description: The product name
+        phase:
+          type: string
+          enum:
+            - available
+            - unavailable
+            - inProgress
+            - additionalRequirements
+            - active
+          description: The product phase
+          readOnly: true
+        applicationStatus:
+          type: string
+          x-stoplight:
+            id: 439iqf3tu28le
+          enum:
+            - incomplete
+            - submitted
+            - review
+            - pending
+            - denied
+            - offer
+            - withdrawn
+            - accepted
+            - declined
+            - expired
+          description: The status of the active application if it exists
+          readOnly: true
+        applicationId:
+          type: string
+          format: uuid
+          description: The id of the active application if it exists
+          readOnly: true
+        incomplete:
+          type: array
+          description: An array of incomplete product details
+          items:
+            type: string
+          readOnly: true
+      required:
+        - name
+        - phase
+    AccountInvitation:
+      title: AccountInvitation
+      x-stoplight:
+        id: h62qh6ynk7nz6
+      description: Represents an account invitation
+      allOf:
+        - type: object
+          properties:
+            email:
+              type: string
+              format: email
+              description: The email address where the invitation is sent
+          required:
+            - email
+        - $ref: ./models/Person.yaml
+          x-stoplight:
+            id: iseva3bk4bk8t
+        - type: object
+          x-stoplight:
+            id: 3k2h5dw2vimbq
+          properties:
+            legacyApiCompatInvite:
+              type: object
+              x-stoplight:
+                id: vff490f7e8ve1
+              properties:
+                firstName:
+                  type: string
+                  x-stoplight:
+                    id: gbt51xchsxugg
+                lastName:
+                  type: string
+                  x-stoplight:
+                    id: z68yqqb4wwoy1
+                companyId:
+                  type: string
+                  x-stoplight:
+                    id: 1chpczpbuup4m
+                roles:
+                  type: array
+                  x-stoplight:
+                    id: j28eix2fwyqei
+                  items:
+                    x-stoplight:
+                      id: vr58g6spmv5du
+                    type: string
+                cardDetails:
+                  type: array
+                  x-stoplight:
+                    id: n5nlq7rq76ej8
+                  items:
+                    x-stoplight:
+                      id: e7x23k3a9mkrx
+                    type: object
+                    properties:
+                      cardType:
+                        type: string
+                        x-stoplight:
+                          id: isnbhea2zjecz
+                        enum:
+                          - physical
+                          - virtual
+                          - both
+                      cardName:
+                        type: string
+                        x-stoplight:
+                          id: 4fbxcq9tvwzw8
+                      limits:
+                        type: object
+                        x-stoplight:
+                          id: kbdmd3z3b4fzt
+                        properties:
+                          interval:
+                            type: string
+                            x-stoplight:
+                              id: u9vrfh38gzvie
+                          amount:
+                            type: number
+                            x-stoplight:
+                              id: xqcyv2hscvf48
+                          groups:
+                            type: array
+                            x-stoplight:
+                              id: ohcinqak18l8v
+                            items:
+                              x-stoplight:
+                                id: 7whewiomv6qg4
+                              type: string
+                      terminateAt:
+                        type: string
+                        x-stoplight:
+                          id: 3femyp0anchjw
+                    required:
+                      - cardType
+              required:
+                - companyId
+                - roles
+    PersonDocument:
+      title: PersonDocument
+      x-stoplight:
+        id: muz57zo1m3ydj
+      type: object
+      properties:
+        documentId:
+          type: string
+          x-stoplight:
+            id: dopje1xph2xpa
+          format: uuid
+        personId:
+          type: string
+          x-stoplight:
+            id: 6h1kwjxolnh97
+          format: uuid
+        createdAt:
+          type: string
+          x-stoplight:
+            id: hvxgre1tyvqyz
+          format: date-time
+        verificationDate:
+          type: string
+          x-stoplight:
+            id: ncwip8zs4tuqx
+          format: date-time
+          description: Verification Date if verified
+        verificationMethod:
+          type: string
+          x-stoplight:
+            id: 7w4rb8twc38wi
+          description: Verification Method if verified
+        metadata:
+          $ref: '#/components/schemas/PersonDocumentMetadata'
+          x-stoplight:
+            id: lqxg0bjxsm2df
+      required:
+        - documentId
+        - personId
+        - createdAt
+        - storage
+        - metadata
+    PersonDocumentMetadata:
+      title: PersonDocumentMetadata
+      x-stoplight:
+        id: 2sa6q0h4ir28y
+      type: object
+      properties:
+        documentName:
+          type: string
+          x-stoplight:
+            id: 18msfl4zkl0o2
+      required:
+        - documentName
+      description: Metadata expected in a Person Document
+    Prefill:
+      title: Prefill
+      x-stoplight:
+        id: gmqoh4i3wib8f
+      type: object
+      description: Represents a pre-fill data
+      properties:
+        dateOfBirth:
+          type: string
+          description: The person's date of birth
+          format: date
+        taxId:
+          type: string
+          maxLength: 18
+          description: The person's tax identifier
+    PrefilledPersonData:
+      title: Prefilled person data
+      type: object
+      description: Represents pre-filled person data
+      properties:
+        prefilled:
+          type: boolean
+          description: If data was prefilled for this person
+        prefilledValues:
+          type: object
+          description: The values that were prefilled for this person
+          properties:
+            givenName:
+              type: string
+            familyName:
+              type: string
+            taxId:
+              type: string
+            dateOfBirth:
+              type: string
+              format: date
+            address:
+              $ref: ./models/BasicAddress.yaml
+        addressSelection:
+          type: array
+          description: Addresses that a user can pick to use for prefill
+          items:
+            $ref: ./models/BasicAddress.yaml
+      required:
+        - prefilled
+        - prefilledValues
+        - addressSelection
+    PrefillAccess:
+      title: Prefill Access
+      type: object
+      description: Represents if a given person has a high enough trust score and no malign reason codes and can use prefill
+      properties:
+        canAccess:
+          type: boolean
+          description: 'True if a user can use prefill, false if they cannot'
+      required:
+        - canAccess
+    AuthenticationSession:
+      title: AuthenticationSession
+      x-stoplight:
+        id: 0jkps5rk939kw
+      type: object
+      description: Represents an authentication session
+      properties:
+        sessionId:
+          type: string
+          description: The session identifier
+        ipAddress:
+          type: string
+          format: ipv4
+          description: The IP address associated with the session
+        lastAccessed:
+          type: string
+          format: date-time
+          description: The timestamp when the Session was last accessed
+        userAgent:
+          type: string
+          description: The raw user agent associated with the session
+        device:
+          type: object
+          description: Represents the device
+          properties:
+            type:
+              type: string
+              description: The device type
+            vendor:
+              type: string
+              description: The device vendor
+            model:
+              type: string
+              description: The device model
+        browser:
+          type: object
+          description: Represents the browser details
+          properties:
+            name:
+              type: string
+              description: The browser name
+            version:
+              type: string
+              description: The browser version
+        os:
+          type: object
+          description: Represents the operating system
+          properties:
+            name:
+              type: string
+              description: The operating system name
+            version:
+              type: string
+              description: The operating system version
+            cpu:
+              type: string
+              description: The cpu architecture
+      required:
+        - sessionId
+        - ipAddress
+        - lastAccessed
+        - userAgent
+    BusinessGroup:
+      title: BusinessGroup
+      x-stoplight:
+        id: 1eq8ryyl8tq0i
+      type: object
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: y6x6g0v1445f7
+          description: The Business Group identifier
+          format: uuid
+          readOnly: true
+        businessId:
+          type: string
+          x-stoplight:
+            id: zmuev8xiequej
+          format: uuid
+          description: The business identifier
+          readOnly: true
+        name:
+          type: string
+          x-stoplight:
+            id: wpb8ynpxb19gq
+          description: The Business Group name
+          minLength: 1
+          maxLength: 255
+        active:
+          type: boolean
+          x-stoplight:
+            id: bke01a4upi5xj
+          description: A value indicating whether this group is active
+          default: true
+      required:
+        - id
+        - businessId
+        - name
+        - active
+      description: Represents a business group
+    BusinessDocument:
+      title: BusinessDocument
+      x-stoplight:
+        id: 1a49jyq5s4g3k
+      type: object
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: 5qe9txf02nu4y
+          description: The Business Document identifier
+          format: uuid
+        businessId:
+          type: string
+          x-stoplight:
+            id: kszrczis93u5t
+          description: The Business identifier
+          format: uuid
+        createdAt:
+          type: string
+          x-stoplight:
+            id: taf50bj2gz35r
+          description: created at
+          format: date-time
+        verificationDate:
+          type: string
+          x-stoplight:
+            id: 6mj8k5c3qesv7
+          description: the verification date if verified
+        verificationMethod:
+          type: string
+          x-stoplight:
+            id: dhbgzakws0mge
+          description: the verification method if verified
+        metadata:
+          $ref: '#/components/schemas/BusinessDocumentMetadata'
+          x-stoplight:
+            id: bzb1fbqncdo40
+          description: business document metadata
+      required:
+        - businessId
+        - createdAt
+        - metadata
+    BusinessDocumentMetadata:
+      title: BusinessDocumentMetadata
+      x-stoplight:
+        id: rdznaqx56ru4j
+      type: object
+      properties:
+        documentName:
+          type: string
+          x-stoplight:
+            id: ojp6g1rrqftzp
+          description: The name given to the document
+      required:
+        - documentName
+    BusinessFunction:
+      title: Business Function
+      x-stoplight:
+        id: wui5vomrliifp
+      type: object
+      description: Represents a business function assigned to person
+      properties:
+        businessId:
+          type: string
+          x-stoplight:
+            id: f9if3bdpn1ffj
+          description: The business identifier
+          format: uuid
+          readOnly: true
+        personId:
+          type: string
+          x-stoplight:
+            id: jm87ey2apaqtt
+          description: The person identifier
+          format: uuid
+          readOnly: true
+        functionName:
+          type: string
+          x-stoplight:
+            id: oqrp0vbh8wzis
+          description: The business function name
+        active:
+          type: boolean
+          x-stoplight:
+            id: to2xqey658dtc
+          description: The active flag
+      required:
+        - businessId
+        - personId
+        - functionName
+        - active
+    AccountMigration:
+      title: AccountMigration
+      x-stoplight:
+        id: hhwy2s4hss8os
+      type: object
+      properties:
+        companyId:
+          type: string
+          x-stoplight:
+            id: uhc2h5fe1wrp8
+          format: uuid
+        accountId:
+          type: string
+          x-stoplight:
+            id: pd7n2aqc7dz8e
+          format: uuid
+        error:
+          type: string
+          x-stoplight:
+            id: emep4hja9s9cn
+      required:
+        - companyId
+    AccountSearch:
+      title: AccountSearch
+      x-stoplight:
+        id: arrd5gbvic684
+      description: Represents an account search result
+      type: object
+      properties:
+        accountId:
+          type: string
+          x-stoplight:
+            id: zyldqar9jk6ln
+          format: uuid
+        activated:
+          type: boolean
+          x-stoplight:
+            id: 967179kdymgxl
+        balance:
+          type: number
+          x-stoplight:
+            id: f5abe0mp4rw8i
+        creditLimit:
+          type: number
+          x-stoplight:
+            id: fo3mn00l6wz64
+        frozen:
+          type: boolean
+          x-stoplight:
+            id: 2o35iazzjyfdq
+        minimumDue:
+          type: number
+          x-stoplight:
+            id: fj8niqpyu6721
+        personId:
+          type: string
+          x-stoplight:
+            id: kdvcnbtpbq3ak
+          format: uuid
+        products:
+          type: array
+          x-stoplight:
+            id: t5z52say2q4mi
+          items:
+            x-stoplight:
+              id: 55oy6jmg2c7bq
+            type: string
+    Authentications:
+      title: Authentications
+      x-stoplight:
+        id: vkesfanpbeg3r
+      anyOf:
+        - $ref: '#/components/schemas/PasswordAuthentication'
+          description: Password credentials
+        - $ref: '#/components/schemas/RefreshAuthentication'
+          description: Refresh credentials
+        - $ref: '#/components/schemas/ClientCredentialsAuthentication'
+          description: Client credentials
+        - $ref: '#/components/schemas/CodeAuthentication'
+          description: Code credentials
+        - $ref: '#/components/schemas/LinkAuthentication'
+        - $ref: '#/components/schemas/ApiAuthentication'
+        - $ref: '#/components/schemas/FidoAuthentication'
+    AccountCreditDetails:
+      title: AccountCreditDetails
+      x-stoplight:
+        id: 2y3lgpi5cd3b0
+      type: object
+      description: Represents an account's credit details
+      properties:
+        frozen:
+          type: boolean
+          x-stoplight:
+            id: jk0zbju6ntdxo
+          description: A value indicating whether this account's credit has been frozen
+        creditLimit:
+          type: number
+          x-stoplight:
+            id: 90c1jwuxanf23
+          description: The amount of credit extended
+        minimumDue:
+          type: number
+          x-stoplight:
+            id: 8hgu5b56c0a13
+          description: The minimum amount due
+        currentBalance:
+          type: number
+          x-stoplight:
+            id: do0tgc5qjj3i9
+          description: The current balance
+        delinquentDays:
+          type: number
+          x-stoplight:
+            id: d980gvh1z5bs9
+          description: The number of days past due
+        availableLimit:
+          type: number
+          x-stoplight:
+            id: pzbq46elc6b4k
+          description: The available credit limit
+        aprPct:
+          type: number
+          x-stoplight:
+            id: nsosdr67o1w5z
+          description: The APR percentage
+        billDate:
+          type: string
+          x-stoplight:
+            id: wgfr32ygu9ma9
+          format: date-time
+        graceDate:
+          type: string
+          x-stoplight:
+            id: 9fjzngjimybqk
+          format: date-time
+        delinquentAmount:
+          type: number
+          x-stoplight:
+            id: digz2cl08auyl
+        totalCharges:
+          type: number
+          x-stoplight:
+            id: 2sml8enpaqsk9
+          description: The total charges of all time
+        totalPayments:
+          type: number
+          x-stoplight:
+            id: m4skc0f5zs3l1
+          description: The total repayments of all time
+      required:
+        - frozen
+        - creditLimit
+        - minimumDue
+        - currentBalance
+        - delinquentDays
+        - availableLimit
+        - aprPct
+        - billDate
+        - graceDate
+        - delinquentAmount
+        - totalCharges
+        - totalPayments
+    AuthenticationRegisterFactor:
+      title: Authentication Register Factor
+      x-stoplight:
+        id: e60kdpqve2mn8
+      oneOf:
+        - $ref: '#/components/schemas/AuthenticationRegisterPhoneFactor'
+        - $ref: '#/components/schemas/AuthenticationRegisterPasswordFactor'
+          x-stoplight:
+            id: tkqxmvvd6v0or
+        - $ref: '#/components/schemas/AuthenticationRegisterAuthenticatorFactor'
+          x-stoplight:
+            id: hh4eog8st90ez
+        - $ref: '#/components/schemas/AuthenticationRegisterFidoFactor'
+          x-stoplight:
+            id: vayuf76hbganz
+    AuthenticationRegisterFactorCore:
+      title: AuthenticationRegisterFactorCore
+      x-stoplight:
+        id: x20wcj7nda0mm
+      x-internal: true
+      type: object
+      description: Represents authentication factor methods
+      properties:
+        method:
+          $ref: '#/components/schemas/AuthenticationFactorMethodTypes'
+      required:
+        - method
+    AuthenticationRegisterPhoneFactor:
+      title: Register Phone
+      x-stoplight:
+        id: vmhwftuxtlxx1
+      allOf:
+        - type: object
+          x-stoplight:
+            id: sqr5j8av51hdm
+          properties:
+            value:
+              type: string
+              x-stoplight:
+                id: ouv04w67vti2o
+              description: Phone number in E.164 format
+              maxLength: 14
+              pattern: '/^\+[1-9]\d{1,14}$/'
+            codeChallenge:
+              type: string
+              x-stoplight:
+                id: vnuqhp5b5vaeg
+              description: A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device
+              maxLength: 100
+            method:
+              type: string
+              x-stoplight:
+                id: i2ivn933z3w3x
+              enum:
+                - phone
+            channel:
+              type: string
+              x-stoplight:
+                id: je41y6cnhxyb6
+              enum:
+                - sms
+                - whatsapp
+              default: sms
+              description: The channel used to deliver a challenge
+          required:
+            - value
+            - codeChallenge
+            - method
+            - channel
+        - $ref: '#/components/schemas/AuthenticationRegisterFactorCore'
+          x-stoplight:
+            id: rrh7vl7ymt1ov
+      description: Represents a phone factor registration
+      x-internal: false
+    AuthenticationRegisterPasswordFactor:
+      title: Register Password
+      x-stoplight:
+        id: mbvbb9txzku6y
+      allOf:
+        - $ref: '#/components/schemas/AuthenticationRegisterFactorCore'
+        - type: object
+          x-stoplight:
+            id: zb9hmyu9v14a4
+          properties:
+            value:
+              type: string
+              x-stoplight:
+                id: 9ch8xm4dmu0u3
+              format: password
+              minLength: 8
+              description: The password value to set
+            method:
+              type: string
+              x-stoplight:
+                id: lc36n0vezki17
+              enum:
+                - password
+          required:
+            - value
+            - method
+      description: Represents a password factor registration
+    AuthenticationRegisterAuthenticatorFactor:
+      title: Register Authenticator
+      x-stoplight:
+        id: jjoe2coloj10e
+      allOf:
+        - $ref: '#/components/schemas/AuthenticationRegisterFactorCore'
+        - type: object
+          x-stoplight:
+            id: q0zfazi2ya46j
+          properties:
+            method:
+              type: string
+              x-stoplight:
+                id: 29rpgnz9qok9b
+              enum:
+                - authenticator
+            codeChallenge:
+              type: string
+              x-stoplight:
+                id: kw9kitm57sbke
+              maxLength: 100
+              description: A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device
+          required:
+            - method
+            - codeChallenge
+      description: Represents an authenticator factor registration
+    AuthenticationRegisterFidoFactor:
+      title: Register Fido
+      x-stoplight:
+        id: fjlvqyro5dmkj
+      allOf:
+        - $ref: '#/components/schemas/AuthenticationRegisterFactorCore'
+        - type: object
+          x-stoplight:
+            id: bz7xota7kppkj
+          properties:
+            method:
+              type: string
+              x-stoplight:
+                id: c9aes65kykab7
+              enum:
+                - fido
+            credential:
+              $ref: '#/components/schemas/PublicKeyCredentialWithAttestation'
+              x-stoplight:
+                id: 4e1qq477569ec
+          required:
+            - method
+            - credential
+      description: 'Represents a [fido](https://fidoalliance.org/) factor registration'
+    CreateBusinessOwner:
+      title: CreateBusinessOwner
+      x-stoplight:
+        id: zkiua4ynkqo51
+      type: object
+      properties:
+        personId:
+          type: string
+          x-stoplight:
+            id: 7xwpm60emi1ro
+          format: uuid
+          description: The person identifier
+        percentage:
+          type: number
+          x-stoplight:
+            id: 9sg2rjdh7gdcg
+          minimum: 0
+          maximum: 100
+          description: The percentage of ownership
+      required:
+        - personId
+        - percentage
+    BusinessGroupMembership:
+      title: BusinessGroupMembership
+      x-stoplight:
+        id: bpuvg16ig3bxf
+      type: object
+      description: Represents a business group membership
+      properties:
+        groupId:
+          type: string
+          x-stoplight:
+            id: pb0l5tatplcvd
+          format: uuid
+          description: The business group identifier
+          readOnly: true
+        personId:
+          type: string
+          x-stoplight:
+            id: sqn30vlirnhhm
+          format: uuid
+          description: The person identifier
+          readOnly: true
+        active:
+          type: boolean
+          x-stoplight:
+            id: ylfw74k52n38g
+          default: true
+          description: A value indicating whether this membership is active
+      required:
+        - groupId
+        - personId
+        - active
+    CreatedAccount:
+      title: CreatedAccount
+      x-stoplight:
+        id: ddllgm8z1nhb4
+      type: object
+      properties:
+        accountId:
+          type: string
+          x-stoplight:
+            id: 5whvpnrb1nbf0
+          format: uuid
+          description: The account identifier
+        personId:
+          type: string
+          x-stoplight:
+            id: bp7ngepvrwtsi
+          format: uuid
+          description: The person identifier
+      required:
+        - accountId
+        - personId
+      description: Represents a created account
+    RegisterPasskeyFactor:
+      title: RegisterPasskeyFactor
+      x-stoplight:
+        id: pin9j7xr1id43
+      description: Represents a Passkey factor registration
+      allOf:
+        - $ref: '#/components/schemas/RegisterAuthenticationFactor'
+          x-stoplight:
+            id: letlc3stzjbkx
+        - type: object
+          properties:
+            factorType:
+              type: string
+              x-stoplight:
+                id: ysgpojkjfnax6
+              enum:
+                - passkey
+            value:
+              type: string
+              x-stoplight:
+                id: 1cr6hciujbhsj
+              description: 'The response of the [navigator.credentials.create()](https://www.w3.org/TR/webauthn-2/#sctn-createCredential)'
+          required:
+            - factorType
+            - value
+    InitializePasskeyFactor:
+      title: InitializePasskeyFactor
+      x-stoplight:
+        id: lqdb1pgfpzj5t
+      type: object
+      properties:
+        factorType:
+          type: string
+          x-stoplight:
+            id: pee2sun9x8560
+          enum:
+            - passkey
+          description: The authentication factor type
+      required:
+        - factorType
+      description: Represents a Passkey factor initialization
+    AuthenticationFactorInitialization:
+      title: AuthenticationFactorInitialization
+      x-stoplight:
+        id: m8cs4bminuqo8
+      type: object
+      description: Represents the information needed to complete initialization of a factor
+      properties:
+        options:
+          type: string
+          x-stoplight:
+            id: 6a4uwa3d7nsy6
+          description: Options used for Passkey registration
+      required:
+        - options
+    FidoAuthentication:
+      title: Fido
+      x-stoplight:
+        id: prmky6g8ytw7w
+      allOf:
+        - type: object
+          properties:
+            credential:
+              $ref: '#/components/schemas/PublicKeyCredentialWithAssertion'
+              description: A passkey credential object
+              x-stoplight:
+                id: sgw5hxvubpd9p
+            grant_type:
+              type: string
+              x-stoplight:
+                id: uftsbb69ssvhk
+              enum:
+                - fido
+          required:
+            - credential
+            - grant_type
+        - $ref: '#/components/schemas/AuthenticationCore'
+      description: Represents an authentication passkey request
+    PersonTrustScore:
+      title: PersonTrustScore
+      description: 'Represents a trust score for a person. If a person does not have a score, this will only include personId'
+      type: object
+      properties:
+        personId:
+          type: string
+          format: uuid
+          description: The person identifier
+        trustScoreData:
+          type: object
+          description: Trust score data
+          properties:
+            trustScore:
+              type: number
+              description: 'Trust score from 0 - 1000, with 0 being no trust and 1000 being highest trust'
+            reasonCodes:
+              type: array
+              description: Reason codes for things that impacted a trust score
+              items:
+                type: string
+            phoneNumber:
+              type: string
+              description: The phone number associated with this trust score
+            createdAt:
+              type: string
+              format: date
+              description: The date this trust score was created
+          required:
+            - trustScore
+            - reasonCodes
+            - phoneNumber
+            - createdAt
+      required:
+        - personId
+    PasskeyOptions:
+      title: PasskeyOptions
+      x-stoplight:
+        id: 1h5awjiabaapw
+      type: object
+      properties:
+        options:
+          type: string
+          x-stoplight:
+            id: wn4cxaktqhzw5
+          description: Options used for Passkey registration
+      required:
+        - options
+      description: Represents passkey options
+      x-tags:
+        - Authorize
+    AuthenticationFactorMethodTypes:
+      title: Authentication Factor Method Types
+      x-stoplight:
+        id: wxil3x2ydgyaa
+      type: string
+      enum:
+        - phone
+        - password
+        - authenticator
+        - email
+        - biometric
+        - fido
+        - sms
+      description: The factor method types
+    AuthenticationFactorChannelTypes:
+      title: Authentication Factor Channel Types
+      x-stoplight:
+        id: l9khvxlq2395h
+      type: string
+      enum:
+        - sms
+        - whatsapp
+      description: The factor channel types
+    AuthenticationPasswordlessCore:
+      title: AuthenticationPasswordlessCore
+      x-stoplight:
+        id: 7ddtihijcqp6s
+      type: object
+      x-internal: true
+      properties:
+        username:
+          type: string
+          description: Either an email or phone number in e164 format
+          maxLength: 320
+        method:
+          type: string
+          x-stoplight:
+            id: yxm8iluqsi4ht
+          enum:
+            - email
+            - fido
+          description: The factor method types
+        client_id:
+          type: string
+          x-stoplight:
+            id: xeaqlkxw7o599
+          description: The application's client identifier
+          maxLength: 100
+      required:
+        - username
+        - method
+    AuthenticationPasswordlessEmail:
+      title: Passwordless Email
+      x-stoplight:
+        id: l3ebx46o260n4
+      allOf:
+        - $ref: '#/components/schemas/AuthenticationPasswordlessCore'
+        - type: object
+          x-stoplight:
+            id: ydzqytpd84qfm
+          properties:
+            method:
+              type: string
+              enum:
+                - email
+            codeChallenge:
+              type: string
+              x-stoplight:
+                id: f5lw285i5qpil
+              maxLength: 100
+              description: A base64url encoded SHA256 hash of a one time secret used to validate that the request starts and ends on the same device
+          required:
+            - method
+            - codeChallenge
+      description: Represents a passwordless email
+    AuthenticationPasswordlessFido:
+      title: Passwordless Fido
+      x-stoplight:
+        id: ink3296a5wwg4
+      allOf:
+        - $ref: '#/components/schemas/AuthenticationPasswordlessCore'
+        - type: object
+          x-stoplight:
+            id: xmhyovc2p7g1n
+          properties:
+            method:
+              type: string
+              x-stoplight:
+                id: 5liu5jk8dqc29
+              enum:
+                - fido
+          required:
+            - method
+      description: Represents a passwordless FIDO
+    RegisterAuthenticationFactor:
+      allOf:
+        - $ref: '#/components/schemas/AuthenticationFactorMethod'
+          x-stoplight:
+            id: qk9vxlkwty1in
+    Invitation:
+      title: Invitation
+      x-stoplight:
+        id: c39zli8bb5zda
+      allOf:
+        - type: object
+          properties:
+            accountId:
+              type: string
+              x-stoplight:
+                id: c8ccfzg3ju1zz
+              format: uuid
+              description: The account identifier
+            personId:
+              type: string
+              x-stoplight:
+                id: ravyco4ok4zsu
+              format: uuid
+              description: The person identifier
+            inviterId:
+              type: string
+              x-stoplight:
+                id: xviraj7xzi73m
+              format: uuid
+              description: The inviter person identifier
+            accepted:
+              type: boolean
+              x-stoplight:
+                id: 4jiivrzqsd5zd
+              description: A value indicating whether the invitation has been accepted
+            invitationType:
+              type: string
+              x-stoplight:
+                id: hfswtj1bpk956
+              description: The type of invitation
+          required:
+            - accountId
+            - personId
+            - inviterId
+            - accepted
+            - invitationType
+        - $ref: ./models/CoreModel.yaml
+          x-stoplight:
+            id: fwz6ph9vxbjbm
+    AuthenticationRegisterFactorOptions:
+      title: AuthenticationRegisterFactorOptions
+      x-stoplight:
+        id: mkijlb5h4of7f
+      oneOf:
+        - $ref: '#/components/schemas/AuthenticationRegisterFidoFactorOptions'
+        - $ref: '#/components/schemas/AuthenticationRegisterAuthenticatorFactorOptions'
+          x-stoplight:
+            id: 34ixc3s9badrs
+    AuthenticationRegisterFidoFactorOptions:
+      title: Register Fido Factor Options
+      x-stoplight:
+        id: em2ozm6pncmpx
+      allOf:
+        - $ref: '#/components/schemas/AuthenticationRegisterFactorCore'
+        - type: object
+          x-stoplight:
+            id: 0i4psgnx7wo7g
+          properties:
+            method:
+              type: string
+              x-stoplight:
+                id: xb4t3cee2b8wm
+              enum:
+                - fido
+            client_id:
+              type: string
+              x-stoplight:
+                id: l7kwtrbzrcbph
+              maxLength: 100
+              description: The application's client identifier
+          required:
+            - method
+            - client_id
+      description: 'Represents a [fido](https://fidoalliance.org/) factor registration'
+    AuthenticationRegisterAuthenticatorFactorOptions:
+      title: Register Authenticator Factor Options
+      x-stoplight:
+        id: eq3j6ue467zar
+      allOf:
+        - $ref: '#/components/schemas/AuthenticationRegisterFactorCore'
+        - type: object
+          x-stoplight:
+            id: etuw3o50enwfp
+          properties:
+            method:
+              type: string
+              x-stoplight:
+                id: r48q5dvdfo753
+              enum:
+                - authenticator
+          required:
+            - method
+      description: Represents an authenticator factor registration
+    AuthenticationFidoAttestationOptions:
+      title: Fido Attestation Options
+      x-stoplight:
+        id: jzqom8gam68v3
+      type: object
+      description: 'Represents the attestation options for a [fido](https://fidoalliance.org/) factor'
+      properties:
+        rp:
+          type: object
+          x-stoplight:
+            id: evdjliea0drmv
+          description: Relying Party
+          required:
+            - name
+            - id
+          properties:
+            name:
+              type: string
+              x-stoplight:
+                id: 8lfetfadosd6m
+            id:
+              type: string
+              x-stoplight:
+                id: kg9vjssvs0qcl
+            icon:
+              type: string
+              x-stoplight:
+                id: v99yi4a21psew
+        user:
+          type: object
+          x-stoplight:
+            id: 20xhfxggysjp6
+          required:
+            - id
+            - name
+            - displayName
+          properties:
+            id:
+              type: string
+              x-stoplight:
+                id: cg48webyrm312
+            name:
+              type: string
+              x-stoplight:
+                id: ht174zbh57c0z
+            displayName:
+              type: string
+              x-stoplight:
+                id: xfezpv4bqfrqh
+        challenge:
+          type: string
+          x-stoplight:
+            id: an5qy1uxm284o
+          description: The challenge is produced by the server
+        pubKeyCredParams:
+          type: array
+          x-stoplight:
+            id: tojcgckue39rl
+          items:
+            x-stoplight:
+              id: e6r879cj994ba
+            type: object
+            properties:
+              type:
+                type: string
+                x-stoplight:
+                  id: xqxtsde9mawut
+                enum:
+                  - public-key
+              alg:
+                type: number
+                x-stoplight:
+                  id: xqvumryuh7s40
+            required:
+              - type
+              - alg
+        timeout:
+          type: number
+          x-stoplight:
+            id: dfyx7vfq8x4bs
+        attestation:
+          type: string
+          x-stoplight:
+            id: 3b49xi6axcj2c
+          enum:
+            - direct
+            - indirect
+            - none
+      required:
+        - rp
+        - user
+        - challenge
+        - pubKeyCredParams
+        - attestation
+    AuthenticationFidoAssertionOptions:
+      title: Fido Assertion Options
+      x-stoplight:
+        id: h2v8xtszd61az
+      type: object
+      description: 'Represents the assertion options for a [fido](https://fidoalliance.org/) factor'
+      properties:
+        challenge:
+          type: string
+          x-stoplight:
+            id: stscbkg69va9v
+          description: The challenge is produced by the server
+        timeout:
+          type: number
+          x-stoplight:
+            id: ql52h0cgrorfv
+        rpId:
+          type: string
+          x-stoplight:
+            id: lp24sjcmigb99
+        userVerification:
+          type: string
+          x-stoplight:
+            id: pu2skhvb8kp95
+          enum:
+            - required
+            - preferred
+            - discouraged
+        attestation:
+          type: string
+          x-stoplight:
+            id: 078o9q4ug77u5
+          enum:
+            - direct
+            - indirect
+            - none
+        allowCredentials:
+          type: array
+          x-stoplight:
+            id: fvwnoz1s916o3
+          items:
+            $ref: '#/components/schemas/PublicKeyCredentialDescriptor'
+            x-stoplight:
+              id: pby0ipfoht9u4
+      required:
+        - challenge
+    AuthenticationAuthenticatorOptions:
+      title: Authenticator Options
+      x-stoplight:
+        id: 7y9lyjsuqxun2
+      type: object
+      properties:
+        secret:
+          type: string
+          description: The secret key shared between the authenticator app and the server used to generate TOTP codes
+        qrCode:
+          type: string
+          description: The QR code image encoded in base64
+      required:
+        - secret
+    PublicKeyCredential:
+      title: PublicKeyCredential
+      x-stoplight:
+        id: rklrenckc4ku2
+      type: object
+      properties:
+        id:
+          type: string
+          description: The base64url encoding of `rawId`
+        type:
+          type: string
+          x-stoplight:
+            id: rzle2ld5pqdco
+          enum:
+            - public-key
+          description: 'This enumeration defines the valid credential types. It is an extension point; values can be added to it in the future, as more credential types are defined. The values of this enumeration are used for versioning the Authentication Assertion and attestation structures according to the type of the authenticator. Currently one credential type is defined, namely `public-key`.'
+        rawId:
+          type: string
+          x-stoplight:
+            id: 0q4c19d42dwrs
+          description: The credential identifier
+        authenticatorAttachment:
+          type: string
+          x-stoplight:
+            id: 8zc9uw4kcwh7x
+          enum:
+            - cross-platform
+            - platform
+      required:
+        - id
+        - type
+        - rawId
+    PublicKeyCredentialWithAttestation:
+      title: PublicKey Credential With Attestation
+      x-stoplight:
+        id: ba3jylczikgkc
+      allOf:
+        - $ref: '#/components/schemas/PublicKeyCredential'
+        - type: object
+          x-stoplight:
+            id: m8wcc2kf7ebal
+          properties:
+            clientExtensionResults:
+              $ref: '#/components/schemas/SimpleClientExtensionResults'
+              x-stoplight:
+                id: 99dk4lm12c1jf
+            response:
+              $ref: '#/components/schemas/AuthenticatorAttestationResponse'
+              x-stoplight:
+                id: kzl61cj6xr0uw
+          required:
+            - clientExtensionResults
+            - response
+    PublicKeyCredentialWithAssertion:
+      title: PublicKey Credential With Assertion
+      x-stoplight:
+        id: 7gd4qdp0xjgo9
+      allOf:
+        - $ref: '#/components/schemas/PublicKeyCredential'
+          x-stoplight:
+            id: 9a9ufvmxvn0e0
+        - type: object
+          properties:
+            clientExtensionResults:
+              $ref: '#/components/schemas/SimpleClientExtensionResults'
+              x-stoplight:
+                id: 7h5ep99fjthsp
+            response:
+              $ref: '#/components/schemas/AuthenticatorAssertionResponse'
+              x-stoplight:
+                id: qjhxi2venuomp
+          required:
+            - clientExtensionResults
+            - response
+    SimpleClientExtensionResults:
+      title: SimpleClientExtensionResults
+      x-stoplight:
+        id: rqspm8plypks0
+      type: object
+      properties:
+        appid:
+          type: boolean
+          x-stoplight:
+            id: b6cyv554fvozk
+        appidExclude:
+          type: boolean
+          x-stoplight:
+            id: 06pevcqpc4vgz
+        credProps:
+          type: object
+          x-stoplight:
+            id: 8zr52s7bvj9a9
+          properties:
+            rk:
+              type: boolean
+              x-stoplight:
+                id: pwpmuek1y0knm
+          required:
+            - rk
+    AuthenticatorAttestationResponse:
+      title: AuthenticatorAttestationResponse
+      x-stoplight:
+        id: wzfwm40slgsc6
+      type: object
+      properties:
+        clientDataJSON:
+          type: string
+          x-stoplight:
+            id: 5qco9qy6yp9c1
+        attestationObject:
+          type: string
+          x-stoplight:
+            id: ntzjnfki783zb
+        transports:
+          type: array
+          x-stoplight:
+            id: whbs2nvw3qb5v
+          items:
+            $ref: '#/components/schemas/AuthenticatorTransport'
+            x-stoplight:
+              id: pqy3t094iut0a
+      required:
+        - clientDataJSON
+        - attestationObject
+    AuthenticatorTransport:
+      title: AuthenticatorTransport
+      x-stoplight:
+        id: ewj440x101mfr
+      type: string
+      enum:
+        - hybrid
+        - ble
+        - internal
+        - nfc
+        - usb
+    PublicKeyCredentialDescriptor:
+      title: PublicKeyCredentialDescriptor
+      x-stoplight:
+        id: j9cmtlpvaqcw6
+      type: object
+      properties:
+        type:
+          type: string
+          x-stoplight:
+            id: qctkzowgtrtm6
+          enum:
+            - public-key
+        id:
+          type: string
+          x-stoplight:
+            id: 18w62kqwr3kg5
+        transports:
+          type: array
+          x-stoplight:
+            id: u3usakdrxsdhd
+          items:
+            $ref: '#/components/schemas/AuthenticatorTransport'
+            x-stoplight:
+              id: 253fvmcvwbuxd
+      required:
+        - type
+        - id
+    AuthenticatorAssertionResponse:
+      title: AuthenticatorAssertionResponse
+      x-stoplight:
+        id: h11rjp3ciwraa
+      type: object
+      properties:
+        clientDataJSON:
+          type: string
+          x-stoplight:
+            id: 5pc96gd04f1zm
+        authenticatorData:
+          type: string
+          x-stoplight:
+            id: gsa53bedbcfm8
+        signature:
+          type: string
+          x-stoplight:
+            id: fdg2z4la2y5hj
+        userHandle:
+          type: string
+          x-stoplight:
+            id: 0cu1bffnxzo0z
+      required:
+        - clientDataJSON
+        - authenticatorData
+        - signature
+  requestBodies:
+    Authentication:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Authentications'
+        application/x-www-form-urlencoded:
+          schema:
+            $ref: '#/components/schemas/Authentications'
+      description: One of the authentication credential models
+    BusinessRegistration:
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Business.yaml
+      description: Represents a business registration
+    CreateAddress:
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Address.yaml
+    BusinessOwner:
+      content:
+        application/json:
+          schema:
+            $ref: ./models/BusinessOwner.yaml
+    RegisterAuthenticationFactor:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthenticationRegisterFactor'
+      description: Represents an authentication factor registration request
+    AuthenticationChallenge:
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - $ref: '#/components/schemas/OtpAuthenticationChallenge'
+                x-stoplight:
+                  id: daeypch9s4p7w
+              - $ref: '#/components/schemas/MagicLinkAuthenticationChallenge'
+                x-stoplight:
+                  id: lztjnyhkgbu0x
+    InitatePasswordReset:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PasswordReset'
+    PasswordUpdate:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PasswordUpdate'
+    PersonRegistration:
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Person.yaml
+      description: Represents a person registration
+    AccountInvitation:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccountInvitation'
+    PersonUpdate:
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Person.yaml
+      description: Represents a person update
+    BusinessUpdate:
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Business.yaml
+    Prefill:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Prefill'
+    AddressUpdate:
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Address.yaml
+    CreateBusinessOwner:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateBusinessOwner'
+    CreateBusinessEmployee:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./models/Employee.yaml
+              - type: object
+                x-stoplight:
+                  id: nsi863nueb8w7
+                properties:
+                  personId:
+                    type: string
+                    x-stoplight:
+                      id: mvbnmlaq5muy5
+                    description: The person identifier
+                    format: uuid
+                required:
+                  - personId
+    Employee:
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Employee.yaml
+    AssignBusinessFunction:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BusinessFunction'
+      description: ''
+    InitializeAuthenticationFactor:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/InitializePasskeyFactor'
+    AuthenticationPasswordless:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthenticationPasswordless'
+      description: Represents a passwordless authentication request
+    RegisterAuthenticationFactorOptions:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthenticationRegisterFactorOptions'
+  responses:
+    AuthenticationToken:
+      description: Authentication bearer token response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthenticationToken'
+    AnalyticsGuestToken:
+      description: Authentication bearer token for Analytics Tooling
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AnalyticsGuestToken'
+    PrefilledPersonResponse:
+      description: Represents a prefill result for a person
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PrefilledPersonData'
+    CanPrefill:
+      description: Represents prefill eligibility
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PrefillAccess'
+    PersonList:
+      description: Represents a list of people
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+                description: Pagination metadata
+              data:
+                description: Person results
+                type: array
+                items:
+                  $ref: ./models/Person.yaml
+                  x-stoplight:
+                    id: 31ssjq16gsfc7
+            required:
+              - metadata
+              - data
+      headers: {}
+    CreatedPerson:
+      description: Represents a newly registered person and the uri location to retrieve said person
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Person.yaml
+      headers:
+        location:
+          schema:
+            type: string
+            format: uri
+          description: The url location to retrieve the created person
+    Account:
+      description: An account
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Account.yaml
+    ReferralList:
+      description: Represents a list of referrals
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Referral'
+            required:
+              - metadata
+              - data
+    Business:
+      description: A business response
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Business.yaml
+    CreatedBusiness:
+      description: Represents a newly registered business and the uri location to retrieve said business
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Business.yaml
+      headers:
+        location:
+          schema:
+            type: string
+            format: uri
+          description: The url location to retrieve the created business
+    CreatedAuthenticationFactor:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthenticatorFactorSetup'
+    CreatedAddress:
+      description: Represents a newly created address and the uri location to retrieve said address
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Address.yaml
+      headers:
+        location:
+          schema:
+            type: string
+            format: uri
+          description: The url location to retrieve the created address
+    AccountList:
+      description: Represents a list of accounts
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+              data:
+                type: array
+                items:
+                  $ref: ./models/Account.yaml
+            required:
+              - metadata
+              - data
+    CreatedBusinessOwner:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            $ref: ./models/BusinessOwner.yaml
+    AuthenticationFactorList:
+      description: Represents a list of authentication factors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthenticationFactorList'
+    ApplicationList:
+      description: Represents a list of product applications
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+            required:
+              - metadata
+              - data
+    ProductList:
+      description: List of products
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Product'
+    BusinessList:
+      description: Represents a paginated list of businesses
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+              data:
+                type: array
+                items:
+                  $ref: ./models/Business.yaml
+            required:
+              - metadata
+              - data
+    CompletePerson:
+      description: Represents a person
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./models/Person.yaml
+              - type: object
+                properties:
+                  lastLogin:
+                    type: string
+                    format: date-time
+                    description: The last time this person accessed the system
+                    readOnly: true
+                  phone:
+                    $ref: ./models/Phone.yaml
+                  email:
+                    $ref: ./models/Email.yaml
+                  address:
+                    $ref: ./models/Address.yaml
+    Person:
+      description: Represents a person
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Person.yaml
+    CreatedPhone:
+      description: Represents a newly created phone and the uri location to retrieve said phone
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Phone.yaml
+      headers:
+        location:
+          schema:
+            type: string
+          description: The url location to retrieve the created phone
+    CreatedEmail:
+      description: Represents a newly created email and the uri location to retrieve said email
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Email.yaml
+      headers:
+        location:
+          schema:
+            type: string
+          description: The url location to retrieve the created email
+    AddressList:
+      description: Represents a list of addresses
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+              data:
+                type: array
+                items:
+                  $ref: ./models/Address.yaml
+            required:
+              - metadata
+              - data
+    PhoneList:
+      description: Represents a list of phones
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+              data:
+                type: array
+                items:
+                  $ref: ./models/Phone.yaml
+            required:
+              - metadata
+              - data
+    EmailList:
+      description: Represents a list of emails
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+              data:
+                type: array
+                items:
+                  $ref: ./models/Email.yaml
+            required:
+              - metadata
+              - data
+    AuthenticationSessionList:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/AuthenticationSession'
+    AccountMigration:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/AccountMigration'
+    PromoCodeList:
+      description: Represents a list of promotional codes
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+                x-stoplight:
+                  id: lobs8ioftit18
+              data:
+                type: array
+                x-stoplight:
+                  id: me6wrrehumueh
+                items:
+                  $ref: ./models/PromoCode.yaml
+                  x-stoplight:
+                    id: e7lxyus5c8fth
+            required:
+              - metadata
+              - data
+    AccountSearchList:
+      description: Represents a list of account search results
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+                x-stoplight:
+                  id: gviqiqs80790l
+              data:
+                type: array
+                x-stoplight:
+                  id: 5p2v2jtr9p7x7
+                items:
+                  $ref: '#/components/schemas/AccountSearch'
+                  x-stoplight:
+                    id: y4gayce7eixkk
+            required:
+              - metadata
+              - data
+    Address:
+      description: Represents an address
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Address.yaml
+    EmployeeList:
+      description: Represents a list of employees
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+                x-stoplight:
+                  id: 1uk1m0ds22qyo
+              data:
+                type: array
+                x-stoplight:
+                  id: 33s2eeepkyt8o
+                items:
+                  $ref: ./models/Employee.yaml
+                  x-stoplight:
+                    id: wyd2qx40lqlpx
+            required:
+              - metadata
+              - data
+    Employee:
+      description: Represents an employee
+      content:
+        application/json:
+          schema:
+            $ref: ./models/Employee.yaml
+    BusinessFunction:
+      description: Respresents a business function
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BusinessFunction'
+    BusinessFunctionList:
+      description: Represents a list of business functions
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+                x-stoplight:
+                  id: jt87f0xfrhz6u
+              data:
+                type: array
+                x-stoplight:
+                  id: cnmkep5jvrrac
+                items:
+                  $ref: '#/components/schemas/BusinessFunction'
+                  x-stoplight:
+                    id: fyj50ad0m6qlg
+            required:
+              - metadata
+              - data
+    BusinessGroupList:
+      description: Represents a list of business groups
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+                x-stoplight:
+                  id: jjrg1bl5d8f0v
+              data:
+                type: array
+                x-stoplight:
+                  id: qdz5wi2cek0a5
+                items:
+                  $ref: '#/components/schemas/BusinessGroup'
+                  x-stoplight:
+                    id: cl4wnk7wpkqw8
+            required:
+              - metadata
+              - data
+    BusinessGroup:
+      description: Represents a business group
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BusinessGroup'
+      headers: {}
+    BusinessGroupMembershipList:
+      description: Represents a list of business group members
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+                x-stoplight:
+                  id: gx780m86a2tw7
+              data:
+                type: array
+                x-stoplight:
+                  id: 38n3y6eqjrqwc
+                items:
+                  $ref: '#/components/schemas/BusinessGroupMembership'
+                  x-stoplight:
+                    id: o8wv4mtom4ue5
+            required:
+              - metadata
+              - data
+    CreatedAccount:
+      description: Represents a created account
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreatedAccount'
+      headers:
+        location:
+          schema:
+            type: string
+            format: uri
+          description: The location to retrieve the created account
+    InitializedAuthenticationFactor:
+      description: Represents the information needed to complete initialization of a factor
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthenticationFactorInitialization'
+    PersonBusinessPrefill:
+      description: An array of businesses that can be used to prefill certain data.
+      content:
+        application/json:
+          schema:
+            type: object
+            x-examples:
+              Example 1:
+                businesses:
+                  - business:
+                      name: Grattage Garage
+                      dba: Automotive Repair
+                      taxId: '123456789'
+                      formationDate: '2020-07-22'
+                      formationLocation: NY
+                    addresses:
+                      - street: 779 Saint Paul Drive
+                        locality: Syracuse
+                        region: NY
+                        postalCode: '13224'
+                      - street: 779 Saint Paul Drive
+                        locality: Syracuse
+                        region: NY
+                        postalCode: '13224'
+                    owners:
+                      - givenName: Linn
+                        familyName: Grattage
+                        title: Owner
+            properties:
+              businesses:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    business:
+                      type: object
+                      required:
+                        - name
+                        - taxId
+                      properties:
+                        name:
+                          type: string
+                        dba:
+                          type: string
+                        taxId:
+                          type: string
+                        formationDate:
+                          type: string
+                        formationLocation:
+                          type: string
+                    addresses:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          street:
+                            type: string
+                          locality:
+                            type: string
+                          region:
+                            type: string
+                          postalCode:
+                            type: string
+                        required:
+                          - street
+                          - locality
+                          - region
+                          - postalCode
+                    owners:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          givenName:
+                            type: string
+                          familyName:
+                            type: string
+                          title:
+                            type: string
+                        required:
+                          - givenName
+                          - familyName
+                          - title
+                  required:
+                    - business
+                    - addresses
+                    - owners
+            required:
+              - businesses
+    AuthenticationPasswordless:
+      description: Represents a passwordless authentication response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthenticationFidoAssertionOptions'
+    AccountInvitationList:
+      description: Represents a list of account invitations
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+                x-stoplight:
+                  id: 9qtuvya212v9k
+              data:
+                type: array
+                x-stoplight:
+                  id: 2cr166u5htuli
+                items:
+                  $ref: '#/components/schemas/Invitation'
+                  x-stoplight:
+                    id: zb4ecg4wv2ixt
+            required:
+              - metadata
+              - data
+    RegisterAuthenticationFactorOptions:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/AuthenticationFidoAttestationOptions'
+                x-stoplight:
+                  id: engbbpsigutwn
+              - $ref: '#/components/schemas/AuthenticationAuthenticatorOptions'
+                x-stoplight:
+                  id: ylte222idoayv
+  parameters:
+    personId:
+      name: personId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The person identifier
+    active:
+      name: active
+      in: query
+      required: false
+      schema:
+        type: boolean
+      description: Filters based on active status
+    page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: Which page of results to request
+    pageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 100
+        default: 25
+        exclusiveMinimum: 0
+      description: The number of resources returned per page
+    sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: asc
+      description: The sort order of results
+    phoneId:
+      name: phoneId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The phone identifier
+    emailId:
+      name: emailId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The email identifier
+    addressId:
+      name: addressId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The address identifier
+    businessId:
+      name: businessId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The business identifier
+    nextToken:
+      name: nextToken
+      in: query
+      schema:
+        type: string
+      description: A token to retrieve the next set of results
+    photoId:
+      name: photoId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The photo identifier
+    accountId:
+      name: accountId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The account identifier
+    applicationId:
+      name: applicationId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The application identifier
+    product:
+      name: product
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - credit
+          - banking
+          - treasury
+          - factoring
+      description: The product name
+    productPhase:
+      name: productPhase
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - available
+          - application
+          - eligible
+          - ineligible
+          - incomplete
+      description: The product phase
+    reviewer:
+      name: reviewer
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+      description: The person identifier representing the reviewer
+    applicationStatus:
+      name: applicationStatus
+      in: query
+      schema:
+        type: string
+        enum:
+          - incomplete
+          - submitted
+          - review
+          - pending
+          - denied
+          - offer
+          - withdrawn
+          - accepted
+          - declined
+          - expired
+      description: The status of the application
+    functionName:
+      name: functionName
+      in: query
+      schema:
+        type: string
+        maxLength: 255
+      description: The business function name
+    groupId:
+      name: groupId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The group identifier
+    invitationType:
+      name: invitationType
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - none
+          - signatory
+          - user
+        default: user
+      description: The type of invitation email to send
+  securitySchemes:
+    token:
+      type: http
+      scheme: bearer
+      description: Bearer token
+security:
+  - token: []
+tags:
+  - name: Accounts
+    description: Account
+  - name: Applications
+    description: Applications
+  - name: Authorize
+    description: Authorize
+  - name: Businesses
+    description: Businesses
+  - name: Emails
+    description: Emails
+  - name: Events
+    description: Pub/Sub Events
+  - name: Group
+    description: Group
+  - name: Persons
+    description: Person
+  - name: Phones
+    description: Phones
+  - name: Scim
+    description: Scim

@@ -1,0 +1,67 @@
+title: error-block
+x-stoplight:
+  id: tff9uf7hzbswc
+description: The Rfc7807 specification for exceptions
+type: object
+x-tags:
+  - v1
+properties:
+  type:
+    type: string
+    description: 'A URI reference that identifies the problem type.  This specification encourages that, when dereferenced, it provide human-readable documentation for the problem type.'
+    format: uri
+    example: 'https://api.bancobpi.pt/validation-error'
+    maxLength: 150
+    x-stoplight:
+      id: gd28l93yi0hg7
+  title:
+    type: string
+    description: 'A short, human-readable summary of the problem type'
+    example: bad-request
+    maxLength: 30
+    x-stoplight:
+      id: dhaotr9ka4sqo
+  status:
+    type: integer
+    description: The HTTP status code
+    example: 400
+    maximum: 999
+    x-stoplight:
+      id: hx8egcwfpj4jk
+  detail:
+    type: string
+    description: A human-readable explanation specific to this occurrence of the problem
+    example: Invalid values in the request
+    maxLength: 200
+    x-stoplight:
+      id: tqqx2425g1npr
+  instance:
+    type: string
+    description: A URI reference that identifies the specific occurrence of the problem
+    format: uri-reference
+    example: /simulations
+    maxLength: 150
+    x-stoplight:
+      id: 8dnn47glhg0gm
+  language:
+    type: string
+    default: en
+    pattern: '^[a-z]{2}(-[a-zA-Z]+)?$'
+    example: en-US
+    description: Language
+    maxLength: 10
+    x-stoplight:
+      id: 593su53nsudyd
+  requestId:
+    type: string
+    description: Trace id of the current request
+    example: c4ea66ad-0caa-4e0a-99b1-5fc47dd3b723
+    maxLength: 36
+    x-stoplight:
+      id: cnpgno58teci7
+required:
+  - type
+  - title
+  - status
+  - detail
+  - requestId

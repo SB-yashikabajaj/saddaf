@@ -1,0 +1,680 @@
+openapi: 3.1.0
+x-stoplight:
+  id: f2e9jmmkmtq1c
+info:
+  title: Servicing
+  version: '1.0'
+  description: Endpoints for Flex's platform servicing
+  summary: Servicing
+  contact:
+    name: Support
+    url: 'https://www.flex.one'
+    email: support@flex.one
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+servers:
+  - url: 'https://platform.flexbase.dev'
+    description: Development
+  - url: 'https://platform.flex.one'
+    description: Production
+  - url: 'http://localhost:3000'
+    description: Local
+paths:
+  /servicing/promocodes:
+    get:
+      summary: List Promo Codes
+      tags:
+        - PromoCodes
+      responses:
+        '200':
+          $ref: '#/components/responses/PromoCodeList'
+      operationId: list-promocodes
+      description: Retrieve a list of promotion codes
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+        - $ref: '#/components/parameters/startDate'
+        - $ref: '#/components/parameters/endDate'
+    post:
+      summary: Create a promocode
+      operationId: create-promocodes
+      responses:
+        '200':
+          $ref: '#/components/responses/CreatedPromoCode'
+      tags:
+        - PromoCodes
+      description: Create a promotional code
+      requestBody:
+        $ref: '#/components/requestBodies/PromoCode'
+  '/servicing/promocodes/{promoCodeId}':
+    parameters:
+      - $ref: '#/components/parameters/promoCodeId'
+    get:
+      summary: Get PromoCode
+      tags:
+        - PromoCodes
+      responses:
+        '200':
+          $ref: '#/components/responses/PromoCode'
+      operationId: get-promocodes
+      description: 'Gets the specified promotional code. '
+    patch:
+      summary: Update PromoCode
+      operationId: update-promocodes
+      responses:
+        '200':
+          $ref: '#/components/responses/PromoCode'
+      tags:
+        - PromoCodes
+      description: Updates the specified promotional code
+      requestBody:
+        $ref: '#/components/requestBodies/PromoCode'
+  '/servicing/promocodes/{promoCodeId}/accounts':
+    parameters:
+      - $ref: '#/components/parameters/promoCodeId'
+    get:
+      summary: List Accounts with Promo Code
+      tags:
+        - PromoCodes
+      responses:
+        '200':
+          $ref: '#/components/responses/AccountList'
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+      operationId: list-accounts-with-promocode
+      description: Retrieve a list of accounts associated with the specified promotional code
+  /servicing/partnerships:
+    get:
+      summary: Get Partnership Dashboard
+      responses:
+        '200':
+          $ref: '#/components/responses/PartnershipDashboardResponse'
+      operationId: getPartnershipDashboard
+      x-stoplight:
+        id: 4ek6bn8n67ny2
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: startDate
+          description: start date of the dashboard
+          required: true
+        - schema:
+            type: string
+          in: query
+          required: true
+          description: end date of the dashboard
+          name: endDate
+      tags:
+        - Partnerships
+  '/servicing/banking/application/{unitApplicationId}':
+    parameters:
+      - schema:
+          type: string
+        name: unitApplicationId
+        in: path
+        required: true
+    get:
+      summary: Get Unit Banking Application
+      tags:
+        - BankingApplications
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metadata:
+                    $ref: ./models/PaginationMetadata.yaml
+                    x-stoplight:
+                      id: rj3t0ny64fols
+                  data:
+                    $ref: '#/components/schemas/BankingApplication'
+                    x-stoplight:
+                      id: qgu76hhs8whop
+      operationId: get-servicing-banking-application-unit-application-id
+      x-stoplight:
+        id: 6hff69uwivzpm
+  '/servicing/banking/applications/company/{companyId}':
+    parameters:
+      - schema:
+          type: string
+        name: companyId
+        in: path
+        required: true
+    get:
+      summary: Get Unit Banking Applications by Flex Company Id
+      tags:
+        - BankingApplications
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metadata:
+                    $ref: ./models/PaginationMetadata.yaml
+                    x-stoplight:
+                      id: 7ubzhpp7ppe8r
+                  data:
+                    type: array
+                    x-stoplight:
+                      id: jve1gpinu2wo5
+                    items:
+                      $ref: '#/components/schemas/BankingApplication'
+                      x-stoplight:
+                        id: a9oj3vemnl8zh
+      operationId: get-servicing-banking-application-flex-company-id
+      x-stoplight:
+        id: vil3xw5qu4amf
+  '/servicing/banking/application/customer/{unitCustomerId}':
+    parameters:
+      - schema:
+          type: string
+        name: unitCustomerId
+        in: path
+        required: true
+    get:
+      summary: Get Unit Banking Applications By Customer Id
+      tags:
+        - BankingApplications
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metadata:
+                    $ref: ./models/PaginationMetadata.yaml
+                    x-stoplight:
+                      id: qslulgnv3vgfl
+                  data:
+                    $ref: '#/components/schemas/BankingApplication'
+                    x-stoplight:
+                      id: ckrtnc76t3aus
+      operationId: get-servicing-banking-applications-unit-customer-id
+      x-stoplight:
+        id: js3calg31sl1v
+  '/servicing/accounts/{id}/promocodes/{promocodeId}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: Account or Company ID
+      - schema:
+          type: string
+        name: promocodeId
+        in: path
+        required: true
+        description: Promo code ID
+    delete:
+      summary: Unlink Promo Code
+      operationId: delete-account-promocode
+      responses:
+        '204':
+          description: No Content
+      description: Disassociates a promo code with an account
+      tags:
+        - PromoCodes
+    post:
+      summary: Link Promo Code
+      operationId: link-account-promocode
+      responses:
+        '201':
+          description: Created
+      description: Links promo code to a company/account
+      tags:
+        - PromoCodes
+  '/servicing/promocodes/code/{code}':
+    parameters:
+      - schema:
+          type: string
+        name: code
+        in: path
+        required: true
+        description: The code value
+    get:
+      summary: Get promo code by value
+      tags:
+        - PromoCodes
+      responses:
+        '200':
+          $ref: '#/components/responses/PromoCode'
+      operationId: get-promocode-by-value
+      description: This will look up and return the promocode associated with the value specified. It does not require authentication and can be used within the application flow.
+      security: []
+  '/servicing/authorize/{authenticationId}/ratelimit':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: authenticationId
+        in: path
+        required: true
+        description: The authentication identifier
+    delete:
+      summary: Clear password rate limit
+      operationId: clear-authentication-ratelimit
+      responses:
+        '200':
+          description: OK
+      tags:
+        - Authorize
+      description: Clear the password rate limit of the specified authentication
+  /servicing/accounts/phones/allowlist:
+    get:
+      summary: Get Phone Allow List
+      tags:
+        - Accounts
+      operationId: list-accounts-phone-allowlist
+      description: Retrieve an allow list of phones
+      responses:
+        '200':
+          $ref: '#/components/responses/AccountPhoneRuleList'
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/nextToken'
+    parameters: []
+    post:
+      summary: Add Phone Rule
+      operationId: add-accounts-phones-allowlist
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - Accounts
+      description: Add a phone to either the allow or block list rule
+      requestBody:
+        $ref: '#/components/requestBodies/AccountPhoneRule'
+  '/servicing/companies/point-in-time/{companyId}':
+    parameters:
+      - $ref: '#/components/parameters/companyId'
+      - $ref: '#/components/parameters/asOf'
+      - $ref: '#/components/parameters/hasCredit'
+      - $ref: '#/components/parameters/createdAt'
+    get:
+      summary: Get a companies attributes as of a specific point in-time
+      tags:
+        - Companies
+      operationId: getCompanyAsOf
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: ./models/Company.yaml
+                    x-stoplight:
+                      id: 17exlko4s8n24
+  /servicing/companies/point-in-time:
+    parameters:
+      - $ref: '#/components/parameters/asOf'
+      - $ref: '#/components/parameters/hasCredit'
+      - $ref: '#/components/parameters/createdAt'
+    get:
+      summary: Get a list of companies attributes as of a specific point in-time
+      tags:
+        - Companies
+      operationId: listCompaniesAsOf
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: ./models/Company.yaml
+                      x-stoplight:
+                        id: 342kxlsbg70yu
+components:
+  schemas:
+    ApplicationWithPartnership:
+      title: ApplicationWithPartnership
+      x-stoplight:
+        id: 8vumkrzy439i3
+      type: object
+      required:
+        - businessId
+        - businessName
+        - externalPartnershipId
+      properties:
+        businessId:
+          type: string
+          x-stoplight:
+            id: ggiz6p1pjudol
+          format: uuid
+          description: business/company id
+        businessName:
+          type: string
+          x-stoplight:
+            id: ls7vr6ef1f1t5
+          description: business/company name
+        externalPartnershipId:
+          type: string
+          x-stoplight:
+            id: ucumpsn3mzen5
+          description: identifier assigned by 3rd party
+        applicationStatus:
+          type: string
+          x-stoplight:
+            id: 9yjo1p99ait87
+        averageBalance:
+          type: string
+          x-stoplight:
+            id: viefply698z88
+        rebateAmount:
+          type: string
+          x-stoplight:
+            id: qn26rs177c4on
+    BankingApplication:
+      title: BankingApplication
+      x-stoplight:
+        id: n7vlh2d5252d3
+      type: object
+      required:
+        - id
+        - applicationType
+        - flexUserId
+        - flexCompanyId
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: 0ge0dgwvxrj5s
+        applicationType:
+          type: string
+          x-stoplight:
+            id: ymwpkad4ctyua
+        flexUserId:
+          type: string
+          x-stoplight:
+            id: ps00yc2fdzr2s
+          format: uuid
+        flexCompanyId:
+          type: string
+          x-stoplight:
+            id: fc5vfazb8bufs
+          format: uuid
+        attributes:
+          type: object
+          x-stoplight:
+            id: 231s71yt7aobk
+    AccountPhoneRule:
+      title: Phone Rule
+      x-stoplight:
+        id: a96glx9ecx03m
+      type: object
+      description: Represents a phone allow list rule
+      properties:
+        phone:
+          type: string
+          x-stoplight:
+            id: ezd6dzrg0p1xj
+          pattern: '/^\+[1-9]\d{1,14}$/'
+          maxLength: 14
+          description: Phone number in E.164 format
+        bypass:
+          type: boolean
+          x-stoplight:
+            id: btqix34rezd4s
+          description: A value indicating whether to bypass the twilio lookup check
+        reject:
+          type: boolean
+          x-stoplight:
+            id: i0nwnesxg7azy
+          description: A value indicating whether to reject this phone
+        note:
+          type: string
+          x-stoplight:
+            id: 5kl48bfcdrlkd
+          description: A note for this rule
+          maxLength: 4096
+      required:
+        - phone
+        - bypass
+        - reject
+  securitySchemes:
+    token:
+      type: http
+      scheme: bearer
+      description: Bearer token
+  responses:
+    PromoCodeList:
+      description: Represents a list of promotional codes
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+                x-stoplight:
+                  id: j546nv6qjtgbr
+              data:
+                type: array
+                x-stoplight:
+                  id: ffnoy03tdsods
+                items:
+                  $ref: ./models/PromoCode.yaml
+                  x-stoplight:
+                    id: b2y4p2bj2vajo
+            required:
+              - metadata
+              - data
+    CreatedPromoCode:
+      description: Represents a created promotional code
+      content:
+        application/json:
+          schema:
+            $ref: ./models/PromoCode.yaml
+      headers:
+        location:
+          schema:
+            type: string
+            format: uri
+          description: The location to retrieve the created promocode
+    PromoCode:
+      description: Represents a promotional code
+      content:
+        application/json:
+          schema:
+            $ref: ./models/PromoCode.yaml
+    AccountList:
+      description: Represents a list of accounts
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+                x-stoplight:
+                  id: n9hgwq26ra14l
+              data:
+                type: array
+                x-stoplight:
+                  id: cxvs6a74b5my4
+                items:
+                  $ref: ./models/Account.yaml
+                  x-stoplight:
+                    id: 555wf7vuri2s9
+            required:
+              - metadata
+              - data
+    PartnershipDashboardResponse:
+      description: Dashboard for alfred partnerships page
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ApplicationWithPartnership'
+    BankingApplication:
+      description: Banking Application Response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BankingApplication'
+    AccountPhoneRuleList:
+      description: Represents a list of account phone rules
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: ./models/PaginationMetadata.yaml
+                x-stoplight:
+                  id: 2pqiz06vl6um1
+              data:
+                type: array
+                x-stoplight:
+                  id: dgntwzu1aj2pw
+                items:
+                  $ref: '#/components/schemas/AccountPhoneRule'
+                  x-stoplight:
+                    id: 905ogkydk1u2m
+            required:
+              - metadata
+              - data
+  requestBodies:
+    PromoCode:
+      content:
+        application/json:
+          schema:
+            $ref: ./models/PromoCode.yaml
+    AccountPhoneRule:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccountPhoneRule'
+      description: Represents an account phone rule request
+  parameters:
+    page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: Which page of results to request
+    pageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 100
+        default: 25
+        exclusiveMinimum: 0
+      description: The number of resources returned per page
+    sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: asc
+      description: The sort order of results
+    nextToken:
+      name: nextToken
+      in: query
+      schema:
+        type: string
+      description: A token to retrieve the next set of results
+    startDate:
+      name: startDate
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      description: The minimum timestamp to filter results
+    endDate:
+      name: endDate
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      description: The maximum timestamp to filter results
+    promoCodeId:
+      name: promoCodeId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The promotional code identifier
+    companyId:
+      name: companyId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The company identifier (in Api)
+    asOf:
+      name: asOf
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      description: The maximum record as of timestamp to filter on
+    createdAt:
+      name: createdAt
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      description: The minimum record created at to filter on
+    hasCredit:
+      name: hasCredit
+      in: query
+      required: false
+      schema:
+        type: boolean
+      description: Whether or not to return results where creditLimit = 0
+security:
+  - token: []
+tags:
+  - name: Accounts
+    description: Accounts
+  - name: Authorize
+    description: Authorize
+  - name: BankingApplications
+    description: Banking Specific Applications (e.g. Unit Application)
+  - name: Partnerships
+    description: Partnerships (e.g. Trinet)
+  - name: PromoCodes
+    description: Promo Codes
+  - name: Companies
+    description: Api Companies
+x-internal: true

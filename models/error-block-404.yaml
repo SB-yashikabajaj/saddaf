@@ -1,0 +1,70 @@
+title: error-block-404
+x-stoplight:
+  id: qtqj4whthh8v8
+description: The Rfc7807 specification for exceptions
+x-tags:
+  - v1
+allOf:
+  - properties:
+      type:
+        type: string
+        description: 'A URI reference that identifies the problem type.  This specification encourages that, when dereferenced, it provide human-readable documentation for the problem type.'
+        format: uri
+        example: 'https://api.bancobpi.pt/not-found'
+        maxLength: 150
+        x-stoplight:
+          id: lev7u286nk2o8
+      title:
+        type: string
+        description: 'A short, human-readable summary of the problem type'
+        example: not-found
+        maxLength: 30
+        x-stoplight:
+          id: 4edfcgbzfd8vs
+      status:
+        type: integer
+        description: The HTTP status code
+        example: 404
+        maximum: 999
+        x-stoplight:
+          id: etshqwdr6jgr1
+      detail:
+        type: string
+        description: A human-readable explanation specific to this occurrence of the problem
+        example: The server has not found anything matching the Request-URI
+        maxLength: 200
+        x-stoplight:
+          id: tapdeyco64s4t
+      instance:
+        type: string
+        description: A URI reference that identifies the specific occurrence of the problem
+        format: uri-reference
+        example: /simulations
+        maxLength: 150
+        x-stoplight:
+          id: 829jh3a046hdz
+      language:
+        type: string
+        default: en
+        pattern: '^[a-z]{2}(-[a-zA-Z]+)?$'
+        example: en-US
+        description: Language
+        maxLength: 10
+        x-stoplight:
+          id: ix7ejyw6do9bc
+      requestId:
+        type: string
+        description: Trace id of the current request
+        example: c4ea66ad-0caa-4e0a-99b1-5fc47dd3b723
+        maxLength: 36
+        x-stoplight:
+          id: szgqc58u2kf4b
+    required:
+      - type
+      - title
+      - status
+      - detail
+      - requestId
+    x-stoplight:
+      id: 7cl3edmz33kx5
+type: object

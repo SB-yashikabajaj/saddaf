@@ -1,0 +1,70 @@
+title: error-block-409
+x-stoplight:
+  id: uvxhwsiop5ala
+description: The Rfc7807 specification for exceptions
+x-tags:
+  - v1
+allOf:
+  - properties:
+      type:
+        type: string
+        description: 'A URI reference that identifies the problem type.  This specification encourages that, when dereferenced, it provide human-readable documentation for the problem type.'
+        format: uri
+        example: 'https://api.bancobpi.pt/business-error'
+        maxLength: 150
+        x-stoplight:
+          id: i65u0zuge4z9y
+      title:
+        type: string
+        description: 'A short, human-readable summary of the problem type'
+        example: conflict
+        maxLength: 30
+        x-stoplight:
+          id: z0leoc6y6nb52
+      status:
+        type: integer
+        description: The HTTP status code
+        example: 409
+        maximum: 999
+        x-stoplight:
+          id: d1rev7148oqkj
+      detail:
+        type: string
+        description: A human-readable explanation specific to this occurrence of the problem
+        example: The request could not be completed due to a conflict with the current state of the resource
+        maxLength: 200
+        x-stoplight:
+          id: a30bc80twkcgb
+      instance:
+        type: string
+        description: A URI reference that identifies the specific occurrence of the problem
+        format: uri-reference
+        example: /simulations
+        maxLength: 150
+        x-stoplight:
+          id: d0d1560l1pigg
+      language:
+        type: string
+        default: en
+        pattern: '^[a-z]{2}(-[a-zA-Z]+)?$'
+        example: en-US
+        description: Language
+        maxLength: 10
+        x-stoplight:
+          id: 3ojdw4al5xray
+      requestId:
+        type: string
+        description: Trace id of the current request
+        example: c4ea66ad-0caa-4e0a-99b1-5fc47dd3b723
+        maxLength: 36
+        x-stoplight:
+          id: sfqaxrplojtiv
+    required:
+      - type
+      - title
+      - status
+      - detail
+      - requestId
+    x-stoplight:
+      id: 60uigskolnf8b
+type: object

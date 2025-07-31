@@ -1,0 +1,12 @@
+$ref: ./account-number.yaml
+x-stoplight:
+  id: te3cjd6980bdj
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: numeroConta
+    - name: tipoUtilizacao
+      value: despesa
+x-tags:
+  - expenses-account-number

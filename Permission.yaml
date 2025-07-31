@@ -1,0 +1,191 @@
+openapi: 3.1.0
+x-stoplight:
+  id: o0gfawhw3j6vo
+info:
+  title: Permission
+  version: '1.0'
+  description: Endpoints for Flex's Permissions functionality
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+  contact:
+    name: Support
+    url: 'https://www.flex.one'
+    email: support@flex.one
+  summary: Permission
+servers:
+  - url: 'http://localhost:3000'
+    description: Local
+  - url: 'https://platform.flexbase.dev'
+    description: Development
+  - url: 'https://platform.flex.one'
+    description: Production
+paths:
+  '/permission/accounts/{accountId}/accountRole/{accountRole}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/accountRole'
+    post:
+      summary: Add account role to authentication
+      description: Add an account level role to an authentication.
+      tags:
+        - Permission
+      operationId: addAccountRoleToAuthentication
+      x-stoplight:
+        id: 6v89pilikluku
+      requestBody:
+        $ref: '#/components/requestBodies/RoleTargetBody'
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: Remove account role from authentication
+      tags:
+        - Permission
+      responses:
+        '200':
+          description: OK
+      operationId: removeAccountRoleFromAuthentication
+      x-stoplight:
+        id: epst1vs24egfn
+      description: Remove an account level role from an authentication.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleTarget'
+  '/permission/accounts/{accountId}/flexRoles/{flexRole}':
+    x-internal: true
+    parameters:
+      - $ref: '#/components/parameters/flexRole'
+      - $ref: '#/components/parameters/accountId'
+    post:
+      summary: Add flex role to authentication
+      description: Add a flex level role to an authentication
+      tags:
+        - Permission
+      operationId: addFlexRoleToAuthentication
+      requestBody:
+        $ref: '#/components/requestBodies/RoleTargetBody'
+      responses:
+        '200':
+          description: OK
+      x-stoplight:
+        id: h0xtxgnjvp2u6
+    delete:
+      summary: Remove flex role from authentication
+      tags:
+        - Permission
+      responses:
+        '200':
+          description: OK
+      operationId: removeFlexRoleFromAuthentication
+      x-stoplight:
+        id: u7yjwejsp543q
+      description: Remove a flex level role from an authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleTarget'
+  '/permission/accounts/{accountId}/listAccountPermissions':
+    parameters:
+      - schema:
+          type: string
+        name: accountId
+        in: path
+        required: true
+    get:
+      summary: List account permissions on account
+      tags:
+        - Permission
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuthenticationRole'
+                  x-stoplight:
+                    id: ntnwpwght568u
+      operationId: listAccountPermissionsOnAccount
+      x-stoplight:
+        id: xl0xqhp14rrzm
+      description: 'List the permissions that are on and account. '
+components:
+  schemas:
+    RoleTarget:
+      title: RoleTarget
+      x-stoplight:
+        id: nfc5n94cpcvyt
+      type: object
+      description: |-
+        Model to help target an authentication for permissions.
+        Currently supports email or id lookup.
+      properties:
+        maybeTargetEmail:
+          type: string
+          x-stoplight:
+            id: 2g0c6ny7za0o6
+          description: The authentication user_name / email
+        maybeTargetAuthenticationId:
+          type: string
+          x-stoplight:
+            id: 4rrz34hgnqsnf
+          description: The Authentication Id
+    AuthenticationRole:
+      title: AuthenticationRole
+      x-stoplight:
+        id: f1sbf6m2kwnqj
+      type: object
+      required:
+        - userName
+        - role
+      properties:
+        userName:
+          type: string
+          x-stoplight:
+            id: 80fe7d24sa4dj
+        role:
+          type: string
+          x-stoplight:
+            id: wrtruqfygkjq8
+      description: Model describing an authentication's role
+  requestBodies:
+    RoleTargetBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoleTarget'
+      description: ''
+  parameters:
+    accountId:
+      name: accountId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The Account Identifier
+    accountRole:
+      name: accountRole
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The Account Role Identifier
+    flexRole:
+      name: flexRole
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The Flex Role Identifier
+  securitySchemes:
+    token:
+      type: http
+      scheme: bearer
+tags:
+  - name: Permission
+    description: Permission

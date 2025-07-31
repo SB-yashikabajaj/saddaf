@@ -1,0 +1,16 @@
+title: checkings-account-number-read-only
+x-stoplight:
+  id: 8y8rlw5jlc7u0
+example: '1234567000001'
+x-tags:
+  - checkings-account-number
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: numeroConta
+description: 'Number for a checking account. To consult more information, use this id in the Checking Accounts API.'
+type: string
+minLength: 13
+maxLength: 13
+readOnly: true

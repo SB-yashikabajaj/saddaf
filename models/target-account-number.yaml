@@ -1,0 +1,13 @@
+$ref: ./account-number.yaml
+x-stoplight:
+  id: 83mz189hmfjdp
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: numeroConta
+    - name: tipoUtilizacao
+      value: contrapartida
+description: 'Account number of the target checking account in a transaction. To consult more information, use this id in the Checking Accounts API.'
+x-tags:
+  - target-account-number

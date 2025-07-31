@@ -1,0 +1,19 @@
+type: object
+x-stoplight:
+  id: 3izqnd9yhvb5z
+title: link-self-body
+description: 'Self links to the resource itself, based on Hypertext Application Language (HAL) specification.'
+x-tags:
+  - v1
+properties:
+  _links:
+    type: object
+    description: Self link to the resource itself
+    properties:
+      self:
+        $ref: ./link-body.yaml
+        x-stoplight:
+          id: 1rl6l98wrm1l4
+    readOnly: true
+    x-stoplight:
+      id: ghniziat8180f

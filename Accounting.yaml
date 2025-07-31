@@ -1,0 +1,4641 @@
+openapi: 3.1.0
+x-stoplight:
+  id: m7mcr7boyh1hv
+info:
+  title: Accounting
+  version: '1.0'
+  summary: Accounting
+  contact:
+    name: Support
+    url: 'https://www.flex.one'
+    email: support@flex.one
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+  description: Accounting path
+servers:
+  - url: 'https://platform.flexbase.dev'
+    description: Development
+  - description: Production
+    url: 'https://platform.flex.one'
+  - url: 'http://localhost:3000'
+    description: Local
+paths:
+  /accounting/expenses/exchange:
+    post:
+      summary: Create an expense link
+      operationId: expense-link
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    x-stoplight:
+                      id: q2rzx5y1s9oum
+                  connectionId:
+                    type: string
+                    x-stoplight:
+                      id: v8s6oxwp3x585
+                  requestId:
+                    type: string
+                    x-stoplight:
+                      id: 788r9khmk37li
+      x-stoplight:
+        id: ngia86d5gypdo
+      description: Passes a public token to facilitate the exchange of an expense link access_token.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                publicToken:
+                  type: string
+                  x-stoplight:
+                    id: vhg3j6yw49yqh
+              required:
+                - publicToken
+        description: Customer public token passed to exchange
+      tags:
+        - Expenses
+    parameters: []
+  /accounting/expenses/webhook:
+    parameters: []
+    post:
+      summary: Expense webhook
+      operationId: expense-webhook
+      responses:
+        '200':
+          description: OK
+      x-stoplight:
+        id: ohtckgow5z897
+      description: 'Expense webhook for receiving creation and updates of links, accounts and vendors.'
+      requestBody:
+        description: 'Receive webhook content for updating and creating of either link, accouting or vendor data.'
+        content:
+          application/json:
+            schema:
+              anyOf:
+                - $ref: '#/components/schemas/WebhookLink'
+                  x-stoplight:
+                    id: tobbql2uzjhrj
+                - $ref: '#/components/schemas/WebhookVendor'
+                  x-stoplight:
+                    id: a3nqax5j8p0j6
+                - $ref: '#/components/schemas/WebhookAccount'
+                  x-stoplight:
+                    id: 9ne2n7046r3ar
+                - $ref: '#/components/schemas/WebhookJob'
+                  x-stoplight:
+                    id: to9dvg32ot8up
+                - $ref: '#/components/schemas/WebhookBill'
+                  x-stoplight:
+                    id: 3prysxwsvob1g
+                - $ref: '#/components/schemas/WebhookBillPayment'
+                  x-stoplight:
+                    id: wibfhglwzghuo
+      security: []
+      x-internal: true
+      x-validation: false
+      tags:
+        - Expenses
+  /accounting/expenses/links:
+    get:
+      summary: Expense links
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  links:
+                    x-stoplight:
+                      id: r7uq73b5peqll
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ExpenseLink'
+                      x-stoplight:
+                        id: uwrtoauhmli1n
+                required:
+                  - links
+      operationId: expense-links
+      x-stoplight:
+        id: xiamdubk1kujp
+      description: Returns a list of expense links.
+      tags:
+        - Expenses
+    parameters: []
+  '/accounting/expenses/synced/{connectionId}':
+    parameters:
+      - schema:
+          type: string
+        name: connectionId
+        in: path
+        required: true
+        description: platform connection id
+    post:
+      summary: Expense synced items
+      operationId: expense-synced
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncedExpenses'
+      x-stoplight:
+        id: wsjribn2iihe1
+      description: Returns list of synced expense items.
+      requestBody:
+        description: Takes a list of transaction ids.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transactionIds:
+                  type: array
+                  x-stoplight:
+                    id: jlpht2u6xkmwl
+                  items:
+                    x-stoplight:
+                      id: 94m4doruft92k
+                    type: string
+              required:
+                - transactionIds
+      tags:
+        - Expenses
+  '/accounting/expenses/sync/{connectionId}':
+    parameters:
+      - schema:
+          type: string
+        name: connectionId
+        in: path
+        required: true
+        description: platform connection id
+    post:
+      summary: Create an expense item
+      operationId: post-expense-sync
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: array
+                    x-stoplight:
+                      id: 37tm412qbw342
+                    items:
+                      $ref: '#/components/schemas/Expenses'
+                      x-stoplight:
+                        id: 6hl45mg9jws7n
+                required:
+                  - transactions
+      x-stoplight:
+        id: z0wio0ohxvjp5
+      description: Creates a new expense item.
+      requestBody:
+        description: List of transactions to sync
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transactions:
+                  type: array
+                  x-stoplight:
+                    id: sk9sh5htwqviq
+                  items:
+                    $ref: '#/components/schemas/Transactions'
+                    x-stoplight:
+                      id: hn7w4dditxqfx
+              required:
+                - transactions
+      tags:
+        - Expenses
+    patch:
+      summary: Modify an expense item
+      operationId: patch-expense-synced
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: array
+                    x-stoplight:
+                      id: joj9txdsqkubs
+                    items:
+                      $ref: '#/components/schemas/Expenses'
+                      x-stoplight:
+                        id: 7oaen7yl4u7f7
+                required:
+                  - transactions
+      x-stoplight:
+        id: juocxgqj4c63y
+      description: Modifies an existing expense item.
+      requestBody:
+        description: List of transactions and account ids to patch
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transactions:
+                  type: array
+                  x-stoplight:
+                    id: vakig21lpgysm
+                  items:
+                    $ref: '#/components/schemas/Transactions'
+                    x-stoplight:
+                      id: lkhdf1rigiyjn
+              required:
+                - transactions
+      tags:
+        - Expenses
+  '/accounting/expenses/connections/{connectionId}':
+    parameters:
+      - schema:
+          type: string
+        name: connectionId
+        in: path
+        required: true
+    delete:
+      summary: Delete an expense link
+      operationId: delete-expense-link
+      responses:
+        '200':
+          description: OK
+      x-stoplight:
+        id: 5xsz8pb01x39h
+      description: Delete an expense link.
+      tags:
+        - Expenses
+  '/accounting/expenses/{connectionId}/receipt':
+    post:
+      summary: Create an expense receipt
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: OK
+      operationId: createExpenseReceipt
+      x-stoplight:
+        id: 6n5hqme9mzooa
+      description: creates an expense attachment for the given invoice if there is a matching expense and autosync is on
+      parameters:
+        - schema:
+            type: string
+          in: query
+          required: true
+          description: The Invoice Identifier
+          name: invoiceId
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties: {}
+        description: Multipart/form-data representing the receipt file
+    parameters:
+      - schema:
+          type: string
+        name: connectionId
+        in: path
+        required: true
+        description: link connection id
+  '/accounting/expenses/metrics/{id}':
+    get:
+      summary: Get general expense integration information
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseMetrics'
+      operationId: get-expense-metrics
+      x-stoplight:
+        id: ww731a0sf49t0
+      description: Returns a customers account integration along with transactions information.
+      parameters: []
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+  '/accounting/expenses/connections/{connectionId}/cards':
+    parameters:
+      - schema:
+          type: string
+        name: connectionId
+        in: path
+        required: true
+    post:
+      summary: Create category on card
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - card
+                properties:
+                  card:
+                    $ref: '#/components/schemas/Card'
+                    x-stoplight:
+                      id: ht5kd88wapm6w
+      operationId: post-expenses-category-to-card
+      x-stoplight:
+        id: m45m6xovsekak
+      description: Maps a category to a card id.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - categoryId
+                - userId
+              properties:
+                categoryId:
+                  type: string
+                  x-stoplight:
+                    id: thkvx5whd7n9c
+                userId:
+                  type: string
+                  x-stoplight:
+                    id: ciud1l77epf4i
+                cardName:
+                  type: string
+                  x-stoplight:
+                    id: 5i7qc8hg6fsbc
+    patch:
+      summary: Modify category on card
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - card
+                properties:
+                  card:
+                    $ref: '#/components/schemas/Card'
+                    x-stoplight:
+                      id: pp7pgbmxsjjfm
+      operationId: patch-expenses-category-to-card
+      x-stoplight:
+        id: f9v29bb4anha5
+      description: Edit a mapped category to card id.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cardId
+                - categoryId
+              properties:
+                cardId:
+                  type: string
+                  x-stoplight:
+                    id: 8zslof230yqaj
+                categoryId:
+                  type: string
+                  x-stoplight:
+                    id: ekbzee9j6tu9e
+    get:
+      summary: Get categories on cards
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - categories
+                  - cards
+                properties:
+                  categories:
+                    type: array
+                    x-stoplight:
+                      id: s4biz1o1v1lt8
+                    items:
+                      $ref: '#/components/schemas/Category'
+                      x-stoplight:
+                        id: do0p5w0fo06lz
+                  cards:
+                    type: array
+                    x-stoplight:
+                      id: 8b27aybxuzvx9
+                    items:
+                      $ref: '#/components/schemas/Card'
+                      x-stoplight:
+                        id: zou7reb32u97h
+      operationId: get-expenses-category-to-card
+      x-stoplight:
+        id: vugtm2ypsbvzj
+      description: Returns a mapped category to card id.
+  '/accounting/expenses/connections/{connectionId}/cards/{cardId}':
+    parameters:
+      - schema:
+          type: string
+        name: connectionId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: cardId
+        in: path
+        required: true
+    get:
+      summary: Get category on card
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categories:
+                    type: array
+                    x-stoplight:
+                      id: jzss15jweidim
+                    items:
+                      $ref: '#/components/schemas/Category'
+                      x-stoplight:
+                        id: yt6v40cdlmyjh
+                  card:
+                    $ref: '#/components/schemas/Card'
+                    x-stoplight:
+                      id: z94220v6q3hmg
+      operationId: get-expenses-category-to-card-id
+      x-stoplight:
+        id: a8m3pr4pgxpxb
+  '/accounting/expenses/connections/{connectionId}/backfill/{businessId}':
+    parameters:
+      - schema:
+          type: string
+        name: connectionId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: businessId
+        in: path
+        required: true
+    post:
+      summary: Backfill an integration
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - ids
+                properties:
+                  ids:
+                    type: array
+                    x-stoplight:
+                      id: kxizh678x5lrt
+                    items:
+                      x-stoplight:
+                        id: rew5uc38wt3do
+                      type: string
+      operationId: post-backfill-integration
+      x-stoplight:
+        id: bqs6y4jdem9t3
+  '/accounting/accounts/{accountId}/spendplans':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+    post:
+      summary: Create spend plan
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - createdId
+                properties:
+                  createdId:
+                    type: string
+                    format: uuid
+                    x-stoplight:
+                      id: jufg6jr3wqcq6
+      operationId: createSpendPlan
+      x-stoplight:
+        id: lnpsam1j9uw9f
+      requestBody:
+        $ref: '#/components/requestBodies/CreateSpendPlanBody'
+    get:
+      summary: Get spend plans
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          $ref: '#/components/responses/GetSpendPlans'
+      operationId: getSpendPlans
+      x-stoplight:
+        id: akic6ev6mwb9c
+  '/accounting/accounts/{accountId}/spendplans/admin/overview':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+    get:
+      summary: Get spend plans admin
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          $ref: '#/components/responses/GetSpendPlansAdmin'
+      operationId: getSpendPlansAdmin
+      x-stoplight:
+        id: 5277kajpji6q0
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}/admin':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+    get:
+      summary: Get spend plan admin
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          $ref: '#/components/responses/GetSpendPlanAdmin'
+      operationId: getSpendPlanAdmin
+      x-stoplight:
+        id: 5277htjpji6q1
+  '/accounting/accounts/{accountId}/cards/{cardId}/spendplans':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/cardId'
+    get:
+      summary: Get spend plan by card id
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          $ref: '#/components/responses/GetSpendPlans'
+      operationId: getSpendPlansByCardId
+      x-stoplight:
+        id: wlvabcdh7owsz
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+    get:
+      summary: Get spend plan
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          $ref: '#/components/responses/GetSpendPlan'
+      operationId: getSpendPlan
+      x-stoplight:
+        id: wlvgxcph7owsz
+    patch:
+      summary: Update spend plan
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - updatedId
+                properties:
+                  updatedId:
+                    type: string
+                    format: uuid
+                    x-stoplight:
+                      id: jufg6jr3fhcq6
+      operationId: updateSpendPlan
+      x-stoplight:
+        id: znxn4zs82ig3i
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateSpendPlanBody'
+    delete:
+      summary: delete spend plan
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: OK
+      operationId: deleteSpendPlan
+      x-stoplight:
+        id: amns4zs82ig3i
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}/limits':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+    get:
+      summary: Get spend plan limits
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          $ref: '#/components/responses/GetSpendPlanLimits'
+      operationId: getSpendPlanLimits
+      x-stoplight:
+        id: 2h2strykcevh3
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}/cards':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+    get:
+      summary: Get spend plan cards
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          $ref: '#/components/responses/GetSpendPlanCards'
+      operationId: getSpendPlanCards
+      x-stoplight:
+        id: uxgbi2tr2p0vj
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}/transactions':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+    get:
+      summary: Get spend plan transactions
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          $ref: '#/components/responses/GetSpendPlanTransactions'
+      operationId: getSpendPlanTransactions
+      x-stoplight:
+        id: 8ydw9xlxps26i
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}/transactions/admin':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+    get:
+      summary: Get spend plan transactions as admin
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          $ref: '#/components/responses/GetSpendPlanTransactions'
+      operationId: getSpendPlanTransactionsAdmin
+      x-stoplight:
+        id: 8ydw9uwups26j
+  '/accounting/expenses/connections/{connectionId}/settings':
+    parameters:
+      - schema:
+          type: string
+        name: connectionId
+        in: path
+        required: true
+        description: connection id
+    patch:
+      summary: Patch integration settings
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseLink'
+      operationId: patch-accounting-settings
+      x-stoplight:
+        id: acd51i29p7h3z
+      description: |
+        Patch integration settings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountingSettings'
+  '/accounting/connections/{connectionId}/bankfeeds/otp':
+    parameters:
+      - schema:
+          type: string
+        name: connectionId
+        in: path
+        required: true
+    get:
+      summary: Bank feeds OTP
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - otp
+                  - expiresAt
+                properties:
+                  otp:
+                    type: string
+                    x-stoplight:
+                      id: jufg6jr3wqcq5
+                  expiresAt:
+                    type: string
+                    x-stoplight:
+                      id: 72q2n8qasrw9e
+      operationId: get-accounting-bankfeeds-otp
+      x-stoplight:
+        id: 4bz78j1ibrh26
+      tags:
+        - BankFeeds
+      x-internal: true
+  '/accounting/expenses/connections/{connectionId}/coa':
+    parameters:
+      - schema:
+          type: string
+        name: connectionId
+        in: path
+        required: true
+    get:
+      summary: Get chart of accounts
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+                  x-stoplight:
+                    id: nbk8gxfy3dtho
+      operationId: get-accounting-coa
+      x-stoplight:
+        id: ezh3jjlwag2u5
+      description: ''
+    patch:
+      summary: Patch chart of accounts
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+                  x-stoplight:
+                    id: jcwjxomk3s7qy
+      operationId: patch-accounting-coa
+      x-stoplight:
+        id: elbj05pvgifx1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - accounts
+              properties:
+                accounts:
+                  type: array
+                  x-stoplight:
+                    id: qotf5ha8p45pj
+                  items:
+                    x-stoplight:
+                      id: t8b9byrqbgmxn
+                    type: object
+                    required:
+                      - id
+                    properties:
+                      id:
+                        type: string
+                        x-stoplight:
+                          id: cke9eaaxd9dhk
+                      displayName:
+                        type: string
+                        x-stoplight:
+                          id: ce8ywal4z8jko
+                      visible:
+                        type: boolean
+                        x-stoplight:
+                          id: mnreczle0rv9u
+  '/accounting/commerce/connections/{connectionId}/metrics/{metric}':
+    parameters:
+      - schema:
+          type: string
+        name: connectionId
+        in: path
+        required: true
+        description: unique connection id
+      - schema:
+          type: string
+        name: metric
+        in: path
+        required: true
+        description: unique metric to query
+    get:
+      summary: Fetch commerce metric
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - metrics
+                properties:
+                  metrics:
+                    type: array
+                    x-stoplight:
+                      id: iemm8c6dedjzm
+                    items:
+                      $ref: '#/components/schemas/CommerceMetric'
+                      x-stoplight:
+                        id: 9iahrprbzhswy
+      operationId: get-accounting-commerce-metric
+      x-stoplight:
+        id: gta6zy63328lc
+      description: Fetch commerce customer metrics.
+      tags:
+        - Commerce
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: startDate
+          description: start date
+        - schema:
+            type: string
+          in: query
+          name: endDate
+          description: end date
+  /accounting/commerce/metrics:
+    parameters: []
+    post:
+      summary: Process metrics on active links
+      tags:
+        - Commerce
+      responses:
+        '200':
+          description: OK
+      operationId: post-accounting-commerce-metrics
+      x-stoplight:
+        id: sybdahi22unrs
+      description: Process all links and pull metrics
+      x-internal: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/GcpPubSubMessage.yaml
+  '/accounting/commerce/connections/{connectionId}/products':
+    get:
+      summary: get commerce products
+      tags:
+        - Commerce
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: object
+                    x-stoplight:
+                      id: 9tzatbkuu44uy
+      operationId: get-accounting-commerce-products
+      x-stoplight:
+        id: oavoxm0eye2wd
+      description: get commerce products
+    parameters:
+      - schema:
+          type: string
+        name: connectionId
+        in: path
+        required: true
+        description: connection id
+      - schema:
+          type: string
+        in: query
+        name: startDate
+        description: start date filter
+      - schema:
+          type: string
+        in: query
+        name: endDate
+        description: end date filter
+  '/accounting/commerce/connections/{connectionId}/orders':
+    get:
+      summary: get commerce orders
+      tags:
+        - Commerce
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orders:
+                    type: object
+                    x-stoplight:
+                      id: cge8p4e5gif3s
+      operationId: get-accounting-commerce-orders
+      x-stoplight:
+        id: sj62i9ijrmi9n
+      description: get commerce orders
+    parameters:
+      - schema:
+          type: string
+        name: connectionId
+        in: path
+        required: true
+        description: connection id
+      - schema:
+          type: string
+        in: query
+        name: startDate
+        description: start date filter
+      - schema:
+          type: string
+        in: query
+        name: endDate
+        description: end date filter
+  '/accounting/businesses/{businessId}/spendplans/migrate':
+    parameters:
+      - schema:
+          type: string
+        name: businessId
+        in: path
+        required: true
+    post:
+      summary: Migrate account to create twisp entities
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accounts:
+                    type: array
+                    x-stoplight:
+                      id: gxaneycvty3i6
+                    items:
+                      x-stoplight:
+                        id: l8cik2n2r5xg4
+                      type: string
+      operationId: createTwispAccountEntities
+      x-stoplight:
+        id: htwvf7ulbck87
+      description: Migrate account for spendplans
+      x-internal: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+  /accounting/spendplans/migrate:
+    post:
+      summary: Migrate create twisp entities for all accounts
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accounts:
+                    type: array
+                    x-stoplight:
+                      id: j3c690xe39cy7
+                    items:
+                      x-stoplight:
+                        id: 95tcqx79x8tdk
+                      type: string
+      operationId: createTwispAccountEntitiesForAllAccounts
+      x-stoplight:
+        id: wz0m3ar27tq8z
+      description: Migrate all spendplans
+      x-internal: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}/link/cards/{cardId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+      - schema:
+          type: string
+          format: uuid
+        name: cardId
+        in: path
+        required: true
+        description: The card identifier
+    post:
+      summary: Link Card to Spend Plan
+      description: Link Card to Spend Plan
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: OK
+      operationId: linkCardToSpendPlan
+      x-stoplight:
+        id: 9mtnmfhqqjdnp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - recurring
+                - fullFundsAccess
+              properties:
+                initialAmount:
+                  type: number
+                  x-stoplight:
+                    id: rvbif9denpl3q
+                futureAmount:
+                  type: number
+                  x-stoplight:
+                    id: 04ua0l8pjqhka
+                recurring:
+                  type: boolean
+                  x-stoplight:
+                    id: pvixwx81wtbza
+                fullFundsAccess:
+                  type: boolean
+                  x-stoplight:
+                    id: pvixwx81wtbzz
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}/unlink/cards/{cardId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+      - $ref: '#/components/parameters/cardId'
+    post:
+      summary: Unlink Card from Spend Plan
+      description: Unlink Card from Spend Plan
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: OK
+      operationId: unlinkCardFromSpendPlan
+      x-stoplight:
+        id: 85pnbtm9e4m3c
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}/link/members/{personId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+      - $ref: '#/components/parameters/personId'
+    post:
+      summary: Link Member to Spend Plan
+      description: Link Member to Spend Plan
+      tags:
+        - SpendPlans
+      requestBody:
+        $ref: '#/components/requestBodies/LinkSpendPlanMemberBody'
+      responses:
+        '200':
+          description: OK
+      operationId: linkMemberToSpendPlan
+      x-stoplight:
+        id: d63fzr4kkz7ba
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}/unlink/members/{personId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+      - $ref: '#/components/parameters/personId'
+    post:
+      summary: Unlink Member from Spend Plan
+      description: Unlink Member from Spend Plan
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: OK
+      operationId: unlinkMemberFromSpendPlan
+      x-stoplight:
+        id: lurr2pgk2auod
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}/unlink/managers/{personId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+      - $ref: '#/components/parameters/personId'
+    post:
+      summary: Unlink Manager from Spend Plan
+      description: Unlink Manager from Spend Plan
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: OK
+      operationId: unlinkManagerFromSpendPlan
+      x-stoplight:
+        id: mlaxitin3sjuo
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}/link/managers/{personId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+      - $ref: '#/components/parameters/personId'
+    post:
+      summary: Link Manager to Spend Plan
+      description: Link Manager to Spend Plan
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        $ref: '#/components/requestBodies/LinkSpendPlanManagerBody'
+      operationId: linkManagerToSpendPlan
+      x-stoplight:
+        id: 7px2mm3e75fzy
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}/default':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+    patch:
+      summary: Set default spend plan for card
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: OK
+      operationId: patch-accounting-spendplans-default
+      x-stoplight:
+        id: 3f1digo8nn0gd
+      description: Set default spend plan
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cardId
+              properties:
+                cardId:
+                  type: string
+                  x-stoplight:
+                    id: g5x4u02e4ko40
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}/requestfunds':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+    post:
+      summary: Spend plans request funds
+      description: Spend plans request funds
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpendPlanRequestFunds'
+      operationId: post-accounting-spendplans-request-funds
+      x-stoplight:
+        id: 4mnl27nuhkief
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+              properties:
+                amount:
+                  type: number
+                  x-stoplight:
+                    id: 7eu2so0cf22ne
+                description:
+                  type: string
+                  x-stoplight:
+                    id: i0rwpx2oc2h8t
+    get:
+      summary: 'Spend plans get pending, approved, declined request funds'
+      description: 'Spend plans get pending, approved, declined request funds'
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SpendPlanRequestFunds'
+                  x-stoplight:
+                    id: jvkhi6vtgb2fx
+      operationId: get-accounting-spendplans-view-funds
+      x-stoplight:
+        id: 6uix4gdrr44pd
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}/requestfunds/{requestId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+      - schema:
+          type: string
+        name: requestId
+        in: path
+        required: true
+        description: the request identifier
+    post:
+      summary: Spend plans approve or deny funds
+      description: Spend plans approve or deny funds
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - decision
+                  - requestId
+                properties:
+                  decision:
+                    x-stoplight:
+                      id: p8wektcdq6q3v
+                    enum:
+                      - approved
+                      - declined
+                  reason:
+                    type: string
+                    x-stoplight:
+                      id: gbbq57pcbplyy
+                  requestId:
+                    type: string
+                    format: uuid
+      operationId: decisionFundsRequest
+      x-stoplight:
+        id: 3pthoz49rkeut
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - decision
+              properties:
+                decision:
+                  x-stoplight:
+                    id: p8wektcdq6q3v
+                  enum:
+                    - approved
+                    - declined
+                reason:
+                  type: string
+                  x-stoplight:
+                    id: gbbq57pcbplyy
+  '/accounting/accounts/{accountId}/spendplans/transactions/members/{personId}':
+    parameters:
+      - schema:
+          type: string
+        name: accountId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: personId
+        in: path
+        required: true
+  '/accounting/businesses/{businessId}/ap':
+    parameters:
+      - schema:
+          type: string
+        name: businessId
+        in: path
+        required: true
+    get:
+      summary: Accounts payable properties
+      tags:
+        - AccountsPayable
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  link:
+                    type: object
+                    x-stoplight:
+                      id: rz4xodfv3ffyf
+                    required:
+                      - id
+                      - connectionId
+                      - platform
+                      - isReady
+                      - classes
+                      - departments
+                      - locations
+                      - vendors
+                      - customers
+                      - accounts
+                    properties:
+                      id:
+                        type: string
+                        x-stoplight:
+                          id: turayt1p7bibi
+                      connectionId:
+                        type: string
+                        x-stoplight:
+                          id: ogs3978x6mv0k
+                      platform:
+                        type: string
+                        x-stoplight:
+                          id: incmamrvudv0b
+                      isReady:
+                        type: boolean
+                        x-stoplight:
+                          id: v20wqllc70wo8
+                      classes:
+                        type: array
+                        x-stoplight:
+                          id: h0ry3jmfkh36w
+                        items:
+                          x-stoplight:
+                            id: 43ozcze29b1ly
+                          type: object
+                          required:
+                            - id
+                            - name
+                            - status
+                          properties:
+                            id:
+                              type: string
+                              x-stoplight:
+                                id: tb3wtbsk5so4s
+                            name:
+                              type: string
+                              x-stoplight:
+                                id: btbsh9kxqeigy
+                            status:
+                              type: string
+                              x-stoplight:
+                                id: yxo775txvb43l
+                      departments:
+                        type: array
+                        x-stoplight:
+                          id: galrm933kcfvt
+                        items:
+                          x-stoplight:
+                            id: p9xre8lnaya14
+                          type: object
+                          required:
+                            - id
+                            - name
+                            - status
+                          properties:
+                            id:
+                              type: string
+                              x-stoplight:
+                                id: wt7hz1hfxkrcx
+                            name:
+                              type: string
+                              x-stoplight:
+                                id: 6tr4qohuszhps
+                            status:
+                              type: string
+                              x-stoplight:
+                                id: t483usd68una6
+                      locations:
+                        type: array
+                        x-stoplight:
+                          id: l7wax7z6q0kj8
+                        items:
+                          x-stoplight:
+                            id: gb0jfsapy5sky
+                          type: object
+                          required:
+                            - id
+                            - name
+                            - status
+                          properties:
+                            id:
+                              type: string
+                              x-stoplight:
+                                id: sfmqyfxvtzlen
+                            name:
+                              type: string
+                              x-stoplight:
+                                id: sqa9h4vfxyes1
+                            status:
+                              type: string
+                              x-stoplight:
+                                id: ykrclhjeysh72
+                      vendors:
+                        type: array
+                        x-stoplight:
+                          id: 3nxmq4blvjeru
+                        items:
+                          x-stoplight:
+                            id: hu4u8bibqmy1r
+                          type: object
+                          required:
+                            - id
+                            - name
+                            - status
+                          properties:
+                            id:
+                              type: string
+                              x-stoplight:
+                                id: 3uotgh7g21hfv
+                            name:
+                              type: string
+                              x-stoplight:
+                                id: 6xp4w801bz7su
+                            contactName:
+                              type: string
+                              x-stoplight:
+                                id: 7joewabhxh501
+                            email:
+                              type: string
+                              x-stoplight:
+                                id: a9uqmv9kb6rhq
+                            apiId:
+                              type: string
+                              x-stoplight:
+                                id: at6vxg1j4y5fs
+                            status:
+                              type: string
+                              x-stoplight:
+                                id: lgk7wfswh6f6b
+                      customers:
+                        type: array
+                        x-stoplight:
+                          id: bw8o3zadw37qt
+                        items:
+                          x-stoplight:
+                            id: bk69nsuy0obaq
+                          type: object
+                          required:
+                            - id
+                            - name
+                            - status
+                          properties:
+                            id:
+                              type: string
+                              x-stoplight:
+                                id: q86ab7i7ymotw
+                            name:
+                              type: string
+                              x-stoplight:
+                                id: v8q4ao8vmsbt8
+                            status:
+                              type: string
+                              x-stoplight:
+                                id: oa3cstwdw0xue
+                      accounts:
+                        type: array
+                        x-stoplight:
+                          id: x1v7zymmtoym0
+                        items:
+                          x-stoplight:
+                            id: j8e0ewivljis4
+                          type: object
+                          required:
+                            - id
+                            - name
+                            - status
+                          properties:
+                            id:
+                              type: string
+                              x-stoplight:
+                                id: lv1mr2lebb7cr
+                            name:
+                              type: string
+                              x-stoplight:
+                                id: o1eidd7kk9q4w
+                            platformData:
+                              type: object
+                              x-stoplight:
+                                id: 74dg086fbqv9r
+                              properties:
+                                fullQualifiedName:
+                                  type: string
+                                  x-stoplight:
+                                    id: k2z5gl7w7jemr
+                                subTitle:
+                                  type: array
+                                  x-stoplight:
+                                    id: gixc6wpmf2vuh
+                                  items:
+                                    x-stoplight:
+                                      id: f3opw94opt0jy
+                                    type: string
+                            status:
+                              type: string
+                              x-stoplight:
+                                id: nup58cy3guios
+      operationId: get-accounting-accounts-payable
+      x-stoplight:
+        id: mdbasyefpwcqs
+      description: 'Internal endpoint to retrive accounts payable vendors, accounts, classes, departments, locations'
+      x-internal: true
+  '/accounting/account/{accountId}/expenses/connections/{connectionId}/link':
+    parameters:
+      - schema:
+          type: string
+        name: accountId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: connectionId
+        in: path
+        required: true
+    patch:
+      summary: Re-sync a rutter integration connection
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connection'
+      operationId: patch-integration-link
+      x-stoplight:
+        id: x14uvlzd8uzza
+      description: Internal api taking in customer account id and access token and pulls link into platform.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - accessToken
+              properties:
+                accessToken:
+                  type: string
+                  x-stoplight:
+                    id: debbxf9eiaod2
+                toSync:
+                  type: boolean
+                  x-stoplight:
+                    id: qx1gb6n6x2qev
+      x-internal: true
+  '/accounting/account/{accountId}/expenses/connections/{connectionId}/platform':
+    parameters:
+      - schema:
+          type: string
+        name: accountId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: connectionId
+        in: path
+        required: true
+    patch:
+      summary: Fetch charts/vendors/classes for an integration
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      operationId: patch-integration-platform
+      x-stoplight:
+        id: 44m8tawj5cwv3
+      description: |-
+        Internal api taking in customer account id and connection id and pulls all periphials
+
+        accounts
+        vendors
+        classes
+        customers
+        departments
+        locations
+      x-internal: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+  /accounting/ap/billpay:
+    post:
+      summary: Accounts Payable bill pay task queue
+      tags:
+        - AccountsPayable
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      operationId: post-accounting-ap-billpay
+      x-stoplight:
+        id: 6gmai2iufb5a2
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/GcpPubSubMessage.yaml
+      x-internal: true
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}/link/invoices/{invoiceId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+      - schema:
+          type: string
+        name: invoiceId
+        in: path
+        required: true
+    post:
+      summary: Link invoice to Spend Plan
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: OK
+      operationId: linkInvoiceToSpendPlan
+      x-stoplight:
+        id: p01b9qfh9cufr
+      description: attempt to link invoice to given spend plan. Will fail if doing so would exceed the spend control limits.
+  '/accounting/accounts/{accountId}/invoices/links':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+    post:
+      summary: Get Spend Plan Linked to Invoices
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          $ref: '#/components/responses/GetInvoiceSpendPlans'
+      operationId: getSpendPlanLinkForInvoices
+      x-stoplight:
+        id: 24z2o2o5bxpyg
+      requestBody:
+        $ref: '#/components/requestBodies/GetInvoicesSpendPlanBody'
+  '/accounting/accounts/{accountId}/spendplans/{spendPlanId}/unlink/invoices/{invoiceId}':
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/spendPlanId'
+      - schema:
+          type: string
+        name: invoiceId
+        in: path
+        required: true
+    post:
+      summary: Unlink Invoice from spend plan
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: OK
+      operationId: unlinkInvoiceFromSpendPlan
+      x-stoplight:
+        id: 9y44l8vja5axq
+      description: Unlink an invoice that is attached to a spend plan
+  /accounting/ap/billpay/process:
+    post:
+      summary: Accounts Payable bill pay process queue
+      tags:
+        - AccountsPayable
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      operationId: postAccountingApBillpayProcess
+      x-stoplight:
+        id: 0lx7yzyse1u71
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/GcpPubSubMessage.yaml
+      x-internal: true
+  /accounting/expenses/links/process:
+    parameters: []
+    post:
+      summary: Links process job
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      operationId: post-accounting-expenses-links-process
+      x-stoplight:
+        id: r1siziru973qq
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/GcpPubSubMessage.yaml
+      description: ''
+      x-internal: true
+  '/accounting/accounts/{accountId}/bankfeeds/backfill':
+    parameters:
+      - schema:
+          type: string
+        name: accountId
+        in: path
+        required: true
+    post:
+      summary: Bank feeds backfill
+      tags:
+        - BankFeeds
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ids:
+                    type: array
+                    x-stoplight:
+                      id: vqoay8zoofdeo
+                    items:
+                      x-stoplight:
+                        id: 2mqfpy10thn6v
+                      type: string
+      operationId: post-accounting-accounts-accountId-events-eventId-backfill
+      x-stoplight:
+        id: 8rldk1z07kiuj
+      description: takes event notification id and backfills a bank feed transaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ids
+              properties:
+                ids:
+                  type: array
+                  x-stoplight:
+                    id: 7fe89nabhgq8a
+                  items:
+                    x-stoplight:
+                      id: ws4tiydj23uz5
+                    type: string
+      x-internal: true
+  '/accounting/accounts/{accountId}/feeds/connection':
+    parameters:
+      - schema:
+          type: string
+        name: accountId
+        in: path
+        required: true
+    post:
+      summary: Create a direct intuit connection
+      tags:
+        - BankFeeds
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - connectionId
+                properties:
+                  connectionId:
+                    type: string
+                    x-stoplight:
+                      id: t580k7gjp98ko
+      operationId: post-accounting-accounts-accountId-feeds-connection
+      x-stoplight:
+        id: h7whsiajytohh
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      x-internal: true
+  /accounting/feeds/process:
+    post:
+      summary: 'Process categories, accounts and transactions'
+      tags:
+        - BankFeeds
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      operationId: post-accounting-feeds-process
+      x-stoplight:
+        id: ug8y8rnliidl1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - process
+              properties:
+                process:
+                  x-stoplight:
+                    id: 67gnav5o643ej
+                  enum:
+                    - categories
+                    - accounts
+                    - transactions
+      x-internal: true
+  /accounting/feeds/categories/process:
+    post:
+      summary: process bank feed categories
+      tags:
+        - BankFeeds
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      operationId: post-accounting-feeds-categories-process
+      x-stoplight:
+        id: o1hc2rpigkcqh
+      x-internal: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/GcpPubSubMessage.yaml
+  /accounting/feeds/accounts/process:
+    post:
+      summary: process bank feed accounts
+      tags:
+        - BankFeeds
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      operationId: post-accounting-feeds-accounts-process
+      x-stoplight:
+        id: 1qy89x0a4kqc4
+      x-internal: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/GcpPubSubMessage.yaml
+  /accounting/feeds/transactions/process:
+    post:
+      summary: process bank feed transactions
+      tags:
+        - BankFeeds
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      operationId: post-accounting-feeds-transactions-process
+      x-stoplight:
+        id: uymh6u4e560fn
+      x-internal: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./models/GcpPubSubMessage.yaml
+  '/accounting/businesses/{businessId}/spendplans/admin/view':
+    parameters:
+      - schema:
+          type: string
+        name: businessId
+        in: path
+        required: true
+    get:
+      summary: Fetch spend plans admin via Alfred
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          description: Shared Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SpendPlanAdminView'
+                  x-stoplight:
+                    id: nez1ptw428fuk
+      operationId: get-spend-plans-alfred
+      x-stoplight:
+        id: rhp7hg3t3zit7
+  '/accounting/businesses/{businessId}/spendplans/{spendPlanId}/admin/view':
+    parameters:
+      - schema:
+          type: string
+        name: businessId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: spendPlanId
+        in: path
+        required: true
+    get:
+      summary: Fetch spend plan admin via Alfred
+      tags:
+        - SpendPlans
+      responses:
+        '200':
+          $ref: '#/components/responses/GetSpendPlansAlfred'
+      operationId: get-spend-plan-alfred
+      x-stoplight:
+        id: bcm6n5euafnyb
+  /accounting/flexErrorCodes:
+    get:
+      summary: get flex error codes
+      tags:
+        - Generic
+      responses:
+        '200':
+          $ref: '#/components/responses/GetFlexErrorCodes'
+      operationId: getFlexErrorCodes
+      x-stoplight:
+        id: bcm6n2rtafnyb
+  /accounting/feeds/connection:
+    post:
+      summary: Create Intuit bank feed connection
+      tags:
+        - BankFeeds
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseLink'
+      operationId: post-accounting-feeds-connection
+      x-stoplight:
+        id: y3hlwcyi4qin5
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+  '/accounting/businesses/{businessId}/commerce/metrics':
+    parameters:
+      - schema:
+          type: string
+        name: businessId
+        in: path
+        required: true
+    get:
+      summary: Fetch all metrics for a business
+      tags:
+        - Commerce
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - links
+                properties:
+                  links:
+                    type: array
+                    x-stoplight:
+                      id: 5fgydos05n45o
+                    items:
+                      x-stoplight:
+                        id: qs85cd8jojwzw
+                      type: object
+                      required:
+                        - platform
+                        - metrics
+                      properties:
+                        platform:
+                          type: string
+                          x-stoplight:
+                            id: yg4upxf2jzp33
+                        metrics:
+                          type: object
+                          x-stoplight:
+                            id: zd42xe7w0ru6w
+                          required:
+                            - total_revenue
+                            - total_orders
+                            - active_customers
+                            - refund_rate
+                          properties:
+                            total_revenue:
+                              type: array
+                              x-stoplight:
+                                id: 0kgduwfh76if9
+                              items:
+                                $ref: '#/components/schemas/Metric'
+                                x-stoplight:
+                                  id: k61vdkhtbecmg
+                            total_orders:
+                              type: array
+                              x-stoplight:
+                                id: 2lp94ehukws9c
+                              items:
+                                $ref: '#/components/schemas/Metric'
+                                x-stoplight:
+                                  id: 7oaid02x1chv7
+                            active_customers:
+                              type: array
+                              x-stoplight:
+                                id: nikicnu9j7tlb
+                              items:
+                                $ref: '#/components/schemas/Metric'
+                                x-stoplight:
+                                  id: hecl4wxa65eny
+                            refund_rate:
+                              type: array
+                              x-stoplight:
+                                id: dryn6encx8c38
+                              items:
+                                $ref: '#/components/schemas/Metric'
+                                x-stoplight:
+                                  id: k0zdehehq58si
+      operationId: get-accounting-businesses-businessId-commerce-metrics
+      x-stoplight:
+        id: x0otb0sk2ybew
+  '/accounting/businesses/{businessId}/ads/campaigns/{campaignId}/dailies':
+    parameters:
+      - schema:
+          type: string
+        name: businessId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: campaignId
+        in: path
+        required: true
+    get:
+      summary: Fetch campaign dailes
+      tags:
+        - Ads
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - dailies
+                properties:
+                  platform:
+                    type: string
+                    x-stoplight:
+                      id: 5x02s0qfgk2n9
+                  dailies:
+                    type: array
+                    x-stoplight:
+                      id: ch5dsv9ayq3cy
+                    items:
+                      $ref: '#/components/schemas/Daily'
+                      x-stoplight:
+                        id: 5ceyv6w16xvne
+      operationId: get-accounting-businesses-businessId-ads-dailies
+      x-stoplight:
+        id: puwoiwrxrjjiw
+      parameters: []
+  '/accounting/businesses/{businessId}/ads/campaigns':
+    parameters:
+      - schema:
+          type: string
+        name: businessId
+        in: path
+        required: true
+    get:
+      summary: Fetch campaigns
+      tags:
+        - Ads
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - campaigns
+                properties:
+                  platform:
+                    type: string
+                    x-stoplight:
+                      id: s0h15xnohxp87
+                  campaigns:
+                    type: array
+                    x-stoplight:
+                      id: q5zcvlmuyo39l
+                    items:
+                      $ref: '#/components/schemas/Campaign'
+                      x-stoplight:
+                        id: oub1wrf6zzjem
+      operationId: get-accounting-businesses-businessId-ads-campaigns
+      x-stoplight:
+        id: j6xjr79pm2vun
+      parameters: []
+  /accounting/commerce/links:
+    get:
+      summary: Commerce links
+      tags:
+        - Commerce
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - links
+                properties:
+                  links:
+                    type: array
+                    x-stoplight:
+                      id: 8pgqg4jnolrka
+                    items:
+                      $ref: '#/components/schemas/CommerceLink'
+                      x-stoplight:
+                        id: q7q7sb297e6gq
+      operationId: get-accounting-commerce-links
+      x-stoplight:
+        id: p8yjl9d6hr9n4
+  /accounting/ads/links:
+    get:
+      summary: Advertising links
+      tags:
+        - Ads
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - links
+                properties:
+                  links:
+                    type: array
+                    x-stoplight:
+                      id: 0psupxif5vym4
+                    items:
+                      $ref: '#/components/schemas/AdsLink'
+                      x-stoplight:
+                        id: ady5vqhuat4xi
+      operationId: get-accounting-ads-links
+      x-stoplight:
+        id: dw2npsxg1buef
+components:
+  schemas:
+    WebhookLink:
+      title: WebhookLink
+      x-stoplight:
+        id: 6qxy7glgzq6hr
+      type: object
+      description: incoming webhook request for link
+      properties:
+        type:
+          type: string
+          x-stoplight:
+            id: esyq6tmeak6gq
+          enum:
+            - CONNECTION
+        code:
+          type: string
+          x-stoplight:
+            id: mffvsdhd7oj5n
+          enum:
+            - INITIAL_UPDATE
+            - CONNECTION_UPDATED
+        access_token:
+          type: string
+          x-stoplight:
+            id: fkwaz0ekemzik
+        connection_id:
+          type: string
+          x-stoplight:
+            id: 593kw89kw31nn
+        store_unique_id:
+          type: string
+          x-stoplight:
+            id: sehf0errcuoxi
+      required:
+        - type
+        - code
+        - access_token
+        - connection_id
+    WebhookVendor:
+      title: WebhookVendor
+      x-stoplight:
+        id: g7xxcfed1b3kr
+      type: object
+      description: incoming webhook for vendor
+      properties:
+        type:
+          type: string
+          x-stoplight:
+            id: wr5n1xtu2kh9w
+          enum:
+            - VENDOR
+        code:
+          type: string
+          x-stoplight:
+            id: ib87xa7zbcng3
+          enum:
+            - VENDOR_CREATED
+            - VENDOR_UPDATED
+        access_token:
+          type: string
+          x-stoplight:
+            id: 5nd0izi831228
+        connection_id:
+          type: string
+          x-stoplight:
+            id: w2h8azd5pmziw
+        vendor:
+          type: object
+          x-stoplight:
+            id: 8i6mveoa4ojdq
+      required:
+        - type
+        - code
+        - access_token
+        - connection_id
+        - vendor
+    WebhookAccount:
+      title: WebhookAccount
+      x-stoplight:
+        id: l3nj4s95304b2
+      type: object
+      description: incoming webhook for account
+      required:
+        - type
+        - code
+        - access_token
+        - connection_id
+        - account
+      properties:
+        type:
+          type: string
+          x-stoplight:
+            id: 0r95j3650advr
+          enum:
+            - ACCOUNT
+        code:
+          type: string
+          x-stoplight:
+            id: md8gdb0tnfagm
+          enum:
+            - ACCOUNT_CREATED
+            - ACCOUNT_UPDATED
+        access_token:
+          type: string
+          x-stoplight:
+            id: x1chxtqugjdnq
+        connection_id:
+          type: string
+          x-stoplight:
+            id: 3wneyb3az5opq
+        account:
+          type: object
+          x-stoplight:
+            id: oc20yywsctz9y
+    ExpenseLink:
+      title: ExpenseLink
+      x-stoplight:
+        id: stghildfj6qur
+      type: object
+      description: Expense link model.
+      required:
+        - connectionId
+        - platform
+        - isReady
+        - id
+        - status
+      properties:
+        connectionId:
+          type: string
+          x-stoplight:
+            id: t3wibnrehk2t3
+          description: Unique connection id to be sent back to server for susiquent calls.
+        platform:
+          type: string
+          x-stoplight:
+            id: 4zdon3to9cmqx
+          description: 'Unique string representing respective platform. i.e. QUICKBOOKS, NETSUITE, XERO.'
+        isReady:
+          type: boolean
+          x-stoplight:
+            id: 0tcfavn6em1h2
+          description: Boolean representing when an integration is ready for further action.
+        id:
+          type: string
+          x-stoplight:
+            id: s7gyi3f1p5e2e
+        modifiable:
+          type: boolean
+          x-stoplight:
+            id: d7e45oz8p95f7
+          description: If modifiable then expense records are allowed to PATCH.
+        syncPreferences:
+          type: string
+          x-stoplight:
+            id: js7uxucf0lcyq
+          description: |-
+            syncPreferences (undefined, autoSync, autoCategorization, manualCategorizaton)
+
+            If undefined than no preference has been selected.
+        accounts:
+          type: array
+          x-stoplight:
+            id: p3i5kfgtqpta5
+          description: Array of Chart of Accounts in respect to an accounting integrations to be used with expense line items.
+          items:
+            $ref: '#/components/schemas/Category'
+            x-stoplight:
+              id: 75pji80c2emhy
+        generalLedgers:
+          type: array
+          x-stoplight:
+            id: amneqk5my012u
+          description: Returns a list of eligible general ledgers of type credit card
+          items:
+            $ref: '#/components/schemas/GeneralLedger'
+            x-stoplight:
+              id: 2tiaig78bef6e
+        notifications:
+          $ref: '#/components/schemas/LinkNotification'
+          x-stoplight:
+            id: 7o5fyp5vpw3gy
+          description: General message when returned should be displayed on frontend for platform insight.
+        enabledBankFeeds:
+          type: boolean
+          x-stoplight:
+            id: ilo0n3gxjj9vy
+          description: Toggle on/off bank feeds.
+        enabledCreditFeeds:
+          type: boolean
+          x-stoplight:
+            id: brws22x8kv7yv
+          description: Toggle on/off credit feeds.
+        enabledExpenses:
+          type: boolean
+          x-stoplight:
+            id: bi5lif8jjgcqe
+          description: Toggle on/off expenses.
+        accountsPayableLedgers:
+          type: array
+          x-stoplight:
+            id: l5ap12m86wamr
+          items:
+            $ref: '#/components/schemas/GeneralLedger'
+            x-stoplight:
+              id: cd8g4tx1ao0js
+        enabledAccountsPayable:
+          type: boolean
+          x-stoplight:
+            id: ddbe2fuk9t8xn
+        status:
+          type: string
+          x-stoplight:
+            id: k3zga4y5rmfah
+    Accounts:
+      title: Accounts
+      x-stoplight:
+        id: ie1dq79l7m0qc
+      type: object
+      description: Account Types
+      required:
+        - type
+        - items
+      properties:
+        type:
+          type: string
+          x-stoplight:
+            id: 21p3envqd0ayp
+        items:
+          type: array
+          x-stoplight:
+            id: 25tulhmlgg6ho
+          items:
+            $ref: '#/components/schemas/Category'
+            x-stoplight:
+              id: azx4x6yu2dznp
+    Expenses:
+      title: Expenses
+      x-stoplight:
+        id: xi2nwkx57glv8
+      type: object
+      description: Expenses.
+      required:
+        - transactionId
+        - status
+      properties:
+        transactionId:
+          type: string
+          x-stoplight:
+            id: s3fkvs90061lc
+        expense:
+          type: object
+          x-stoplight:
+            id: ffvlobid2idld
+          properties:
+            id:
+              type: string
+              x-stoplight:
+                id: i5n0q4wsn36to
+            account:
+              $ref: '#/components/schemas/Category'
+              x-stoplight:
+                id: qyxqyzltqz6i6
+        description:
+          type: string
+          x-stoplight:
+            id: ckzs16qwrnv7m
+        status:
+          type: string
+          x-stoplight:
+            id: yoy6wufkbfsox
+          enum:
+            - notSynced
+            - queued
+            - failure
+            - synced
+        lock:
+          type: boolean
+          x-stoplight:
+            id: nwr87wqdcy3k4
+    Transactions:
+      title: Transactions
+      x-stoplight:
+        id: ui6eq7x5ubgfh
+      type: object
+      description: Transactions
+      properties:
+        transactionId:
+          type: string
+          x-stoplight:
+            id: 0hn51txalo47d
+        accountId:
+          type: string
+          x-stoplight:
+            id: zzj80e17fe90a
+      required:
+        - transactionId
+        - accountId
+    SyncedExpenses:
+      title: SyncedExpenses
+      x-stoplight:
+        id: jazaaid65elwh
+      type: object
+      properties:
+        accounts:
+          $ref: '#/components/schemas/Accounts'
+          x-stoplight:
+            id: gtxwt80rdjb2n
+        expenses:
+          x-stoplight:
+            id: bx2rn2thtgsgp
+          type: array
+          items:
+            $ref: '#/components/schemas/Expenses'
+            x-stoplight:
+              id: 9jfxlab6ob60i
+      required:
+        - expenses
+      description: Synced Expenses
+    Category:
+      title: Category
+      x-stoplight:
+        id: kv1wittyiz1om
+      type: object
+      description: Category and/or Account depending on end user platform
+      required:
+        - id
+        - name
+        - defaultCategory
+        - accountType
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: lfk53hab71vrn
+        name:
+          type: string
+          x-stoplight:
+            id: m0c3m0usbme4j
+        nominalCode:
+          type: string
+          x-stoplight:
+            id: h8orlgs2z0bee
+        defaultCategory:
+          type: boolean
+          x-stoplight:
+            id: punmv8qpbfk6b
+        accountType:
+          type: string
+          x-stoplight:
+            id: xo7i2awdivakq
+          description: |
+            types could be accounts_payable, accounts_receivable, bank, fixed_asset, liability, equity, expense, etc...
+        displayName:
+          type: string
+          x-stoplight:
+            id: gv0vwadw9n4h2
+        visible:
+          type: boolean
+          x-stoplight:
+            id: fto1oz2stg0nz
+        platformData:
+          type: object
+          x-stoplight:
+            id: z8iydz6e2nnh0
+          properties:
+            fullQualifiedName:
+              type: string
+              x-stoplight:
+                id: 6j0jd5nbtrwnw
+            subTitle:
+              type: array
+              x-stoplight:
+                id: f4w8dx25zyl7j
+              items:
+                x-stoplight:
+                  id: fuyf4oqxx6l8c
+                type: string
+    WebhookJob:
+      title: WebhookJob
+      x-stoplight:
+        id: qvbbumpz7wchp
+      type: object
+      description: Webhoook to process a queued job.
+      required:
+        - type
+        - code
+        - access_token
+        - connection_id
+        - job
+      properties:
+        type:
+          type: string
+          x-stoplight:
+            id: 7it305y5oga4r
+          enum:
+            - JOB
+        code:
+          type: string
+          x-stoplight:
+            id: 9fvbbj63epujv
+          enum:
+            - JOB_COMPLETED
+        access_token:
+          type: string
+          x-stoplight:
+            id: 4ioi8wsoiokb5
+        connection_id:
+          type: string
+          x-stoplight:
+            id: okc2tdofq42x2
+        job:
+          type: object
+          x-stoplight:
+            id: lfrm57x4ojc8v
+    ExpenseMetrics:
+      title: Metrics
+      x-stoplight:
+        id: k793i2khcrndv
+      type: object
+      description: Top level metrics object.
+      required:
+        - links
+      properties:
+        links:
+          type: array
+          x-stoplight:
+            id: b5l85lfq5hmi4
+          items:
+            x-stoplight:
+              id: v9hah1vik8iso
+            type: object
+            required:
+              - link
+              - categories
+              - vendors
+              - meta
+            properties:
+              link:
+                $ref: '#/components/schemas/ExpenseMetricsLink'
+                x-stoplight:
+                  id: 6gq00ak9a9buw
+              categories:
+                type: array
+                x-stoplight:
+                  id: i1mqx1zwfiqse
+                items:
+                  $ref: '#/components/schemas/ExpenseMetricsCategories'
+                  x-stoplight:
+                    id: wp6xxzm2z0qo6
+              vendors:
+                type: array
+                x-stoplight:
+                  id: 8pslo3zjn477o
+                items:
+                  $ref: '#/components/schemas/ExpenseMetricsVendors'
+                  x-stoplight:
+                    id: wn6u65sb3h35x
+              meta:
+                $ref: '#/components/schemas/ExpenseMetricsMeta'
+                x-stoplight:
+                  id: 0zr2o3qskcght
+              transactions:
+                type: array
+                x-stoplight:
+                  id: z5u003th7gaye
+                items:
+                  $ref: '#/components/schemas/ExpenseMetricsTransactions'
+                  x-stoplight:
+                    id: n240c9gymwxan
+    ExpenseMetricsLink:
+      title: ExpenseMetricsLink
+      x-stoplight:
+        id: b3d6wo1215kjd
+      type: object
+      description: Link properties
+      required:
+        - id
+        - connectionId
+        - isReady
+        - platform
+        - status
+        - integrationDate
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: 33u07w9k2n2mc
+        connectionId:
+          type: string
+          x-stoplight:
+            id: w7ss2f2zi93ng
+        isReady:
+          type: boolean
+          x-stoplight:
+            id: bdndn8s52j03o
+        platform:
+          type: string
+          x-stoplight:
+            id: hdxtbuuat5xga
+          enum:
+            - QUICKBOOKS
+            - NETSUITE
+            - XERO
+        status:
+          type: string
+          x-stoplight:
+            id: 5oo24odj1lzao
+          enum:
+            - active
+            - disabled
+        syncPreferences:
+          type: string
+          x-stoplight:
+            id: 7fimhq1zceakw
+          enum:
+            - autoSync
+            - autoCategorization
+            - manualCategorization
+        integrationDate:
+          type: string
+          x-stoplight:
+            id: maqdgc2soixbp
+    ExpenseMetricsCategories:
+      title: ExpenseMetricsCategories
+      x-stoplight:
+        id: inueemrspu8bn
+      type: object
+      description: Category properties.
+      required:
+        - id
+        - name
+        - defaultCategory
+        - accountType
+        - platformId
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: wemefbbmxlyw5
+        name:
+          type: string
+          x-stoplight:
+            id: ybx3ib8bfppma
+        defaultCategory:
+          type: boolean
+          x-stoplight:
+            id: 0v1noiqr1jdfi
+        accountType:
+          type: string
+          x-stoplight:
+            id: 333inkzt62rxe
+        platformId:
+          type: string
+          x-stoplight:
+            id: 5beva3jnsan5o
+    ExpenseMetricsVendors:
+      title: ExpenseMetricsVendors
+      x-stoplight:
+        id: 79m58bxc6bf4s
+      type: object
+      required:
+        - id
+        - name
+        - platformId
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: b4s4spimubfp1
+        name:
+          type: string
+          x-stoplight:
+            id: yku12ysz4wd1n
+        contactName:
+          type: string
+          x-stoplight:
+            id: 9dnqpos69qvmc
+        platformId:
+          type: string
+          x-stoplight:
+            id: cowsc9ddi4hj4
+      description: Vendor properties.
+    ExpenseMetricsMeta:
+      title: ExpenseMetricsMeta
+      x-stoplight:
+        id: xvgi3t95h9n0a
+      type: object
+      description: Misc metrics on transactions.
+      required:
+        - transactionsSynced
+        - autoSynced
+        - autoCategorizationsSynced
+        - manualCategorizationsSynced
+      properties:
+        transactionsSynced:
+          type: number
+          x-stoplight:
+            id: 45wqzdnpa2ud9
+        autoSynced:
+          type: number
+          x-stoplight:
+            id: bbwn7z49jozs0
+        autoCategorizationsSynced:
+          type: number
+          x-stoplight:
+            id: nbe9o24wj9yjb
+        manualCategorizationsSynced:
+          type: number
+          x-stoplight:
+            id: us6eayscbtjjy
+        lastSynced:
+          type: string
+          x-stoplight:
+            id: qkzj0l9cb36bw
+    ExpenseMetricsTransactions:
+      title: ExpenseMetricsTransactions
+      x-stoplight:
+        id: 930gxqcdholtg
+      type: object
+      description: Auto Sync Transaction properties.
+      required:
+        - id
+        - status
+        - purchaseDate
+        - transactionStatus
+        - origin
+        - cardId
+        - byUser
+        - cardType
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: glfyq8vlban7s
+        syncPreference:
+          type: string
+          x-stoplight:
+            id: vve5vfu8sz0f3
+          enum:
+            - autoSync
+            - autoCategorization
+            - manualCategorization
+        status:
+          type: string
+          x-stoplight:
+            id: pr5jt1et4uztt
+          enum:
+            - notSynced
+            - queued
+            - failure
+            - synced
+        syncedAt:
+          type: string
+          x-stoplight:
+            id: t7t3lb16n5zib
+        failureReason:
+          type: string
+          x-stoplight:
+            id: y4150d2y6hgjz
+        category:
+          type: object
+          x-stoplight:
+            id: 2tirc2dlpp5qx
+          required:
+            - id
+            - name
+          properties:
+            id:
+              type: string
+              x-stoplight:
+                id: avtnhb62nt3yk
+            name:
+              type: string
+              x-stoplight:
+                id: 515m9j1zqlige
+        purchaseDate:
+          type: string
+          x-stoplight:
+            id: 1fd88z9v9f2nd
+        vendor:
+          type: object
+          x-stoplight:
+            id: pl8akjbcqjq4v
+          required:
+            - id
+            - name
+          properties:
+            id:
+              type: string
+              x-stoplight:
+                id: sfxqbsxcqo0oc
+            name:
+              type: string
+              x-stoplight:
+                id: 531touil3nu92
+        transactionStatus:
+          type: string
+          x-stoplight:
+            id: 3mdha1w8yysyh
+          enum:
+            - pending
+            - voided
+            - settling
+            - settled
+            - bounced
+            - declined
+            - expired
+            - unknown
+        origin:
+          type: string
+          x-stoplight:
+            id: y25k6018n6cvl
+          enum:
+            - debit
+            - credit
+            - bnpl
+            - unknown
+        cardId:
+          type: string
+          x-stoplight:
+            id: s7lpq415snrcg
+        byUser:
+          type: string
+          x-stoplight:
+            id: nj8o17r4i2xx7
+        cardType:
+          type: string
+          x-stoplight:
+            id: bml1za1hzkcpu
+          enum:
+            - virtual
+            - physical
+            - unknown
+        amount:
+          type: number
+          x-stoplight:
+            id: hr612cz8wwtib
+    Card:
+      title: Card
+      x-stoplight:
+        id: nkn0sfy8zvidd
+      type: object
+      description: Mapping of card to category
+      required:
+        - id
+        - category
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: 1z6e86pn2gaax
+        cardId:
+          type: string
+          x-stoplight:
+            id: 6z7grmgke7tgf
+        userId:
+          type: string
+          x-stoplight:
+            id: 051f6hd2dlauz
+        cardName:
+          type: string
+          x-stoplight:
+            id: pv7ccpakai3lt
+        category:
+          $ref: '#/components/schemas/Category'
+          x-stoplight:
+            id: h697bvf6ff0xc
+    CreateSpendPlan:
+      title: CreateSpendPlan
+      x-stoplight:
+        id: jvs9y3fjsk5f9
+      type: object
+      required:
+        - name
+        - frequency
+        - limit
+        - initialLimit
+        - managers
+        - members
+        - allowedRutterCategories
+        - blockedRutterCategories
+        - allowedMccs
+        - blockedMccs
+        - receiptsRequired
+      properties:
+        name:
+          type: string
+          x-stoplight:
+            id: djguc96844r0m
+        description:
+          type: string
+          x-stoplight:
+            id: mo00gmexr484t
+        frequency:
+          type: string
+          x-stoplight:
+            id: ltms35g70g786
+          enum:
+            - onetime
+            - daily
+            - weekly
+            - monthly
+            - quarterly
+            - annually
+        limit:
+          type: number
+          x-stoplight:
+            id: qxnq9sz5bgwii
+        initialLimit:
+          type: number
+          x-stoplight:
+            id: ykg0wovwl37le
+        expirationDate:
+          type: string
+          format: date
+          x-stoplight:
+            id: flnelmd4o33gh
+        managers:
+          type: array
+          x-stoplight:
+            id: sdq7bfcfevr4k
+          description: Contains the manager details
+          items:
+            $ref: '#/components/schemas/SpendPlanMember'
+            x-stoplight:
+              id: qs63gap4pdl05
+        members:
+          type: array
+          x-stoplight:
+            id: slx1an3jk49fj
+          description: Contains the member details
+          items:
+            $ref: '#/components/schemas/SpendPlanMember'
+            x-stoplight:
+              id: qs63gap4pdl04
+        allowedRutterCategories:
+          type: array
+          x-stoplight:
+            id: 4x48v9t2rfrgn
+          description: Spend plan may only assign a transaction to these accounting categories
+          items:
+            x-stoplight:
+              id: jcknpf7zva1y2
+            type: string
+        blockedRutterCategories:
+          type: array
+          x-stoplight:
+            id: 4x48v9t2rfrgm
+          description: Spend plan may not assign a transaction to these accounting categories
+          items:
+            x-stoplight:
+              id: jcknpf7zva1y3
+            type: string
+        allowedMccs:
+          type: array
+          x-stoplight:
+            id: d1hfkzdecn9jf
+          description: MCC codes of allowed merchants
+          items:
+            x-stoplight:
+              id: 5ahkl1s4p093u
+            type: string
+        blockedMccs:
+          type: array
+          x-stoplight:
+            id: g8mjaerg61ei1
+          description: MCC codes of blocked merchants
+          items:
+            x-stoplight:
+              id: duwasdreskkb9
+            type: string
+        receiptsRequired:
+          type: boolean
+          x-stoplight:
+            id: 5kho169o7xdqw
+        receiptRequiredThreshold:
+          type: number
+          x-stoplight:
+            id: or1szmdzz2clo
+          description: if null then all transactions require receipts
+    UpdateSpendPlan:
+      title: UpdateSpendPlan
+      x-stoplight:
+        id: jvs9y3fjsk5f0
+      type: object
+      required:
+        - name
+        - frequency
+        - limit
+        - initialLimit
+        - allowedRutterCategories
+        - blockedRutterCategories
+        - allowedMccs
+        - blockedMccs
+        - receiptsRequired
+        - members
+        - managers
+      properties:
+        name:
+          type: string
+          x-stoplight:
+            id: djguc96844r01
+        description:
+          type: string
+          x-stoplight:
+            id: mo00gmexr4842
+        frequency:
+          type: string
+          x-stoplight:
+            id: ltms35g70g783
+          enum:
+            - onetime
+            - daily
+            - weekly
+            - monthly
+            - quarterly
+            - annually
+        limit:
+          type: number
+          x-stoplight:
+            id: qxnq9sz5bgwi4
+        initialLimit:
+          type: number
+          x-stoplight:
+            id: ykg0wovwl37l5
+        expirationDate:
+          type: string
+          x-stoplight:
+            id: flnelmd4o33g6
+        allowedRutterCategories:
+          type: array
+          x-stoplight:
+            id: 4x48v9t2rfrg7
+          description: Spend plan may only assign a transaction to these accounting categories
+          items:
+            x-stoplight:
+              id: jcknpf7zva1y8
+            type: string
+        blockedRutterCategories:
+          type: array
+          x-stoplight:
+            id: 4x48v9t2rfrg9
+          description: Spend plan may not assign a transaction to these accounting categories
+          items:
+            x-stoplight:
+              id: jcknpf7zva1y0
+            type: string
+        allowedMccs:
+          type: array
+          x-stoplight:
+            id: d1hfkzdecn9j1
+          description: MCC codes of allowed merchants
+          items:
+            x-stoplight:
+              id: 5ahkl1s4p0932
+            type: string
+        blockedMccs:
+          type: array
+          x-stoplight:
+            id: g8mjaerg61ei3
+          description: MCC codes of blocked merchants
+          items:
+            x-stoplight:
+              id: duwasdreskkb4
+            type: string
+        receiptsRequired:
+          type: boolean
+          x-stoplight:
+            id: 5kho169o7xdq5
+        receiptRequiredThreshold:
+          type: number
+          x-stoplight:
+            id: or1szmdzz2cl6
+          description: if null then all transactions require receipts
+        managers:
+          type: array
+          x-stoplight:
+            id: sdq7bfcfevr4k
+          description: Contains the manager details
+          items:
+            $ref: '#/components/schemas/SpendPlanMember'
+            x-stoplight:
+              id: qs63gap4pdl05
+        members:
+          type: array
+          x-stoplight:
+            id: slx1an3jk49fj
+          description: Contains the member details
+          items:
+            $ref: '#/components/schemas/SpendPlanMember'
+            x-stoplight:
+              id: qs63gap4pdl04
+    SpendPlanMember:
+      title: SpendPlanMember
+      x-stoplight:
+        id: zyyrj2eg46x9e
+      type: object
+      required:
+        - personId
+        - repeatFundsAccess
+        - fullFundsAccess
+      properties:
+        personId:
+          type: string
+          x-stoplight:
+            id: 8jziwx9d6i4zc
+          format: uuid
+        repeatFundsAccess:
+          type: boolean
+          x-stoplight:
+            id: 69tszhgg16iqc
+          description: Will the spend plan amount renew for this person
+        fullFundsAccess:
+          type: boolean
+          x-stoplight:
+            id: 8dj6ya9674gpj
+        limit:
+          type: number
+          x-stoplight:
+            id: vbv5sgz1k9pnh
+        initialLimit:
+          type: number
+          x-stoplight:
+            id: 8dj6ya9674gph
+    SpendPlanAdminView:
+      title: SpendPlanAdminView
+      x-stoplight:
+        id: qnxo85vxjux5y
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - limit
+        - assigned
+        - initialLimit
+        - managers
+        - members
+        - spent
+        - remaining
+        - frequency
+        - usage
+        - isPlanActive
+        - allowedRutterCategories
+        - blockedRutterCategories
+        - allowedMccs
+        - blockedMccs
+        - createdAt
+        - entries
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: ohn8doknuod72
+          format: uuid
+        name:
+          type: string
+          x-stoplight:
+            id: km534jzmttehq
+        description:
+          type: string
+          x-stoplight:
+            id: r7m67ra1jltz7
+        limit:
+          type: number
+          x-stoplight:
+            id: 87f6shzp3fd06
+        assigned:
+          type: number
+          x-stoplight:
+            id: 7ayx0vpyzydhg
+        initialLimit:
+          type: number
+          x-stoplight:
+            id: ykg0wovwl37po
+        expirationDate:
+          type: string
+          format: date
+          x-stoplight:
+            id: flnelmd4o31de
+        managers:
+          type: array
+          x-stoplight:
+            id: sdq7bfcfev07k
+          description: Contains the manager details
+          items:
+            $ref: '#/components/schemas/SpendPlanLimit'
+            x-stoplight:
+              id: qs63gapabcd24
+        members:
+          type: array
+          x-stoplight:
+            id: slx1an3jk40jk
+          description: Contains the member details
+          items:
+            $ref: '#/components/schemas/SpendPlanLimit'
+            x-stoplight:
+              id: qs63gap4abcd23
+        spent:
+          type: number
+          x-stoplight:
+            id: 24brv8f1swypa
+        remaining:
+          type: number
+          x-stoplight:
+            id: exm9rpq8qkdvb
+        frequency:
+          type: string
+          x-stoplight:
+            id: vcq3f107x0qjt
+          enum:
+            - onetime
+            - daily
+            - weekly
+            - monthly
+            - quarterly
+            - annually
+        usage:
+          type: string
+          x-stoplight:
+            id: qfa4zb6dyn8e6
+          enum:
+            - near limit
+            - overspent
+            - no funds remaining
+            - normal
+        isPlanActive:
+          type: boolean
+          x-stoplight:
+            id: yjwz4hag503zg
+        allowedRutterCategories:
+          type: array
+          x-stoplight:
+            id: 4x48v9t2rfaaa
+          description: Spend plan may only assign a transaction to these accounting categories
+          items:
+            x-stoplight:
+              id: jcknpf7zvaaab
+            type: string
+        blockedRutterCategories:
+          type: array
+          x-stoplight:
+            id: 4x48v9t2rfaac
+          description: Spend plan may not assign a transaction to these accounting categories
+          items:
+            x-stoplight:
+              id: jcknpf7zvaaad
+            type: string
+        allowedMccs:
+          type: array
+          x-stoplight:
+            id: d1hfkzdecnaae
+          description: MCC codes of allowed merchants
+          items:
+            x-stoplight:
+              id: 5ahkl1s4p0aaf
+            type: string
+        blockedMccs:
+          type: array
+          x-stoplight:
+            id: g8mjaerg61aag
+          description: MCC codes of blocked merchants
+          items:
+            x-stoplight:
+              id: duwasdresaah
+            type: string
+        createdAt:
+          type: string
+          x-stoplight:
+            id: d5fwvbtj76aai
+          format: date
+        entries:
+          type: array
+          x-stoplight:
+            id: ez6r6114c28v8
+          items:
+            x-stoplight:
+              id: ltweahjt61s17
+            type: object
+            required:
+              - invoiceId
+              - entryId
+              - amount
+              - date
+            properties:
+              invoiceId:
+                type: string
+                x-stoplight:
+                  id: 3x406pairwa3q
+              entryId:
+                type: string
+                x-stoplight:
+                  id: ems65iuv6q2mx
+              amount:
+                type: string
+                x-stoplight:
+                  id: g75ctyeyt2k62
+              date:
+                type: string
+                x-stoplight:
+                  id: 38tmu1kbjt66o
+    SpendPlanView:
+      title: SpendPlanView
+      x-stoplight:
+        id: xxh9rr9bgtrf6
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - limit
+        - spent
+        - remaining
+        - frequency
+        - usage
+        - isPlanActive
+        - allowedRutterCategories
+        - blockedRutterCategories
+        - allowedMccs
+        - blockedMccs
+        - createdAt
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: kuwb40jt8796g
+          format: uuid
+        name:
+          type: string
+          x-stoplight:
+            id: shy37f8sggv0u
+        description:
+          type: string
+          x-stoplight:
+            id: elkcznz9387vu
+        limit:
+          type: number
+          x-stoplight:
+            id: 27wvjuuayy9fi
+        spent:
+          type: number
+          x-stoplight:
+            id: 7cv0ew4dfrytu
+        remaining:
+          type: number
+          x-stoplight:
+            id: 11nx8t8digvxe
+        frequency:
+          type: string
+          x-stoplight:
+            id: ovf1m8sbid9rt
+          enum:
+            - onetime
+            - daily
+            - weekly
+            - monthly
+            - quarterly
+            - annually
+        usage:
+          type: string
+          x-stoplight:
+            id: eqz81pfgqtvdx
+          enum:
+            - near limit
+            - overspent
+            - no funds remaining
+            - normal
+        isPlanActive:
+          type: boolean
+          x-stoplight:
+            id: qm23abn42kd95
+        assigned:
+          type: number
+          x-stoplight:
+            id: h6tk8way4omep
+        allowedRutterCategories:
+          type: array
+          x-stoplight:
+            id: 4x48v9t2rfabb
+          description: Spend plan may only assign a transaction to these accounting categories
+          items:
+            x-stoplight:
+              id: jcknpf7zvaabc
+            type: string
+        blockedRutterCategories:
+          type: array
+          x-stoplight:
+            id: 4x48v9t2rfaba
+          description: Spend plan may not assign a transaction to these accounting categories
+          items:
+            x-stoplight:
+              id: jcknpf7zvaabd
+            type: string
+        allowedMccs:
+          type: array
+          x-stoplight:
+            id: d1hfkzdecnabe
+          description: MCC codes of allowed merchants
+          items:
+            x-stoplight:
+              id: 5ahkl1s4p0abf
+            type: string
+        blockedMccs:
+          type: array
+          x-stoplight:
+            id: g8mjaerg61abg
+          description: MCC codes of blocked merchants
+          items:
+            x-stoplight:
+              id: duwasdreskabh
+            type: string
+        createdAt:
+          type: string
+          x-stoplight:
+            id: d5fwvbtj76abi
+          format: date
+        expirationDate:
+          type: string
+          x-stoplight:
+            id: d5fwvbtj76abj
+          format: date
+    SpendPlanUsageTransaction:
+      title: SpendPlanUsageTransaction
+      x-stoplight:
+        id: i1316si037w2s
+      type: object
+      required:
+        - date
+        - amount
+      properties:
+        date:
+          type: string
+          x-stoplight:
+            id: d5fwvbtj76p9x
+          format: date
+        amount:
+          type: string
+          x-stoplight:
+            id: b0ld5ktu7fnrj
+    SpendPlanLimit:
+      title: SpendPlanLimit
+      x-stoplight:
+        id: qe1qmhyefqm8e
+      type: object
+      required:
+        - personId
+        - personName
+        - personEmail
+        - repeatFundAccess
+        - fullFundAccess
+        - initialLimit
+        - futureLimit
+        - limit
+        - spent
+        - remaining
+      properties:
+        personId:
+          type: string
+          x-stoplight:
+            id: mxefmfnzfnw0b
+          format: uuid
+        personName:
+          type: string
+          x-stoplight:
+            id: bu1zvr1ctf6nh
+        personEmail:
+          type: string
+          x-stoplight:
+            id: krasf13hbfdy6
+        repeatFundAccess:
+          type: boolean
+          x-stoplight:
+            id: r79xgbwimu2rr
+        fullFundAccess:
+          type: boolean
+          x-stoplight:
+            id: r79xgbwimu2rs
+        limit:
+          type: number
+          x-stoplight:
+            id: zd4elewijhbjd
+        initialLimit:
+          type: number
+          x-stoplight:
+            id: 27i0j849bt12z
+        futureLimit:
+          type: number
+          x-stoplight:
+            id: 27i0j849b1231
+        spent:
+          type: number
+          x-stoplight:
+            id: 27i0j849bt13f
+        remaining:
+          type: number
+          x-stoplight:
+            id: 27i0j849bt14a
+    SpendPlanCard:
+      title: SpendPlanCard
+      x-stoplight:
+        id: jhz7784a1l01m
+      type: object
+      required:
+        - personId
+        - personName
+        - cardName
+        - cardId
+        - limit
+        - initialLimit
+        - spent
+        - repeatFundsAccess
+        - isPlanManager
+        - remainingPtd
+        - email
+        - fullFundsAccess
+      properties:
+        personId:
+          type: string
+          x-stoplight:
+            id: eprp6k8lk1brt
+          format: uuid
+        personName:
+          type: string
+          x-stoplight:
+            id: e5va2ctiuxsek
+        cardName:
+          type: string
+          x-stoplight:
+            id: 1ko441oenpuay
+        cardId:
+          type: string
+          x-stoplight:
+            id: epsp6k8lk1brs
+          format: uuid
+        limit:
+          type: number
+          x-stoplight:
+            id: plmvxz2om8gpy
+        initialLimit:
+          type: number
+          x-stoplight:
+            id: zcwdam339qd0j
+        spent:
+          type: number
+          x-stoplight:
+            id: q86tjxjsekea4
+        repeatFundsAccess:
+          type: boolean
+          x-stoplight:
+            id: 14zcnuq0x3o4s
+        isPlanManager:
+          type: boolean
+          x-stoplight:
+            id: 14zcnuq0x3o4n
+        remainingPtd:
+          type: number
+          x-stoplight:
+            id: 14zcnuq0x3o4l
+        email:
+          type: string
+          x-stoplight:
+            id: 14zcnuq0x3o4x
+        fullFundsAccess:
+          type: boolean
+          x-stoplight:
+            id: 14zcnerax3o4x
+    SpendPlanTransaction:
+      title: SpendPlanTransaction
+      x-stoplight:
+        id: n5krmcxtzgoqy
+      type: object
+      description: Transaction data for spend plan
+      properties:
+        date:
+          type: string
+          x-stoplight:
+            id: htag9mur09eyj
+          format: date
+        who:
+          type: string
+          x-stoplight:
+            id: 43ni3tz8alb24
+        amount:
+          type: string
+          x-stoplight:
+            id: p5pnxatfpbhal
+        docId:
+          type: string
+          x-stoplight:
+            id: cs5c4r071093c
+          format: uuid
+        id:
+          type: string
+          x-stoplight:
+            id: 5fze38idw7e6k
+          format: uuid
+        paymentMethod:
+          type: string
+          x-stoplight:
+            id: n67d85qbgl6hd
+        last4:
+          type: string
+          x-stoplight:
+            id: 4fghutit0eize
+        transaction:
+          type: string
+          x-stoplight:
+            id: 3pze7vkp2v05w
+        status:
+          type: string
+          x-stoplight:
+            id: 2d6caai2qg6ys
+        category:
+          type: string
+          x-stoplight:
+            id: 9t1y03k6j1bbi
+      required:
+        - date
+        - who
+        - amount
+        - id
+    AccountingFlexErrorCodes:
+      title: AccountingFlexErrorCodes
+      x-stoplight:
+        id: n9oy03byx0ue7
+      enum:
+        - SPEND_PLANS_PLAN_NOT_EXIST
+        - SPEND_PLANS_CALLER_NOT_MEMBER
+        - SPEND_PLANS_GENERIC_CREATE_ERROR
+        - SPEND_PLANS_CARDS_ID_NOT_FOUND
+        - SPEND_PLANS_INVALID_AMOUNTS
+        - SPEND_PLANS_ASSIGN_INVOICE_TO_PLAN
+        - SPEND_PLANS_NO_PLAN_VALUE
+        - SPEND_PLANS_ASSIGNED_VALUE_OVER_PLAN_VALUE
+        - SPEND_PLANS_INVALID_MCC_COMBINATION
+        - SPEND_PLANS_INVALID_ACCOUNTING_CATEGORY_COMBINATION
+        - SPEND_PLANS_ALREADY_EXPIRED
+        - SPEND_PLANS_INVALID_LINK_AMOUNTS
+        - SPEND_PLANS_INVALID_LINK_AMOUNTS_FULL_FUNDS
+      description: Flex Error Code keys that the accounting endpoints may return
+    AccountingSettings:
+      title: AccountingSettings
+      x-stoplight:
+        id: 9loy1tsewnzkv
+      type: object
+      description: controls various integration settings
+      properties:
+        bankFeeds:
+          type: object
+          x-stoplight:
+            id: 6wa8504f4a4wv
+          properties:
+            enabled:
+              type: boolean
+              x-stoplight:
+                id: nzm2yc0csxhf3
+        expenses:
+          type: object
+          x-stoplight:
+            id: 4lvaqw6kz0rxv
+          properties:
+            enabled:
+              type: boolean
+              x-stoplight:
+                id: jo9zuu8e2n431
+            generalLedger:
+              type: string
+              x-stoplight:
+                id: 2oluqxzaf81g4
+            syncPreferences:
+              type: object
+              x-stoplight:
+                id: 9o7v60e4cnrfv
+              properties:
+                syncPreference:
+                  type: string
+                  x-stoplight:
+                    id: u2598y3agg2dx
+                  enum:
+                    - autoSync
+                    - autoCategorization
+                    - manualCategorization
+                accountId:
+                  type: string
+                  x-stoplight:
+                    id: 17na8vx5fhzpg
+        creditFeeds:
+          type: object
+          x-stoplight:
+            id: 6zllnkrr5d6rl
+          properties:
+            enabled:
+              type: boolean
+              x-stoplight:
+                id: wsebova3ov5tl
+        accountsPayable:
+          type: object
+          x-stoplight:
+            id: n3b4hi3t0qc2l
+          properties:
+            enabled:
+              type: boolean
+              x-stoplight:
+                id: 6c7dagdz79ok6
+            generalLedger:
+              type: string
+              x-stoplight:
+                id: d5i3lozc5janf
+    LinkNotification:
+      title: LinkNotification
+      x-stoplight:
+        id: 2o69g7l9coy67
+      type: object
+      properties:
+        link:
+          type: object
+          x-stoplight:
+            id: coto1zz59mcwd
+          required:
+            - message
+            - type
+          properties:
+            message:
+              type: string
+              x-stoplight:
+                id: 4fp6zu0aftn1j
+            type:
+              type: string
+              x-stoplight:
+                id: m8l43oo2l6fl9
+              enum:
+                - error
+                - warning
+                - notification
+        expenses:
+          type: object
+          x-stoplight:
+            id: oxo7okpff0bzb
+          required:
+            - message
+            - type
+          properties:
+            message:
+              type: string
+              x-stoplight:
+                id: ig09pi9dvqpe0
+            type:
+              type: string
+              x-stoplight:
+                id: 7zo6efug3g7bb
+              enum:
+                - error
+                - warning
+                - notification
+        bankfeeds:
+          type: object
+          x-stoplight:
+            id: g0jxcjm3nj8cx
+          required:
+            - message
+            - type
+          properties:
+            message:
+              type: string
+              x-stoplight:
+                id: be98id2md4xy3
+            type:
+              type: string
+              x-stoplight:
+                id: qgvmj3vzsihhb
+              enum:
+                - error
+                - warning
+                - notification
+        accountsPayable:
+          type: object
+          x-stoplight:
+            id: 1vr7aw9ik0cpz
+          required:
+            - message
+            - type
+          properties:
+            message:
+              type: string
+              x-stoplight:
+                id: g0rgq2iyf59zv
+            type:
+              x-stoplight:
+                id: ztfhs2pdpt86m
+              enum:
+                - error
+                - warning
+                - notification
+    GeneralLedger:
+      title: GeneralLedger
+      x-stoplight:
+        id: x0tzaqequ8rhk
+      type: object
+      required:
+        - id
+        - name
+        - defaultGeneralLedger
+        - accountType
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: 0k5qql1cix0v9
+        name:
+          type: string
+          x-stoplight:
+            id: gk2iv5pio1hxm
+        nominalCode:
+          type: string
+          x-stoplight:
+            id: 34l8feju5uawf
+        defaultGeneralLedger:
+          type: boolean
+          x-stoplight:
+            id: u6jnc8v1s7sid
+        accountType:
+          type: string
+          x-stoplight:
+            id: uo1lufpva2e0x
+        platformData:
+          type: object
+          x-stoplight:
+            id: gosc4nxiel69b
+          properties:
+            accountType:
+              type: string
+              x-stoplight:
+                id: 8ql0j3dptazkl
+            fullQualifiedName:
+              type: string
+              x-stoplight:
+                id: 0c7ii02ifckq6
+            name:
+              type: string
+              x-stoplight:
+                id: kovwx47lwv712
+            subAccount:
+              type: boolean
+              x-stoplight:
+                id: e80h6q8k3cvob
+    Connection:
+      title: Connection
+      x-stoplight:
+        id: 25ujdrlsekmys
+      type: object
+      required:
+        - id
+        - platform
+        - storeUniqueId
+        - needsUpdate
+        - disabled
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: p4a4r60pr2mqj
+        platform:
+          type: string
+          x-stoplight:
+            id: oa3oiqkud8jpb
+        storeUniqueId:
+          type: string
+          x-stoplight:
+            id: f8khnusrsbsyy
+        needsUpdate:
+          type: boolean
+          x-stoplight:
+            id: 5cschuyacp116
+        disabled:
+          type: boolean
+          x-stoplight:
+            id: kzvj98re413v6
+        disabledReason:
+          type: string
+          x-stoplight:
+            id: m09shz0jnrqqs
+        linkUrl:
+          type: string
+          x-stoplight:
+            id: xsk43w3lau08q
+        lastSyncCompletedAt:
+          type: string
+          x-stoplight:
+            id: 3q76gdizkta2x
+        lastSyncStartedAt:
+          type: string
+          x-stoplight:
+            id: oo5rkx0folmki
+      description: Connection Link Object
+    CommerceMetric:
+      title: CommerceMetric
+      x-stoplight:
+        id: cmvl2iuc6ea6w
+      type: object
+      description: Commerce Integration Metrics
+      required:
+        - checkpoint
+        - value
+        - startDate
+        - endDate
+        - id
+        - metric
+      properties:
+        checkpoint:
+          type: string
+          x-stoplight:
+            id: 5ex0cbblv4ijt
+        currency:
+          type: string
+          x-stoplight:
+            id: fgu16u5yk0e66
+        value:
+          type: string
+          x-stoplight:
+            id: wy3u5disykta4
+        startDate:
+          type: string
+          x-stoplight:
+            id: klw1tazxjk7o7
+        endDate:
+          type: string
+          x-stoplight:
+            id: 9lrcp5y3psp4p
+        id:
+          type: string
+          x-stoplight:
+            id: t7jff78x2g3e0
+        metric:
+          type: string
+          x-stoplight:
+            id: tjge8qxd3h4r5
+    SpendPlansAdminDetails:
+      title: SpendPlansAdminDetails
+      x-stoplight:
+        id: u90iiigmak6qg
+      type: object
+      properties:
+        cards:
+          x-stoplight:
+            id: 44tdr6xftcyu5
+          type: array
+          items:
+            $ref: '#/components/schemas/SpendPlanCard'
+            x-stoplight:
+              id: e0txn87s3g1gp
+        limits:
+          x-stoplight:
+            id: famy1s5u0ug96
+          type: array
+          items:
+            $ref: '#/components/schemas/SpendPlanLimit'
+            x-stoplight:
+              id: l5u6oi2teppfy
+        transactions:
+          type: array
+          x-stoplight:
+            id: hbrjxjfsjovsl
+          items:
+            $ref: '#/components/schemas/SpendPlanTransaction'
+            x-stoplight:
+              id: iul88kipafglx
+    SpendPlanRequestFunds:
+      title: SpendPlanRequestFunds
+      x-stoplight:
+        id: 1n193akp14id5
+      type: object
+      required:
+        - id
+        - spendingControlId
+        - requestedBy
+        - status
+        - amount
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: bt75zp7ws5d8g
+        spendingControlId:
+          type: string
+          x-stoplight:
+            id: crwbtdck1zzj4
+        requestedBy:
+          type: string
+          x-stoplight:
+            id: 4k59tvzsrwxkw
+        decisionedBy:
+          type: string
+          x-stoplight:
+            id: 5jf7evcw6dxom
+        description:
+          type: string
+          x-stoplight:
+            id: gx43hfymv1h4u
+        status:
+          x-stoplight:
+            id: 8ismupw8w55wk
+          enum:
+            - pending
+            - approved
+            - declined
+        amount:
+          type: number
+          x-stoplight:
+            id: 6t76h7792kcww
+        actionable:
+          type: boolean
+          x-stoplight:
+            id: mzt907tbojtxt
+        reason:
+          type: string
+          x-stoplight:
+            id: 8l6kffee52y7r
+    WebhookBill:
+      title: WebhookBill
+      x-stoplight:
+        id: xxhhigsdj9kbn
+      type: object
+      required:
+        - type
+        - code
+        - access_token
+        - connection_id
+        - bill
+      properties:
+        type:
+          x-stoplight:
+            id: rvt3vs15iduoo
+          enum:
+            - BILL
+        code:
+          x-stoplight:
+            id: 0e7ynnaenykgn
+          enum:
+            - BILL_CREATED
+            - BILL_UPDATED
+            - BILL_DELETED
+        access_token:
+          type: string
+          x-stoplight:
+            id: mp0y4wr10l7z0
+        connection_id:
+          type: string
+          x-stoplight:
+            id: wyup89nxty3jl
+        bill:
+          type: string
+          x-stoplight:
+            id: 7p2k8a72w9uro
+    WebhookBillPayment:
+      title: WebhookBillPayment
+      x-stoplight:
+        id: ctb0f8fos3aty
+      type: object
+      required:
+        - type
+        - code
+        - access_token
+        - connection_id
+        - bill_payment
+      properties:
+        type:
+          x-stoplight:
+            id: rn3kg6wh20jeg
+          enum:
+            - BILL_PAYMENT
+        code:
+          x-stoplight:
+            id: 8d5w15ske5kuc
+          enum:
+            - BILL_PAYMENT_CREATED
+            - BILL_PAYMENT_UPDATED
+        access_token:
+          type: string
+          x-stoplight:
+            id: jwhrlx7yv4b3a
+        connection_id:
+          type: string
+          x-stoplight:
+            id: mczszwiqzb6ov
+        bill_payment:
+          type: string
+          x-stoplight:
+            id: 0n0q60i726fcn
+      description: ''
+    InvoiceList:
+      title: InvoiceList
+      x-stoplight:
+        id: m2i4onftw290b
+      type: object
+      required:
+        - invoiceIds
+      properties:
+        invoiceIds:
+          type: array
+          x-stoplight:
+            id: jnw0r03yw55qg
+          items:
+            x-stoplight:
+              id: n79wngtevegkn
+            type: string
+            format: uuid
+    InvoiceSpendPlan:
+      title: InvoiceSpendPlan
+      x-stoplight:
+        id: pktldv0xfg02d
+      type: object
+      required:
+        - invoiceId
+      properties:
+        invoiceId:
+          type: string
+          x-stoplight:
+            id: qfbw2ydy7oa80
+        spendPlanId:
+          type: string
+          x-stoplight:
+            id: kq63owdoqtrt1
+        spendPlanName:
+          type: string
+          x-stoplight:
+            id: d76mz8t3bmjmk
+      description: ''
+    Metric:
+      title: Metric
+      x-stoplight:
+        id: ibzcknbpgrmf3
+      type: object
+      required:
+        - startDate
+        - endDate
+        - value
+      properties:
+        startDate:
+          type: string
+          x-stoplight:
+            id: skah7e7ugeng3
+        endDate:
+          type: string
+          x-stoplight:
+            id: 5gf11q5602yi9
+        value:
+          type: number
+          x-stoplight:
+            id: 14u3qdqge1qk3
+    Daily:
+      title: Daily
+      x-stoplight:
+        id: ywdpv0866tx6b
+      type: object
+      description: Campaign Daily Model
+      required:
+        - id
+        - clicks
+        - date
+        - impressions
+        - spend
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: gee7y0zyq8ct4
+        clicks:
+          type: number
+          x-stoplight:
+            id: gevqgh74zmwqd
+        date:
+          type: string
+          x-stoplight:
+            id: k3livs83on96h
+        impressions:
+          type: number
+          x-stoplight:
+            id: bugarcgu54iap
+        spend:
+          type: number
+          x-stoplight:
+            id: w276i848rftue
+        dailyBudget:
+          type: number
+          x-stoplight:
+            id: h7q4fz5bzg1qy
+    Campaign:
+      title: Campaign
+      x-stoplight:
+        id: 0mh3s9oglagvc
+      type: object
+      required:
+        - id
+        - startDate
+        - totalSpend
+        - status
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: wxzxp41mtsad9
+        name:
+          type: string
+          x-stoplight:
+            id: vq3ftoxvzlniu
+        startDate:
+          type: string
+          x-stoplight:
+            id: rknjwzme98sb4
+        endDate:
+          type: string
+          x-stoplight:
+            id: w4u5q4ic7b54s
+        totalSpend:
+          type: number
+          x-stoplight:
+            id: 3rdj588rop2as
+        status:
+          type: string
+          x-stoplight:
+            id: gzyqt85dpobal
+      description: Ad campaign object
+    CommerceLink:
+      title: CommerceLink
+      x-stoplight:
+        id: 7t1kb79vh11be
+      type: object
+      required:
+        - id
+        - platform
+        - isReady
+        - connectionId
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: gky319jku0ski
+        platform:
+          type: string
+          x-stoplight:
+            id: fevtqspo9vewf
+        isReady:
+          type: boolean
+          x-stoplight:
+            id: ilid7r1kyfbxi
+        connectionId:
+          type: string
+          x-stoplight:
+            id: 8zfhj39ky6ktl
+        status:
+          type: string
+          x-stoplight:
+            id: zdr9war6hj4qo
+    AdsLink:
+      title: AdsLink
+      x-stoplight:
+        id: rp2dusk17nary
+      type: object
+      required:
+        - id
+        - platform
+        - isReady
+        - connectionId
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: h91aaknwnbily
+        platform:
+          type: string
+          x-stoplight:
+            id: cvb3mm2p8xdmw
+        isReady:
+          type: boolean
+          x-stoplight:
+            id: slb6x4hqf2xwb
+        connectionId:
+          type: string
+          x-stoplight:
+            id: e5z1dojrciy9w
+        status:
+          type: string
+          x-stoplight:
+            id: cd0cam8d86h8x
+  securitySchemes:
+    token:
+      type: http
+      scheme: bearer
+  requestBodies:
+    LinkSpendPlanMemberBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SpendPlanMember'
+    LinkSpendPlanManagerBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SpendPlanMember'
+    CreateSpendPlanBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateSpendPlan'
+    UpdateSpendPlanBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateSpendPlan'
+    GetInvoicesSpendPlanBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvoiceList'
+  responses:
+    GetSpendPlansAdmin:
+      description: Get spend plans view for manager
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/SpendPlanAdminView'
+    GetSpendPlanAdmin:
+      description: Get spend plan view for manager
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SpendPlanAdminView'
+    GetSpendPlans:
+      description: Get spend plans view for regular member
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/SpendPlanView'
+    GetSpendPlan:
+      description: Get details of a single spend plan
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SpendPlanView'
+    GetSpendPlanLimits:
+      description: Contains the spend plan limits on a spend plan
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/SpendPlanLimit'
+    GetSpendPlanCards:
+      description: Cards associated with a spend plan
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/SpendPlanCard'
+    GetSpendPlanTransactions:
+      description: Contains transactions associated with a spend plan
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/SpendPlanTransaction'
+    GetInvoiceSpendPlans:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/InvoiceSpendPlan'
+              x-stoplight:
+                id: 03jvvaz4c71rk
+    GetFlexErrorCodes:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/AccountingFlexErrorCodes'
+              x-stoplight:
+                id: 03jvvaz4c72fg
+    GetSpendPlansAlfred:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/SpendPlanAdminView'
+                x-stoplight:
+                  id: xqqary05dvoh0
+              - type: object
+                x-stoplight:
+                  id: 9mpfe24ft3l06
+                required:
+                  - cards
+                properties:
+                  cards:
+                    type: array
+                    x-stoplight:
+                      id: 39pkhat9e9zn8
+                    items:
+                      $ref: '#/components/schemas/SpendPlanCard'
+                      x-stoplight:
+                        id: au6c7e2l3tbik
+  parameters:
+    spendPlanId:
+      name: spendPlanId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Identifier of the spend plan
+    accountId:
+      name: accountId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Identifier of the account
+    cardId:
+      name: cardId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Identifier of the card
+    personId:
+      name: personId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Identifier of the person
+security:
+  - token: []
+tags:
+  - name: Generic
+    description: Generic Accounting endpoints
+  - name: AccountsPayable
+    description: Accounts Payable
+  - name: Expenses
+    description: Expenses
+  - name: SpendPlans
+    description: Spend Plans
+  - name: BankFeeds
+    description: Bank Feeds
+  - name: Commerce
+    description: Commerce
+  - name: Ads
+    description: Ads

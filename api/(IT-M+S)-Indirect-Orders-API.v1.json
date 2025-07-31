@@ -1,0 +1,247 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "(IT M+S) Indirect Orders Data API",
+    "version": "1.0",
+    "description": "(IT M+S) Indirect Orders Data API",
+    "contact": {
+      "name": "Philippe,Julien (IT EDS)",
+      "email": "julien.philippe.ext@boehringer-ingelheim.com",
+      "url": "http://boehringer-ingelheim.com"
+    }
+  },
+  "host": "api-gw-dev.boehringer-ingelheim.com:8443",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "paths": {
+    "/orders/headers/{id}": {
+      "parameters": [
+        {
+          "type": "string",
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "customer id (sold to)"
+        }
+      ],
+      "get": {
+        "summary": "get orders headers",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ordersHeaders"
+            }
+          },
+          "204": {
+            "description": "No Content",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "operationId": "get-orders-headers-id",
+        "parameters": [
+          {
+            "type": "string",
+            "in": "query",
+            "name": "business",
+            "description": "Line of Business (AH)",
+            "required": true
+          },
+          {
+            "type": "string",
+            "in": "query",
+            "name": "country",
+            "description": "Country Code (eg: de, fr, us)",
+            "required": true
+          },
+          {
+            "type": "string",
+            "in": "query",
+            "name": "modifiedFrom",
+            "description": "Start date-time when it was modified:  ISO 8601 format: eg: 2020-06-02T14:00:00-05:00",
+            "required": true
+          }
+        ],
+        "description": "get order headers by customer id (sold to)"
+      }
+    },
+    "/orders/lines/{id}": {
+      "parameters": [
+        {
+          "type": "string",
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "order id"
+        }
+      ],
+      "get": {
+        "summary": "get order lines",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ordersLines"
+            }
+          },
+          "204": {
+            "description": "No Content",
+            "schema": {
+              "$ref": "#/definitions/ordersLines"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "operationId": "get-orders-lines-id",
+        "parameters": [
+          {
+            "type": "string",
+            "in": "query",
+            "name": "business",
+            "description": "Line of Business (AH)",
+            "required": true
+          },
+          {
+            "type": "string",
+            "in": "query",
+            "name": "country",
+            "description": "Country Code (eg: de, fr, us)",
+            "required": true
+          }
+        ],
+        "description": "get lines"
+      }
+    }
+  },
+  "definitions": {
+    "ordersHeaders": {
+      "title": "ordersHeaders",
+      "type": "object",
+      "description": "list of supply plan and related orders without lines",
+      "properties": {
+        "businessPartner": {
+          "$ref": "https://stoplight.io/api/v1/projects/bi/info-models/nodes/models/Vendor/BusinessPartner.v2.json?mid=834"
+        },
+        "supplyPlan": {
+          "type": "array",
+          "items": {
+            "$ref": "https://stoplight.io/api/v1/projects/bi/info-models/nodes/models/EngagementData/SupplyPlan.v1.json?mid=10805"
+          }
+        }
+      }
+    },
+    "ordersLines": {
+      "title": "(IT MS) Indirect Orders Data API",
+      "type": "object",
+      "description": "order lines of a specific order",
+      "properties": {
+        "order": {
+          "$ref": "https://stoplight.io/api/v1/projects/bi/info-models/nodes/models/MarketingAndSales/Order.v1.json?mid=10807"
+        }
+      }
+    }
+  },
+  "basePath": "/indirect-orders-data-api",
+  "securityDefinitions": {
+    "oauth2": {
+      "type": "oauth2",
+      "flow": "application",
+      "scopes": {}
+    }
+  }
+}

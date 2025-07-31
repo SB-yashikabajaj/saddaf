@@ -1,0 +1,25 @@
+anyOf:
+  - type: object
+    properties:
+      type:
+        type: string
+        format: uuid
+        x-stoplight:
+          id: tx3rvga3p8iot
+      isPrimary:
+        type: boolean
+        x-stoplight:
+          id: v4aezekjvqtyl
+      active:
+        type: boolean
+        x-stoplight:
+          id: eeu81rxl9w9hd
+    x-stoplight:
+      id: bbvcjgl0ijs6k
+  - $ref: ./BasicAddress.yaml
+    x-stoplight:
+      id: g6bxwbv442mot
+x-stoplight:
+  id: i11gfok4agahd
+description: Properties that are allowed to be edited on existing addresses
+title: ''

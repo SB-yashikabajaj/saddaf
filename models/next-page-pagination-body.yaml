@@ -1,0 +1,37 @@
+title: next-page-pagination-body
+x-stoplight:
+  id: a70b7xxxp3obl
+description: 'Pagination links to indicate the next steps possible in paginated responses, based on Hypertext Application Language (HAL) specification.'
+x-tags:
+  - v1
+allOf:
+  - properties:
+      nextPage:
+        type: integer
+        description: 'The next page number. If value is zero or undefined, there is no next page.'
+        minimum: 0
+        example: 2
+        readOnly: true
+        x-stoplight:
+          id: gzlaxmcdowpsv
+      _links:
+        type: object
+        description: Pagination linking area
+        properties:
+          prev:
+            $ref: ./link-body.yaml
+            x-stoplight:
+              id: s66nkvma1aaw5
+          next:
+            $ref: ./link-body.yaml
+            x-stoplight:
+              id: okz0dx5efkqth
+          self:
+            $ref: ./link-body.yaml
+            x-stoplight:
+              id: 67p5dgueuob8x
+        x-stoplight:
+          id: 6psmf45xa3c9v
+    x-stoplight:
+      id: juougoy1cygsz
+type: object

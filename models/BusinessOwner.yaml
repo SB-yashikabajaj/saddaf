@@ -1,0 +1,34 @@
+allOf:
+  - type: object
+    properties:
+      personId:
+        type: string
+        format: uuid
+        readOnly: true
+        x-stoplight:
+          id: 8yd8x8kzkkr9c
+      businessId:
+        type: string
+        format: uuid
+        readOnly: true
+        x-stoplight:
+          id: 3npfnznlhbhlo
+      percentage:
+        type: number
+        maximum: 100
+        minimum: 0
+        x-stoplight:
+          id: n7rjkyxdbsrzs
+    required:
+      - personId
+      - businessId
+      - percentage
+    x-stoplight:
+      id: wa7wit4tgs6zf
+  - $ref: ./CoreModel.yaml
+    x-stoplight:
+      id: dlp4ev2i21537
+x-stoplight:
+  id: 5ai5r9ia4vvrj
+description: Represents a business owner
+title: ''

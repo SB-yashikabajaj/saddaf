@@ -1,0 +1,14 @@
+$ref: ./id.yaml
+x-stoplight:
+  id: vxf89clhzxiud
+description: Unique identifier for MarketBank token
+x-bpi-field-metadata:
+  type: identificador
+  properties:
+    - name: integridade
+      value: elevada
+    - name: tipoIdentificador
+      value: navegacao
+x-tags:
+  - id-navigation
+title: id-navigation

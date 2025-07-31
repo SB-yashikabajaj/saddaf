@@ -1,0 +1,13 @@
+$ref: ./iban-read-only.yaml
+x-stoplight:
+  id: bq470rwdzazrx
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: iban
+    - name: tipoUtilizacao
+      value: contrapartida
+description: IBAN of the target account in a transaction
+x-tags:
+  - target-iban

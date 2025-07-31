@@ -1,0 +1,13 @@
+$ref: ./nib.yaml
+x-stoplight:
+  id: 9o223z9nla16t
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: nib
+    - name: tipoUtilizacao
+      value: contrapartida
+description: NIB of the target account in a transaction
+x-tags:
+  - target-nib

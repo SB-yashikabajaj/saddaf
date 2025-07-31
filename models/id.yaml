@@ -1,0 +1,15 @@
+title: id
+x-stoplight:
+  id: 17e661xte4lk8
+type: string
+description: Unique identifier
+minLength: 1
+maxLength: 10
+example: '12345'
+x-bpi-field-metadata:
+  type: identificador
+  properties:
+    - name: integridade
+      value: elevada
+x-tags:
+  - id

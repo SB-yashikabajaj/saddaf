@@ -1,0 +1,4426 @@
+openapi: 3.0.0
+paths:
+  /auth:
+    post:
+      operationId: Authentication
+      summary: Authentication
+      security:
+        - basicAuth: []
+      description: |-
+        Authentication API
+
+        Authenticate your credentials, and get an API access token.
+
+        All CoverForce APIs are only accessible to the integrators when an access token is provided.
+
+        This API helps the user/client to get an access token, using their credentials;
+              
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthorizationInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationOutput'
+      tags:
+        - Authentication
+  '/api/application/{applicationId}':
+    get:
+      operationId: GetApplication
+      summary: Get an Application
+      description: |-
+        GET Application API
+
+        Get Application API is used to get the CoverForce Insurance Application that has been created before, using an `applicationId`.
+
+        If `applicationId` does not exist, it will return 404.
+              
+      parameters:
+        - name: applicationId
+          description: Application ID
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      tags:
+        - Application
+      x-stoplight:
+        id: q4tylku50cukr
+  '/api/application/fields-config/{applicationId}':
+    get:
+      operationId: GetApplicationFieldsConfig
+      summary: Get Application Fields Config
+      description: |-
+        GET Application Fields Config API is used to get the requirement level for the fields of an Application, using an `applicationId`.
+        The requirement level for the fields is determined on the basis of policy type and the carriers selected for the Application.
+
+        If `applicationId` does not exist, it will return 404.
+      parameters:
+        - name: applicationId
+          description: Application ID
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetApplicationFieldsConfigOutput'
+      tags:
+        - Application
+  /api/application:
+    post:
+      operationId: CreateApplicationController_createApplication
+      summary: Create an Application
+      description: |-
+        POST Application API
+
+        Create a new application under your client, in the CoverForce systems.
+
+        An Application contains all the data required by the carrier(s) to generate a Quote.
+
+        Returns an Application model, along with an `applicationId`,  which can be used to fetch the application.
+
+        ### Headers
+        The `x-cf-agency-id` header, and the `x-cf-sso-client-id`/`x-client-agency-id` headers, are for clients who use CoverForce's Agency Management to manage their agencies. These are typically AMS Systems, or Agency Networks.
+
+        For all other clients, these headers are not required.
+      parameters:
+        - in: header
+          name: x-client-agency-id
+          description: Header denoting the agency ID on the origin client system.
+          schema:
+            type: string
+            format: uuid
+          required: false
+        - in: header
+          name: x-cf-sso-client-id
+          description: Header denoting the single sign on client ID.
+          schema:
+            type: string
+            format: uuid
+          required: false
+        - in: header
+          name: x-cf-agency-id
+          description: Header denoting the CoverForce agency ID to which an application should be associated.
+          schema:
+            type: string
+            format: uuid
+          required: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApplicationInput'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      tags:
+        - Application
+      x-stoplight:
+        id: trnbv9v23fn2r
+    put:
+      operationId: UpdateApplicationController_updateApplication
+      summary: Update an Application
+      description: |-
+        PUT Application API
+
+        For a given Application with `applicationId`, this overrides the complete application to store the data provided.
+
+        Returns the application model, with updated fields.
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateApplicationInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      tags:
+        - Application
+      x-stoplight:
+        id: kiy8795nqj6ww
+    parameters: []
+  /api/agencies:
+    get:
+      operationId: GetAllAgenciesController_getAllAgencies
+      summary: Get all Agencies
+      description: |-
+        Get all agencies API is used to retrieve the complete list of agencies associated with a network. 
+        Only API client with network privilege will be able to access this endpoint.
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAgenciesOutput'
+      tags:
+        - Agency
+      x-stoplight:
+        id: x3c4t4iqsvr6s
+    parameters: []
+  /api/agency:
+    put:
+      operationId: UpdateAgencyController_updateAgency
+      summary: Update an Agency
+      description: |-
+        Update agency API is used to update the information associated with an agency, like the relationship manager, network id etc. 
+        Only client with network level privilege will have option to update agency information.
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAgencyInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateAgencyOutput'
+      tags:
+        - Agency
+      x-stoplight:
+        id: g54abb0juk1en
+    post:
+      operationId: CreateAgencyController_createAgency
+      summary: Create an Agency
+      description: |-
+        Create agency API is used to create an new CoverForce agency.
+        Only client with network level privilege will have option to update agency information.
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAgencyInput'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAgencyOutput'
+      tags:
+        - Agency
+      x-stoplight:
+        id: 4fpj3sn7wovdx
+    parameters: []
+  /api/questions:
+    get:
+      operationId: GetUWQuestionsController_getUWQuestions
+      summary: Get UW Questions for an Application
+      description: |-
+        Get UW Questions API
+
+        Requires an `applicationId` and `category`, and returns  UW Questions as an output.
+
+        In case the category is `LOCATION`,  the API requires a `locationId` as well.
+
+        The various types of questions available in the UW Questions are date, email, multiselect dropdown, number, phone number, radio, singleselect dropdown, text, year, and address. The question type `ADDRESS` accepts answers in the specific format, which is a JSON stringified version of the `IAddress` (check in API schema) object.
+        This enum might be extended with more QuestionTypes in the future.
+
+        Underwriting Questions have `validations`. These are conditions that the answer needs to fulfill. Below is an explainer of the validations present in our system, along with examples:
+        1. `validationType == REQUIRED`: For this validation, CoverForce only sends a `validationMessage` along in the `validationInfo` object. This means, that this question is Required to be provided an answer for, in order to get a successful Quote from the Insurance Provider. 
+
+            Example:
+            ```json
+            {
+              "validationType" : "REQUIRED",
+              "validationErrorMessage" : "You must select an option"
+            }
+            ```
+        2. `validationType == REGEX`: For this validation, CoverForce sends a `validationMessage` along with a `regexExpression` in the `validationInfo` object. The answer for this question needs to adhere to the provided regex, in order to get successful Quotes from Providers. 
+
+            Example:
+            ```json
+            {
+              "validationType" : "REGEX",
+              "validationErrorMessage" : "EmailID format is invalid",
+              "regexExpression" : "^[^@]+@[^@]+\.[^@]+$"
+            }
+            ```
+
+        3. `validationType == PERMISSIBLE`: For this validation, there are multiple cases possible, based on `permissibleValueType` field in the `validationInfo` object: 
+            * `permissibleValueType == ARRAYTYPE`: A `string` array of `permissibleValues` will be provided along with this `permissibleValueType` in the `validationInfo` object.
+            * `permissibleValueType == LENGTH`: A `string` for the maximum length will be provided for the key `permissibleValues` along with this `permissibleValueType` in the `validationInfo` object.
+            * `permissibleValueType == RANGE`: An object with range [min, max] will be provided along with this `permissibleValueType` in the `validationInfo` object. This is applicable only for `questionType`: `DATE`, `YEAR` and `NUMBER`.
+            Example:
+            ```json
+            {
+              "validationType" : "PERMISSIBLE",
+              "validationErrorMessage" : "Please select a valid option from: OptionA, OptionB, OptionC",
+              "permissibleValueType" : "ARRAYTYPE",
+              "permissibleValues": ["OptionA", "OptionB", "OptionC"]
+
+            }
+            ```
+            ```json
+            {
+              "validationType" : "PERMISSIBLE",
+              "validationErrorMessage" : "Maximum length allowed is 64 characters",
+              "permissibleValueType" : "LENGTH",
+              "permissibleValues": "64"
+
+            }
+            ```
+            ```json
+            {
+              "validationType" : "PERMISSIBLE",
+              "validationErrorMessage" : "Please provide a valid input between 0 and 999",
+              "permissibleValueType" : "RANGE",
+              "permissibleValues": {
+                "min": "0",
+                "max": "999"
+              }
+
+            }
+            ```
+
+
+        For `dependentQuestions`, our system incorporates three primary methods for evaluating conditions based on the combination of  `dependencyType` and `condition` fields:
+        1. **Direct Dependency**: For `conditionType == DIRECT` there is no `condition` value sent as part of the `dependentQuestion` object. It represents the situation where the child question needs to be asked along with the parent question, without any condition.
+        2. **Exact Match Conditions**: For `conditionType == CONDITIONAL`, the system determines an exact match condition through the following rules:
+            * **Boolean Values**: When condition is set to YES, NO, TRUE, or FALSE, it is interpreted as a boolean. The system will verify if the answer precisely matches these boolean representations.
+            * **String and Numeric Values**: If condition contains a string or a number, the system checks if the answer is an exact match to the value specified in condition.
+            * **Multiple Choice Values**: condition can list multiple acceptable values separated by a pipe |. The answer is valid if it matches at least one of these delimited values. For example, for condition set as "Virus | Malware", the answer is considered correct if it is either "Virus" or "Malware".
+
+        3. **Conditional Matching**: For `conditionType == CONDITIONAL`, CoverForce also has conditional matching using relational operators that evaluate numerical relationships:
+            * **Operators**: The system supports the following operators prefixed to the values in condition: >, <, >=, <=. These operators are used to compare the answer numerically. For example, condition set as ">10000" means the answer must be greater than 10,000.
+            * **Combined Conditions**: Conditions can be compounded using logical conjunctions && (AND) and disjunctions || (OR). This allows the establishment of ranges or combined criteria. For example, condition as ">=1 && <=100" requires the answer to be between 1 and 100, inclusive.
+      parameters:
+        - name: applicationId
+          description: Application ID
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: category
+          description: Category
+          required: true
+          in: query
+          schema:
+            enum:
+              - LOCATION
+              - GENERAL
+        - name: locationId
+          description: Location ID
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UWQuestionInfo'
+      tags:
+        - Underwriting Questions
+      x-stoplight:
+        id: 5oi8bum44k10p
+    parameters: []
+  '/api/location/{applicationId}':
+    post:
+      operationId: AddLocationController_addLocation
+      summary: Add Location for an Application
+      description: |-
+        Add Location API
+
+        Add location to an existing CoverForce Application using `applicationId`.
+
+        Takes address, employee details array, as an input.
+
+        Returns the location Object, along with a `locationId`,  that can be further used to update the location as needed.
+      parameters:
+        - name: applicationId
+          description: Application ID
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddLocationInput'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessLocation'
+      tags:
+        - Location
+      x-stoplight:
+        id: 6sh7r5lhhwqd2
+    put:
+      operationId: UpdateLocationController_updateLocation
+      summary: Update Location
+      description: |-
+        Update Location API
+
+        Using an `applicationId` and a `locationId`, overrides a particular location data with the new data provided.
+
+        Returns the location object as an output.
+      parameters:
+        - name: applicationId
+          description: Application ID
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessLocation'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessLocation'
+      tags:
+        - Location
+      x-stoplight:
+        id: 154jf8j6ac6ot
+    parameters:
+      - schema:
+          type: string
+        name: applicationId
+        in: path
+        required: true
+  '/api/location/{applicationId}/{locationId}':
+    delete:
+      operationId: DeleteLocationController_deleteLocation
+      summary: Delete Location from an Application
+      description: |-
+        Delete Location API
+
+        Deletes a particular location from an application, using `applicationId` and `locationId`
+      parameters:
+        - name: applicationId
+          required: true
+          in: path
+          description: The ID of the application
+          schema:
+            type: string
+        - name: locationId
+          required: true
+          in: path
+          description: The ID of the location
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Location
+      x-stoplight:
+        id: io6kk1tn7sxmq
+    parameters:
+      - schema:
+          type: string
+        name: applicationId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: locationId
+        in: path
+        required: true
+  '/api/quotes/{applicationId}':
+    post:
+      operationId: SubmitForQuotesController_submitForQuotes
+      summary: Request for Quote
+      description: |-
+        Request Quotes API
+
+        For a given `applicationId`, submit a request for Quotes.
+
+        This will return a 201 response, in case a request for quotes is raised successfully.  
+      parameters:
+        - name: applicationId
+          description: Application ID
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+        - Quotes
+      x-stoplight:
+        id: kv40kjes1o8dx
+    get:
+      operationId: GetQuotesController_getQuotes
+      summary: Get Quotes
+      description: |-
+        Get Quotes API
+
+        Once a request is submitted for Quotes, Get Quotes API can be polled to get quotations that are generated by multiple carriers for a given application.
+
+        The API returns an array of all Quotes that are generated.
+      parameters:
+        - name: applicationId
+          description: Application ID
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Quote'
+      tags:
+        - Quotes
+      x-stoplight:
+        id: gw7ef3560qu1t
+    parameters:
+      - schema:
+          type: string
+        name: applicationId
+        in: path
+        required: true
+  /api/get-industry-codes:
+    post:
+      operationId: GetNaicsCodesController_getAllNaicsCodes
+      summary: Get All Industry codes
+      description: |-
+        Get All NAICS codes API
+
+        Takes an optional `keyword` as an input, to search upon.
+
+        In case no `keyword` is provided, it returns all supported Industry Level codes as an output.
+
+        These codes are further required in the application model to select an industry.
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetNaicsCodesInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetNaicsCodesOutput'
+      tags:
+        - Industry Selection
+      x-stoplight:
+        id: 1ma8f4jcz36zq
+    parameters: []
+  /api/get-job-codes:
+    post:
+      operationId: GetJobCodesByIndustryController_getJobCodes
+      summary: Get Job codes by Industry
+      description: |-
+        Get Job codes by Industry API
+
+        Takes `naicsCodeId` and `state` as an input,  to return all job code suggestions for a particular industry.
+
+        These codes are further required in the application model to select employee job code.
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetJobCodesByIndustryInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetJobCodesByIndustryOutput'
+      tags:
+        - Job Codes
+      x-stoplight:
+        id: 6mfaf3cpqydla
+    parameters: []
+  /api/get-carriers:
+    get:
+      operationId: GetCarriersController_getCarriers
+      summary: Get All Carriers
+      description: |-
+        Get All Carriers API
+
+        Returns all supported carriers as an output, along with their details.
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCarriersOutput'
+      tags:
+        - Carriers
+      x-stoplight:
+        id: df6jwg0524pbk
+    parameters: []
+  /api/get-legal-entities:
+    get:
+      operationId: GetLegalEntitiesController_getAllLegalEntities
+      summary: Get All Legal Entities
+      description: |-
+        GET All Legal Entities API
+
+        The API takes `policyType` as an input, and returns all LegalEntities applicable for a particular policy,  along with their descriptions.
+      parameters:
+        - name: policyType
+          required: true
+          in: query
+          description: policyType to fetch Legal entities
+          example: WC
+          schema:
+            $ref: '#/components/schemas/PolicyType'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetLegalEntitiesOutput'
+      tags:
+        - Legal Entity
+      x-stoplight:
+        id: k4br2jw801d9a
+    parameters: []
+  /api/get-liability-limits:
+    get:
+      operationId: GetLiabilityLimitsController_getLiabilityLimits
+      summary: Get Liability Limits
+      description: |
+        GET Liability Limits API
+
+        Requires a `policyType` and a `state` as an input.
+
+        Returns an array of liabilityLimits, applicable for the `state` and `policyType`.
+
+        LiabilityLimits object is dependent on the policyType.
+
+
+        <!--theme: info -->
+        > PolicyType: `BR` does not support Liability Limits
+      parameters:
+        - name: policyType
+          required: true
+          in: query
+          example: WC
+          schema:
+            $ref: '#/components/schemas/PolicyType'
+        - name: state
+          required: true
+          in: query
+          description: State
+          example: AK
+          schema:
+            $ref: '#/components/schemas/USState'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetLiabilityLimitsOutput'
+      tags:
+        - Liability Limits
+      x-stoplight:
+        id: ql9wu4nbkbq20
+    parameters: []
+  /api/get-job-codes-by-state:
+    post:
+      operationId: GetJobCodesByStateController_getJobCodes
+      summary: Get Job codes by state
+      description: |-
+        Get All Job Codes for a particular state
+
+        The API takes the state code as an input, and returns all supported Job Codes [along with their descriptions].
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetJobCodesByStateInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetJobCodesByStateOutput'
+      tags:
+        - Job Codes
+      x-stoplight:
+        id: p98ca320yfzwt
+    parameters: []
+  '/api/paymentplans/{applicationId}/{cfQuoteId}':
+    get:
+      operationId: GetPaymentPlansController_getPaymentPlans
+      summary: Get Payment Plans
+      description: |-
+        GET Payments Plans API
+
+        For a given `applicationId` and `cfQuoteId`, get all  applicable payment plans.
+      parameters:
+        - name: applicationId
+          required: true
+          in: path
+          description: The ID of the application
+          schema:
+            type: string
+        - name: cfQuoteId
+          required: true
+          in: path
+          description: The ID of the quote
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPaymentPlansOutput'
+      tags:
+        - Bind and Pay
+      x-stoplight:
+        id: ngqon74dj88sg
+    parameters:
+      - schema:
+          type: string
+        name: applicationId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: cfQuoteId
+        in: path
+        required: true
+  /api/paymentplans:
+    post:
+      operationId: SelectPaymentPlanController_selectPaymentPlan
+      summary: Select Payment Plan
+      description: |-
+        Select Payment Plan API
+
+        Select a Payment Plan for a particular Quote and Application.
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelectPaymentPlanInput'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SelectPaymentPlanOutput'
+      tags:
+        - Bind and Pay
+      x-stoplight:
+        id: am4rvv0mze4ki
+    parameters: []
+  /api/bind:
+    post:
+      operationId: BindQuoteController_bindQuote
+      summary: Request Bind for an Application
+      description: |-
+        Request Bind for a particular Application, using `cfQuoteId` and `applicationId`
+
+        Returns `cfPolicyId` as an output.
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BindQuoteInput'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BindQuoteOutput'
+      tags:
+        - Bind and Pay
+      x-stoplight:
+        id: dsn8xo4rcvz9j
+    parameters: []
+  '/api/{applicationId}/statements':
+    get:
+      operationId: GetUWStatementsController_getUWStatements
+      summary: List Underwriting Statements
+      description: |-
+        List Underwriting Statements API
+
+        Returns all Underwriting Statements for a given `applicationId` and `type`.
+      parameters:
+        - name: applicationId
+          description: Application ID
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: type
+          description: Statement Type
+          required: true
+          in: query
+          schema:
+            type: string
+            enum:
+              - UNDERWRITING
+              - PAYMENT
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UWStatements'
+      tags:
+        - Underwriting Statements
+      x-stoplight:
+        id: 6x2cbis6q5j5k
+    parameters:
+      - schema:
+          type: string
+        name: applicationId
+        in: path
+        required: true
+  /api/management/all-broker-codes:
+    get:
+      operationId: 'GetAllBrokerCodesController_getAllBrokerCodes,'
+      summary: Get All Broker Codes
+      description: |-
+        Get All Broker Codes
+
+        Returns all the broker code configurations associated with your client id.
+
+        ### Headers
+        The `x-cf-agency-id` header, and the `x-cf-sso-client-id`/`x-client-agency-id` headers, are for clients who use CoverForce's Agency Management to manage their agencies. These are typically AMS Systems, or Agency Networks.
+
+        For all other clients, these headers are not required.
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: x-cf-agency-id
+          description: Header denoting the CoverForce agency ID to which an application should be associated.
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: x-cf-sso-client-id
+          description: Header denoting the single sign on client ID.
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: x-client-agency-id
+          description: Header denoting the agency ID on the origin client system.
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllBrokerCodesOutput'
+      tags:
+        - Broker Code Management
+      x-stoplight:
+        id: a8q3sfmk5ya98
+    parameters: []
+  /api/management/broker-code:
+    post:
+      operationId: 'CreateBrokerCodeController_createBrokerCode,'
+      summary: Creates a Broker Code
+      description: |-
+        Creates a Broker Code
+
+        Create a new broker code configuration under your client, in the CoverForce systems.
+
+        Returns a BrokerCode model, along with a `brokerConfigurationId`, which can be used while creating a new application or to update the broker code details.
+
+        The Request has a variable `configuration` of type `Object`. Carrier specific object structure can be found here: [Broker Config details Page](https://coverforce.stoplight.io/docs/coverforce-api/branches/main/7rabn7wvx2hc0-broker-code-configuration-ap-is)
+        ### Headers
+        The `x-cf-agency-id` header, and the `x-cf-sso-client-id`/`x-client-agency-id` headers, are for clients who use CoverForce's Agency Management to manage their agencies. These are typically AMS Systems, or Agency Networks.
+
+        For all other clients, these headers are not required.
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: x-cf-agency-id
+          description: Header denoting the CoverForce agency ID to which an application should be associated.
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: x-cf-sso-client-id
+          description: Header denoting the single sign on client ID.
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: x-client-agency-id
+          description: Header denoting the agency ID on the origin client system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBrokerCodeInput'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrokerCode'
+      tags:
+        - Broker Code Management
+      x-stoplight:
+        id: hxvhm28i838dc
+    put:
+      operationId: 'UpdateBrokerCodeController_updateBrokerCode,'
+      summary: Update a Broker Code
+      description: |-
+        Updates a Broker Code
+
+        For a given Broker Code with `brokerConfigurationId`, this overrides the complete configuration to store the data provided.
+
+        Returns the BrokerCode model, with updated fields.
+
+        ### Headers
+        The `x-cf-agency-id` header, and the `x-cf-sso-client-id`/`x-client-agency-id` headers, are for clients who use CoverForce's Agency Management to manage their agencies. These are typically AMS Systems, or Agency Networks.
+
+        For all other clients, these headers are not required.
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: x-cf-agency-id
+          description: Header denoting the CoverForce agency ID to which an application should be associated.
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: x-cf-sso-client-id
+          description: Header denoting the single sign on client ID.
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: x-client-agency-id
+          description: Header denoting the agency ID on the origin client system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBrokerCodeInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrokerCode'
+      tags:
+        - Broker Code Management
+      x-stoplight:
+        id: odcl2cvirqb5v
+    parameters: []
+  '/api/management/broker-code/{brokerConfigurationId}':
+    delete:
+      operationId: DeleteBrokerCodeController_deleteBrokerCode
+      summary: Delete Broker Code
+      description: |-
+        Deletes a Broker Code
+
+        Deletes a particular broker code configuration associated with your client id from the CoverForce system using `brokerConfigurationId`.
+
+        ### Headers
+        The `x-cf-agency-id` header, and the `x-cf-sso-client-id`/`x-client-agency-id` headers, are for clients who use CoverForce's Agency Management to manage their agencies. These are typically AMS Systems, or Agency Networks.
+
+        For all other clients, these headers are not required.
+      parameters:
+        - name: brokerConfigurationId
+          required: true
+          in: path
+          description: The ID of the Broker Configuration
+          schema:
+            type: string
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: x-cf-agency-id
+          description: Header denoting the CoverForce agency ID to which an application should be associated.
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: x-cf-sso-client-id
+          description: Header denoting the single sign on client ID.
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: x-client-agency-id
+          description: Header denoting the agency ID on the origin client system.
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Broker Code Management
+      x-stoplight:
+        id: 24eao0we6iv9h
+    parameters:
+      - schema:
+          type: string
+        name: brokerConfigurationId
+        in: path
+        required: true
+  /api/application/policy:
+    post:
+      operationId: GetPolicyController_getPolicy
+      summary: Get Policy Details
+      description: |-
+        Get Policy for a CF Policy ID, Quote ID and Application ID
+
+        This API is used to poll for a particular Policy with a `cfPolicyId`,
+        to get the `policyStatus`. Based on which, it can be determined if the policy
+        is issued or not. 
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetPolicyInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPolicyOutput'
+      tags:
+        - Policy
+      x-stoplight:
+        id: gkz7biwxprlfq
+    parameters: []
+  /api/application/policy/document:
+    post:
+      operationId: GetPolicyDocumentController_getPolicyDocument
+      summary: Get Policy Document
+      description: |-
+        Get Policy Document for a CF Policy ID, Quote ID and Application ID
+
+        This API is used to get a base64 encoded `policyDocument`, for a given policy.
+
+        Please note - Not all providers support Policy Documents, and the API might result
+        in 404, if a particular provider does not support policy documents.   
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetPolicyDocumentInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPolicyDocumentOutput'
+      tags:
+        - Policy
+      x-stoplight:
+        id: 5ff6afw2ex1kh
+    parameters: []
+  /api/quote/refer:
+    post:
+      operationId: ReferQuoteController_referQuote
+      summary: Refer Quote to Underwriter
+      description: |-
+        Refer Quote for Underwriting, for an `applicationId` and `cfQuoteId`
+
+        This API is used to refer the quote to an underwriter, along with an optional 
+        `noteToUnderwriter`
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReferQuoteInput'
+      responses:
+        '201':
+          description: ''
+      tags:
+        - Quotes
+      x-stoplight:
+        id: 8ywdmlgzx5a0h
+    parameters: []
+  /api/quote/proposal:
+    get:
+      operationId: GetQuoteProposalController_getQuoteProposal
+      summary: Get Quote Proposal Document
+      description: |-
+        Get Quote Porposal Document for an `applicationId` and `cfQuoteId`
+
+        This API is used to get a Base64 Encoded `quoteProposal` Document, for a given policy.
+
+        The Document Format is present in `fileFormat` and can be `pdf`, `docx`, `jpeg`, or `png` 
+      parameters:
+        - name: applicationId
+          required: true
+          in: query
+          description: Application ID
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+          schema:
+            type: string
+        - name: cfQuoteId
+          required: true
+          in: query
+          description: Quote ID
+          example: QOT-8ef6a644-1c8a-44b0-91f3-cfe63a1fcc92
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetQuoteProposalOutput'
+      tags:
+        - Quotes
+      x-stoplight:
+        id: g3oaq7x34dxdz
+    parameters: []
+  /api/check-appetite:
+    post:
+      summary: Check Appetite
+      operationId: CheckAppetiteController_checkAppetite
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckAppetiteOutput'
+      x-stoplight:
+        id: 5liss40fkzz3z
+      description: |-
+        Check Appetite
+
+        Fetches the Appetite information based on the input data provided.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckAppetiteInput'
+      tags:
+        - Appetite
+    parameters: []
+  /api/get-carrier-industry-codes:
+    post:
+      operationId: GetCarrierIndustryCodesController_getCarrierIndustryCodes
+      summary: Get Carrier Industry Codes
+      description: |-
+        Get Carrier Industry Codes API
+
+        This API is used to get all carrier specific Industry Codes, and takes
+        `carrierId`, `policyType` and `state` as an input.
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetCarrierIndustryCodesInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCarrierIndustryCodesOutput'
+      tags:
+        - Carrier Data Selection
+      x-stoplight:
+        id: saedsls8n3arb
+    parameters: []
+  /api/get-carrier-industry-code-details:
+    post:
+      operationId: GetCarrierIndustryCodeDetailsController_getCarrierIndustryCodeDetails
+      summary: Get Carrier Industry Code Details
+      description: |-
+        Get Carrier Industry Code Details API
+
+        This API is used to get details for a carrier specific Industry Code. 
+
+        This API can be used to determine if a carrier Industry code requires additional industry codes in case of LM BOP and CGL.
+        Also in case of LM this provides the dependent codes for the carrier industry code 
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetCarrierIndustryCodeDetailsInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCarrierIndustryCodeDetailsOutput'
+      tags:
+        - Carrier Data Selection
+      x-stoplight:
+        id: t994zri15jg66
+    parameters: []
+  /api/get-carrier-job-codes:
+    post:
+      operationId: GetCarrierJobCodesController_getCarrierJobCodes
+      summary: Get Carrier Job Codes
+      description: |-
+        Get Carrier Job Codes API
+
+        This API is used to get carrier specific Job Codes for a specific CF Job Code ID,
+        and takes `carrierId`, `state` and `jobCodeId` as an input.
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetCarrierJobCodesInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCarrierJobCodesOutput'
+      tags:
+        - Carrier Data Selection
+      x-stoplight:
+        id: u7nkf4nv4w009
+    parameters: []
+  '/api/application/ams/{applicationId}':
+    get:
+      operationId: GetApplicationWithCarrierCodes
+      summary: Get Application with Carrier Codes
+      description: |-
+        GET Application with Carrier Codes API 
+
+
+        Get Application API is used to get the CoverForce Insurance Application
+        that has been created before, using an `applicationId`.
+
+        It will also return Carrier Specific Codes as part of the output,
+        both Industry Level Codes [under Business Info] and Employee/Job Level Codes [under Location Info] 
+
+        If `applicationId` does not exist, it will return 404.
+            
+      parameters:
+        - name: applicationId
+          description: Application ID
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationWithCarrierCodes'
+      tags:
+        - Carrier Data Selection
+      x-stoplight:
+        id: e4lcwrzgfeyyl
+    parameters:
+      - schema:
+          type: string
+        name: applicationId
+        in: path
+        required: true
+  '/api/location/{applicationId}/employee-info':
+    put:
+      operationId: UpdateLocationEmployeeInfosController_updateLocationWithEmployeeInfosContainingCarrierJobCodes
+      summary: Update Location Employee Info
+      description: |-
+        Update Location Employee Info API
+
+        Update a Location with employee Info, which contains carrier specific job codes      
+      parameters:
+        - name: applicationId
+          description: Application ID
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLocationEmployeeInfosInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateLocationEmployeeInfosOutput'
+      tags:
+        - Carrier Data Selection
+      x-stoplight:
+        id: fdmdqgt0f6c1u
+    parameters:
+      - schema:
+          type: string
+        name: applicationId
+        in: path
+        required: true
+  '/api/application/{applicationId}/carrier-industry-codes':
+    put:
+      operationId: UpdateCarrierIndustryCodesController_updateApplicationWithCarrierIndustryCodes
+      summary: Carrier Industry Code Selection
+      description: |-
+        Carrier Industry Code Selection API
+
+        Update an Application with carrier specific industry codes      
+      parameters:
+        - name: applicationId
+          description: Application ID
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCarrierIndustryCodesInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateCarrierIndustryCodesOutput'
+      tags:
+        - Carrier Data Selection
+      x-stoplight:
+        id: h4d6013f29t2l
+    parameters:
+      - schema:
+          type: string
+        name: applicationId
+        in: path
+        required: true
+info:
+  title: CoverForce APIs
+  description: CoverForce APIs
+  version: '1.0'
+  contact:
+    name: CoverForce
+    url: 'https://www.coverforce.com'
+    email: devops@coverforce.com
+  license:
+    name: CoverForce API Copyright
+    url: 'https://www.coverforce.com'
+tags:
+  - name: Authentication
+    description: Authentication API
+  - name: Agency
+    description: Agency related API.
+  - name: Application
+    description: Application related APIs
+  - name: Application Field Config
+    description: Application Field Config
+  - name: Bind and Pay
+    description: Bind and Pay APIs
+  - name: Carriers
+    description: Carrier APIs
+  - name: Industry Selection
+    description: Industry Selection related APIs
+  - name: Job Codes
+    description: Job Code related APIs
+  - name: Legal Entity
+    description: Legal Entity related APIs
+  - name: Liability Limits
+    description: Liability Limits related APIs
+  - name: Location
+    description: Location related APIs
+  - name: Policy
+    description: Policy APIs
+  - name: Quotes
+    description: Quote related APIs
+  - name: Underwriting Questions
+    description: Underwriting Questions related APIs
+  - name: Underwriting Statements
+    description: Underwriting Statement APIs
+  - name: Broker Code Management
+    description: Broker Code Management APIs
+  - name: Appetite
+    description: Appetite APIs
+  - name: Carrier Data Selection
+    description: Carrier Data Selection APIs
+servers:
+  - url: 'https://sandbox.api.coverforce.com'
+    description: Sandbox server (uses test data)
+  - url: 'https://production.api.coverforce.com'
+    description: Production server (uses live data)
+security:
+  - bearer: []
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+  schemas:
+    PolicyType:
+      type: string
+      description: Policy Type
+      enum:
+        - WC
+        - BOP
+        - CGL
+        - CYBER
+        - BR
+    InsuranceProvider:
+      type: string
+      description: 'Insurance Provider, or Carrier'
+      enum:
+        - LIBERTYMUTUAL
+        - AMTRUST
+        - TRAVELERS
+        - CHUBB
+        - EMPLOYERS
+        - NATIONWIDE
+        - CNA
+        - GAIG
+        - MARKEL
+        - GUARD
+        - COALITION
+        - COALITION_SURPLUS
+        - MERCHANTS
+    USState:
+      type: string
+      description: US State 2-letter Abbreviation
+      enum:
+        - AL
+        - AK
+        - AZ
+        - AR
+        - CA
+        - CO
+        - CT
+        - DE
+        - FL
+        - GA
+        - HI
+        - ID
+        - IL
+        - IN
+        - IA
+        - KS
+        - KY
+        - LA
+        - ME
+        - MD
+        - MA
+        - MI
+        - MN
+        - MS
+        - MO
+        - MT
+        - NE
+        - NV
+        - NH
+        - NJ
+        - NM
+        - NY
+        - NC
+        - ND
+        - OH
+        - OK
+        - OR
+        - PA
+        - RI
+        - SC
+        - SD
+        - TN
+        - TX
+        - UT
+        - VT
+        - VA
+        - WA
+        - WV
+        - WI
+        - WY
+        - DC
+    OfficerInfo:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: First Name
+          example: John
+        lastName:
+          type: string
+          description: Last Name
+          example: Doe
+        annualPayroll:
+          type: number
+          description: Annual Payroll
+          example: 3000
+        cfLocationId:
+          type: string
+          description: CoverForce Location ID
+          example: LOC-410b0436-9048-48e0-835b-9d57c9719a34
+        jobCodeId:
+          type: string
+          description: Job Code Extended Id
+          example: apzw8baez5megDn4GJ6RoS
+        dateOfBirth:
+          type: string
+          description: Date of Birth in ISO Format
+          example: '1992-02-01'
+      required:
+        - firstName
+        - cfLocationId
+    ContactPersonInfo:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: First Name of the Person
+          example: John
+        lastName:
+          type: string
+          description: Last Name of the Person
+          example: Doe
+        email:
+          type: string
+          description: Email of the Person
+          example: john@example.com
+        phone:
+          type: string
+          description: Phone Number of the Person
+          example: '+19234567890'
+        isPrimary:
+          type: boolean
+          description: Is Primary Contact Person
+          example: true
+      required:
+        - firstName
+        - lastName
+        - email
+        - phone
+    Address:
+      type: object
+      properties:
+        addressLine1:
+          type: string
+          description: Address Line 1
+          example: 123 Main St
+        addressLine2:
+          type: string
+          description: Address Line 2
+          example: Apt 1
+        city:
+          type: string
+          description: City
+          example: New York
+        state:
+          $ref: '#/components/schemas/USState'
+          example: AK
+        zip:
+          type: string
+          description: Zip
+          example: '10001'
+      required:
+        - addressLine1
+        - city
+        - state
+        - zip
+    BusinessInfo:
+      type: object
+      required:
+        - businessName
+      properties:
+        owners:
+          description: Company Owners
+          type: array
+          items:
+            $ref: '#/components/schemas/OfficerInfo'
+        contacts:
+          description: Company Contact Persons
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactPersonInfo'
+        mailingAddress:
+          description: Company Address
+          allOf:
+            - $ref: '#/components/schemas/Address'
+        yearOfFounding:
+          type: string
+          description: Year of Founding
+          example: '2019'
+        businessWebsite:
+          type: string
+          description: Company Website
+          example: 'https://coverforce.com'
+        businessName:
+          type: string
+          description: Company Name
+          example: CoverForce LLC
+        fein:
+          type: string
+          description: Federal Employer ID Number
+          example: 12-3456789
+          format: XX-XXXXXXX
+        naicsExtendedId:
+          type: string
+          description: NAICS Extended ID
+          example: 8zRcA5bjAxybiFNdtZj2Mh
+        natureOfBusiness:
+          type: string
+          description: Nature of Business
+          example: Insurance
+        annualRevenue:
+          type: number
+          description: Annual Revenue
+          example: 20000000
+        yearsOfManagementExperience:
+          type: number
+          description: Total years Of Management Experience
+          example: 10
+        isNonProfit:
+          type: boolean
+          description: Is Non Profit Business ?
+          example: false
+        dba:
+          type: string
+          description: Doing Business As
+          example: CoverForce
+        legalEntityType:
+          type: string
+          description: Legal Entity Type
+          enum:
+            - ASSOCIATION
+            - CORPORATION
+            - INDIVIDUAL
+            - JOINT_VENTURE
+            - GENERAL_PARTNERSHIP
+            - LIMITED_PARTNERSHIP
+            - LIMITED_LIABILITY_COMPANY
+            - LIMITED_LIABILITY_PARTNERSHIP
+            - GOVERNMENT_ENTITY
+            - TRUST
+            - ESTATE
+            - S_CORPORATION
+            - NON_PROFIT_CORPORATION
+            - NON_PROFIT_ASSOCIATION
+            - EXECUTOR
+            - LABOR_UNION
+            - MULTIPLE_STATUS
+            - TENANTS_IN_COMMON
+            - JOINT_EMPLOYERS
+          example: CORPORATION
+        natureOfConstructionProject:
+          x-stoplight:
+            id: 9kr6kv52lu24w
+          enum:
+            - NEW_CONSTRUCTION
+            - RENOVATION
+          description: Nature of Construction Project
+    PastPolicyLossInfo:
+      type: object
+      properties:
+        policyType:
+          $ref: '#/components/schemas/PolicyType'
+          example: WC
+        lossType:
+          type: string
+          description: Loss Type
+          oneOf:
+            - $ref: '#/components/schemas/WCLossType'
+            - $ref: '#/components/schemas/BOPLossType'
+            - $ref: '#/components/schemas/CGLLossType'
+            - $ref: '#/components/schemas/CyberLossType'
+        lossDate:
+          type: string
+          description: Loss Date
+          example: '2023-01-03'
+        claimDate:
+          type: string
+          description: Claim Date
+          example: '2023-01-03'
+        claimStatus:
+          type: string
+          description: Claim Status
+          enum:
+            - OPEN
+            - CLOSED
+          example: OPEN
+        totalPaidAmount:
+          type: number
+          description: Total Claim Amount
+          example: 30000
+        totalReservedAmount:
+          type: number
+          description: Total Reserved Amount
+          example: 50000
+        state:
+          $ref: '#/components/schemas/USState'
+          example: AL
+        lossDescription:
+          type: string
+          description: Loss Description
+          example: Loss due to a Medical Reason
+      required:
+        - policyType
+        - lossType
+        - lossDate
+        - claimDate
+        - claimStatus
+        - totalPaidAmount
+        - totalReservedAmount
+        - state
+        - lossDescription
+    InsuranceInfo:
+      type: object
+      properties:
+        insuranceEffectiveDate:
+          type: string
+          description: Insurance Effective Date
+          example: '2023-01-03'
+          format: date
+        insuranceExpiryDate:
+          type: string
+          description: Insurance Expiration Date
+          example: '2023-01-03'
+          format: date
+        carriers:
+          description: List of Providers Selected
+          example:
+            - AMTRUST
+            - CHUBB
+          type: array
+          items:
+            $ref: '#/components/schemas/InsuranceProvider'
+          readOnly: true
+      required:
+        - insuranceEffectiveDate
+        - insuranceExpiryDate
+        - carriers
+    UWQAnswers:
+      type: object
+      properties:
+        questionId:
+          type: string
+          description: Question ID
+          example: QN-3507c567-33df-4961-a09e-61409e5c682a
+        answer:
+          type: string
+          description: Answer
+          example: 'Yes'
+      required:
+        - questionId
+        - answer
+    UWSAnswers:
+      type: object
+      properties:
+        carrier:
+          description: Carrier/ Insurance Provider
+          $ref: '#/components/schemas/InsuranceProvider'
+          example: CNA
+        type:
+          type: string
+          description: StatementType
+          enum:
+            - UNDERWRITING
+            - PAYMENT
+          example: UNDERWRITING
+        answer:
+          type: string
+          description: Answer
+          example: 'Yes'
+        policyType:
+          $ref: '#/components/schemas/PolicyType'
+          example: WC
+      required:
+        - carrier
+        - type
+        - answer
+        - policyType
+    PublicApplicationStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - CREATED
+            - IN_PROGRESS
+            - QUOTING
+            - QUOTED
+            - REFERRED
+            - BIND_IN_PROGRESS
+            - BOUND
+          description: Application Status
+          example: IN_PROGRESS
+        createdDate:
+          type: string
+          description: Application Created Date
+          example: '2023-01-03'
+          format: yyyy-mm-dd
+        updatedDate:
+          type: string
+          description: Application Updated Date
+          example: '2023-01-03'
+          format: yyyy-mm-dd
+      required:
+        - status
+        - createdDate
+        - updatedDate
+    EmployeeInfo:
+      type: object
+      properties:
+        numPartTimeEmployees:
+          type: number
+          description: Total number of Full Time Employees
+          example: 200
+        numFullTimeEmployees:
+          type: number
+          description: Total number of Part Time Employees
+          example: 100
+        totalEmployeePayroll:
+          type: number
+          description: Total Payroll Amount for Employees
+          example: 1000000
+        jobCodeId:
+          type: string
+          description: Job Code ID
+          example: apzw8baez5megDn4GJ6RoS
+      required:
+        - numPartTimeEmployees
+        - numFullTimeEmployees
+        - totalEmployeePayroll
+        - jobCodeId
+    BusinessLocation:
+      type: object
+      properties:
+        locationId:
+          type: string
+          description: Location ID
+          example: LOC-410b0436-9048-48e0-835b-9d57c9719a34
+        address:
+          description: Address
+          allOf:
+            - $ref: '#/components/schemas/Address'
+        isPrimary:
+          type: boolean
+          description: Is Primary
+          example: true
+        employeeInfos:
+          description: Employee Info
+          type: array
+          items:
+            $ref: '#/components/schemas/EmployeeInfo'
+        locationUWInformation:
+          description: Location Specific Underwriting Answers
+          type: array
+          items:
+            $ref: '#/components/schemas/UWQAnswers'
+        buildingInfo:
+          $ref: '#/components/schemas/BuildingInfo'
+      required:
+        - locationId
+        - address
+        - isPrimary
+    AllAgencyInfo:
+      type: object
+      properties:
+        agencyId:
+          type: string
+          description: CF Agency ID
+          example: AY-1c3200a8-1201-436b-0b31-18beea85da30
+        agencyName:
+          type: string
+          description: CF Agency Name
+          example: Test Agency
+        primaryContactDetails:
+          description: Primary Contact Details
+          allOf:
+            - $ref: '#/components/schemas/ContactPersonInfo'
+        primaryAddress:
+          description: Primary Address
+          allOf:
+            - $ref: '#/components/schemas/Address'
+        networkRelationshipManager:
+          description: Network Relationship Manager
+          allOf:
+            - $ref: '#/components/schemas/ContactPersonInfo'
+      required:
+        - agencyId
+        - agencyName
+        - primaryContactDetails
+        - primaryAddress
+    GetAgenciesOutput:
+      type: object
+      properties:
+        agencyNetworkName:
+          type: string
+          description: CF Agency Network Name
+          example: Test Agency Network
+        agencies:
+          description: Agencies information
+          type: array
+          items:
+            $ref: '#/components/schemas/AllAgencyInfo'
+      required:
+        - agencyNetworkName
+        - agencies
+    ApplicationFieldConfig:
+      type: object
+      properties:
+        requirementLevel:
+          type: string
+          description: Requirement level for the Field
+          example: OPTIONAL
+          enum:
+            - REQUIRED
+            - OPTIONAL
+        fieldPath:
+          description: Field Name
+          example: APPLICATION_BUSINESSINFO_ANNUALREVENUE
+          type: string
+          enum:
+            - APPLICATION_INSURANCEINFO_INSURANCEEFFECTIVEDATE
+            - APPLICATION_INSURANCEINFO_INSURANCEEXPIRYDATE
+            - APPLICATION_BUSINESSINFO_YEAROFFOUNDING
+            - APPLICATION_BUSINESSINFO_BUSINESSWEBSITE
+            - APPLICATION_BUSINESSINFO_BUSINESSNAME
+            - APPLICATION_BUSINESSINFO_FEIN
+            - APPLICATION_BUSINESSINFO_NATUREOFBUSINESS
+            - APPLICATION_BUSINESSINFO_ANNUALREVENUE
+            - APPLICATION_BUSINESSINFO_YEARSOFMANAGEMENTEXPERIENCE
+            - APPLICATION_BUSINESSINFO_ISNONPROFIT
+            - APPLICATION_BUSINESSINFO_DBA
+            - APPLICATION_EMPLOYEEINFO_TOTALEMPLOYEEPAYROLL
+            - APPLICATION_EMPLOYEEINFO_NUMFULLTIMEEMPLOYEES
+            - APPLICATION_EMPLOYEEINFO_NUMPARTTIMEEMPLOYEES
+            - APPLICATION_BUSINESSINFO_CONTACTPERSONINFO_FIRSTNAME
+            - APPLICATION_BUSINESSINFO_CONTACTPERSONINFO_LASTNAME
+            - APPLICATION_BUSINESSINFO_CONTACTPERSONINFO_EMAIL
+            - APPLICATION_BUSINESSINFO_CONTACTPERSONINFO_PHONE
+            - APPLICATION_BUSINESSINFO_MAILINGADDRESS_ADDRESSLINE1
+            - APPLICATION_BUSINESSINFO_MAILINGADDRESS_ADDRESSLINE2
+            - APPLICATION_BUSINESSINFO_MAILINGADDRESS_CITY
+            - APPLICATION_BUSINESSINFO_MAILINGADDRESS_STATE
+            - APPLICATION_BUSINESSINFO_MAILINGADDRESS_ZIP
+            - APPLICATION_BUSINESSINFO_LEGALENTITYTYPE
+            - APPLICATION_PASTPOLICYLOSSINFO_POLICYTYPE
+            - APPLICATION_PASTPOLICYLOSSINFO_LOSSTYPE
+            - APPLICATION_PASTPOLICYLOSSINFO_LOSSDATE
+            - APPLICATION_PASTPOLICYLOSSINFO_LOSSDESCRIPTION
+            - APPLICATION_PASTPOLICYLOSSINFO_CLAIMDATE
+            - APPLICATION_PASTPOLICYLOSSINFO_CLAIMSTATUS
+            - APPLICATION_PASTPOLICYLOSSINFO_STATE
+            - APPLICATION_PASTPOLICYLOSSINFO_TOTALPAIDAMOUNT
+            - APPLICATION_PASTPOLICYLOSSINFO_TOTALRESERVEDAMOUNT
+            - LOCATION_ADDRESS_ADDRESSLINE1
+            - LOCATION_ADDRESS_ADDRESSLINE2
+            - LOCATION_ADDRESS_CITY
+            - LOCATION_ADDRESS_STATE
+            - LOCATION_ADDRESS_ZIP
+            - LOCATION_EMPLOYEEINFOS_TOTALEMPLOYEEPAYROLL
+            - LOCATION_EMPLOYEEINFOS_NUMPARTTIMEEMPLOYEES
+            - LOCATION_EMPLOYEEINFOS_NUMFULLTIMEEMPLOYEES
+            - LOCATION_EMPLOYEEINFOS_JOBCODEID
+            - LOCATION_BUILDING_TOTAL_AREA
+            - LOCATION_BUILDING_AREA_OCCUPIED
+            - LOCATION_BUILDING_AREA_OCCUPIED_BY_OTHER
+            - LOCATION_BUILDING_CONSTRUCTION_TYPE_CODE
+            - LOCATION_BUILDING_ANNUAL_SALES
+            - LOCATION_BUILDING_YEAR_BUILT
+            - LOCATION_BUILDING_TOTAL_STORIES
+            - LOCATION_BUILDING_IS_OWNER
+            - LOCATION_BUILDING_BURGLAR_ALARM_TYPE_CODE
+            - LOCATION_BUILDING_SPRINKLERED_PERCENTAGE
+            - LOCATION_BUILDING_ROOF_TYPE
+            - LOCATION_BUILDING_ROOF_UPDATE_YEAR
+            - LOCATION_BUILDING_ELECTRICAL_WIRING_UPDATE_YEAR
+            - LOCATION_BUILDING_HEATING_UPDATE_YEAR
+            - LOCATION_BUILDING_PLUMBING_UPDATE_YEAR
+            - LOCATION_BUILDINGINFO_BUSINESSPERSONALPROPERTYCOVERAGE
+            - LOCATION_BUILDINGINFO_BUILDINGCOVERAGE
+            - APPLICATION_BUSINESSINFO_OWNERS_FIRST_NAME
+            - APPLICATION_BUSINESSINFO_OWNERS_LAST_NAME
+            - APPLICATION_BUSINESSINFO_OWNERS_ANNUAL_PAYROLL
+            - APPLICATION_BUSINESSINFO_OWNERS_EMPLOYEE_JOB_CLASS_CODE
+            - APPLICATION_BUSINESSINFO_OWNERS_LOCATION_ID
+            - APPLICATION_BUSINESSINFO_OWNERS_DATE_OF_BIRTH
+    GetApplicationFieldsConfigOutput:
+      type: object
+      properties:
+        fieldsConfig:
+          type: array
+          description: Config of all the fields for the application
+          items:
+            $ref: '#/components/schemas/ApplicationFieldConfig'
+        applicationId:
+          description: Application ID
+          type: string
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+      required:
+        - fieldsConfig
+        - applicationId
+    Application:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          description: Application ID
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+          readOnly: true
+        clientReferenceId:
+          type: string
+          description: Client Reference ID
+          example: Client-Reference-ID
+          readOnly: true
+        businessInfo:
+          description: Business Details
+          allOf:
+            - $ref: '#/components/schemas/BusinessInfo'
+        pastPolicyLossInfo:
+          description: Past Policy Loss Information
+          type: array
+          items:
+            $ref: '#/components/schemas/PastPolicyLossInfo'
+        insuranceInfo:
+          description: Insurance Information
+          allOf:
+            - $ref: '#/components/schemas/InsuranceInfo'
+        uwqAnswers:
+          description: Underwriting Question Answers
+          type: array
+          items:
+            $ref: '#/components/schemas/UWQAnswers'
+        uwsAnswers:
+          description: Underwriting Statement Answers
+          type: array
+          items:
+            $ref: '#/components/schemas/UWSAnswers'
+        policyType:
+          $ref: '#/components/schemas/PolicyType'
+          example: WC
+        applicationStatus:
+          description: Application Status
+          allOf:
+            - $ref: '#/components/schemas/PublicApplicationStatus'
+          readOnly: true
+        selectedLiabilityLimits:
+          type: object
+          description: Selected Liability Limits
+          oneOf:
+            - $ref: '#/components/schemas/WCLiabilityLimits'
+            - $ref: '#/components/schemas/BOPLiabilityLimits'
+            - $ref: '#/components/schemas/CGLLiabilityLimits'
+            - $ref: '#/components/schemas/CyberLiabilityLimits'
+        businessLocations:
+          description: Business Locations
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessLocation'
+          readOnly: true
+        employeeInfo:
+          $ref: '#/components/schemas/ApplicationEmployeeInfo'
+      required:
+        - applicationId
+        - businessInfo
+        - policyType
+        - applicationStatus
+      title: ''
+    BrokerConfiguration:
+      title: BrokerConfiguration
+      x-stoplight:
+        id: 1rymeqmfdinhb
+      type: object
+      properties:
+        carrierId:
+          x-stoplight:
+            id: 1l5xtri8epev8
+          description: Carrier
+          example: AMTRUST
+          $ref: '#/components/schemas/InsuranceProvider'
+        brokerConfigurationId:
+          type: string
+          description: Broker Configuration Id
+          example: BC-50512e97-1f87-4b8e-a08b-f1f6ed3859b3
+          x-stoplight:
+            id: d8h4v40plol87
+      required:
+        - carrierId
+        - brokerConfigurationId
+    CreateApplicationInput:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: First Name of the Person
+          example: John
+        lastName:
+          type: string
+          description: Last Name of the Person
+          example: Doe
+        policyType:
+          $ref: '#/components/schemas/PolicyType'
+          example: WC
+        businessName:
+          type: string
+          description: Company Name
+          example: CoverForce LLC
+        email:
+          type: string
+          description: Email of the Person
+          example: john@example.com
+        phone:
+          type: string
+          description: Phone Number of the Person
+          example: '+19234567890'
+        carriers:
+          x-stoplight:
+            id: 7qsw5ncjchd7n
+          type: array
+          description: Carriers for which quotes will be generated
+          items:
+            $ref: '#/components/schemas/InsuranceProvider'
+        brokerConfigurations:
+          type: array
+          x-stoplight:
+            id: 9iy7dbrrojzpy
+          items:
+            $ref: '#/components/schemas/BrokerConfiguration'
+        clientReferenceId:
+          type: string
+          description: Client Reference ID
+          example: Client-Reference-ID
+      required:
+        - policyType
+        - businessName
+        - email
+        - phone
+    AnswerOptionInfo:
+      type: object
+      properties:
+        answerOptionText:
+          type: string
+        answerOptionValue:
+          oneOf:
+            - type: string
+            - type: number
+            - type: boolean
+      required:
+        - answerOptionText
+        - answerOptionValue
+    DependencyInfo:
+      type: object
+      properties:
+        dependencyType:
+          type: string
+          enum:
+            - DIRECT
+            - CONDITIONAL
+        condition:
+          type: string
+        childQuestionIds:
+          type: array
+          items:
+            type: string
+      required:
+        - dependencyType
+        - childQuestionIds
+    UWQuestionInfo:
+      type: object
+      properties:
+        questionId:
+          type: string
+          description: Question Id
+          example: QN-3507c567-33df-4961-a09e-61409e5c682a
+        question:
+          type: string
+          description: Question
+          example: What is company DBA name?
+        answerOptions:
+          description: Answer Options
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/AnswerOptionInfo'
+        questionType:
+          type: string
+          description: Question Type
+          enum:
+            - DATE
+            - EMAIL
+            - MULTISELECTDROPDOWN
+            - NUMBER
+            - PHONENUMBER
+            - RADIO
+            - SINGLESELECTDROPDOWN
+            - TEXT
+            - YEAR
+          example: TEXT
+        providers:
+          type: array
+          description: List of Providers that need this question
+          example:
+            - AMTRUST
+            - CHUBB
+          items:
+            $ref: '#/components/schemas/InsuranceProvider'
+        tooltip:
+          type: string
+          description: Question Tooltip
+        validations:
+          description: Question Validations
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/RequiredValidationInfo'
+              - $ref: '#/components/schemas/PermissibleValidationInfo'
+              - $ref: '#/components/schemas/RegexValidationInfo'
+        dependentQuestions:
+          description: Question Dependent Questions
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/DependencyInfo'
+        hasParentQuestion:
+          type: boolean
+          description: Does the Question has a Parent Question
+        defaultAnswer:
+          type: string
+          description: If the question has a default Answer
+      required:
+        - questionId
+        - question
+        - answerOptions
+        - questionType
+        - providers
+        - validations
+        - dependentQuestions
+        - hasParentQuestion
+    RequiredValidationInfo:
+      type: object
+      example:
+        validationType: REQUIRED
+        validationErrorMessage: You must select an option
+      properties:
+        validationType:
+          description: Validation Type
+          type: string
+          enum:
+            - REQUIRED
+        validationErrorMessage:
+          description: Validation Error Message
+          type: string
+      required:
+        - validationType
+        - validationErrorMessage
+    PermissibleValidationInfo:
+      type: object
+      example:
+        validationType: PERMISSIBLE
+        validationErrorMessage: Please select a valid option
+        permissibleValuesType: ARRAYTYPE
+        permissibleValues:
+          - '20'
+          - '10'
+          - '30'
+      properties:
+        validationType:
+          description: Validation Type
+          type: string
+          enum:
+            - PERMISSIBLE
+        validationErrorMessage:
+          description: Validation Error Message
+          type: string
+        permissibleValuesType:
+          description: Permissible Value Type
+          type: string
+          enum:
+            - ARRAYTYPE
+            - LENGTH
+            - RANGE
+        permissibleValues:
+          description: Permissible Values
+          example:
+            - - Option 1
+              - Option 2
+            - '100'
+            - min: '1990-01-01'
+              max: '2030-12-31'
+          oneOf:
+            - type: array
+              items:
+                type: string
+            - type: string
+            - type: object
+              allOf:
+                - $ref: '#/components/schemas/RangePermissibleValue'
+      required:
+        - validationType
+        - validationErrorMessage
+    RangePermissibleValue:
+      type: object
+      properties:
+        min:
+          type: string
+        max:
+          type: string
+    RegexValidationInfo:
+      type: object
+      example:
+        validationType: REGEX
+        validationErrorMessage: EmailID format is invalid
+        regexExpression: '^[^@]+@[^@]+\.[^@]+$'
+      properties:
+        validationType:
+          description: Validation Type
+          type: string
+          enum:
+            - REGEX
+        validationErrorMessage:
+          description: Validation Error Message
+          type: string
+        regexExpression:
+          description: Regex Expression
+          type: string
+      required:
+        - validationType
+        - validationErrorMessage
+        - regexExpression
+    AddLocationInput:
+      type: object
+      properties:
+        address:
+          description: Address
+          allOf:
+            - $ref: '#/components/schemas/Address'
+        isPrimary:
+          type: boolean
+          description: Is Primary
+          example: true
+        employeeInfos:
+          description: Employee Info
+          type: array
+          items:
+            $ref: '#/components/schemas/EmployeeInfo'
+        locationUWInformation:
+          description: Location Specific Underwriting Answers
+          type: array
+          items:
+            $ref: '#/components/schemas/UWQAnswers'
+        buildingInfo:
+          $ref: '#/components/schemas/BuildingInfo'
+      required:
+        - address
+        - isPrimary
+    UpdateApplicationInput:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          description: Application Id
+          readOnly: false
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+        businessInfo:
+          description: Business Details
+          allOf:
+            - $ref: '#/components/schemas/BusinessInfo'
+        pastPolicyLossInfo:
+          description: Past Policy Loss Information
+          type: array
+          items:
+            $ref: '#/components/schemas/PastPolicyLossInfo'
+        insuranceInfo:
+          description: Insurance Information
+          allOf:
+            - $ref: '#/components/schemas/InsuranceInfo'
+        uwqAnswers:
+          description: Underwriting Question Answers
+          type: array
+          items:
+            $ref: '#/components/schemas/UWQAnswers'
+        uwsAnswers:
+          description: Underwriting Statement Answers
+          type: array
+          items:
+            $ref: '#/components/schemas/UWSAnswers'
+        policyType:
+          $ref: '#/components/schemas/PolicyType'
+          example: WC
+        applicationStatus:
+          description: Application Status
+          allOf:
+            - $ref: '#/components/schemas/PublicApplicationStatus'
+          readOnly: true
+        selectedLiabilityLimits:
+          type: object
+          description: Selected Liability Limits
+          oneOf:
+            - $ref: '#/components/schemas/WCLiabilityLimits'
+            - $ref: '#/components/schemas/BOPLiabilityLimits'
+            - $ref: '#/components/schemas/CGLLiabilityLimits'
+            - $ref: '#/components/schemas/CyberLiabilityLimits'
+        employeeInfo:
+          $ref: '#/components/schemas/ApplicationEmployeeInfo'
+      required:
+        - applicationId
+        - businessInfo
+        - policyType
+        - applicationStatus
+    GetNaicsCodesInput:
+      type: object
+      properties:
+        keyword:
+          type: string
+          description: keyword to search NAICS
+          example: '111110'
+        applicationId:
+          type: string
+          description: Application Id
+          example: APP-3d6c3abd-5445-4d58-8ca5-3730ac30a830
+    NaicsCategoryInfo:
+      type: object
+      properties:
+        categoryCode:
+          type: string
+          description: Category Code
+          example: '11'
+        categoryDescription:
+          type: string
+          description: Category Description
+          example: 'Agriculture, Forestry, Fishing and Hunting'
+        imageUrl:
+          type: string
+          description: NAICS Category image url
+          example: 'https://my-bucket.s3-us-west-2.amazonaws.com/44-45.jpeg'
+        tooltip:
+          type: string
+          description: NAICS Category Tool Tip Info
+          example: This category includes activities related to growing crops
+      required:
+        - categoryCode
+        - categoryDescription
+        - tooltip
+    NaicsSubCategoryInfo:
+      type: object
+      properties:
+        categoryCode:
+          type: string
+          description: Category Code
+          example: '11'
+        categoryDescription:
+          type: string
+          description: Category Description
+          example: 'Agriculture, Forestry, Fishing and Hunting'
+        imageUrl:
+          type: string
+          description: NAICS Sub Category image url
+          example: 'https://my-bucket.s3-us-west-2.amazonaws.com/44-45.jpeg'
+        tooltip:
+          type: string
+          description: NAICS Sub Category Tool Tip Info
+          example: This category includes activities related to growing crops
+      required:
+        - categoryCode
+        - categoryDescription
+        - tooltip
+    NaicsCodeInfo:
+      type: object
+      properties:
+        naicsCodeId:
+          type: string
+          description: NAICS Code Extended
+          example: 8zRcA5bjAxybiFNdtZj2Mh
+        naicsCode:
+          type: string
+          description: 6 Digit NAICS Code
+          example: '111110'
+        description:
+          type: string
+          description: NAICS Code Description
+          example: SOY FARMING
+        category:
+          description: NAICS Category Information object
+          allOf:
+            - $ref: '#/components/schemas/NaicsCategoryInfo'
+        subCategory:
+          description: NAICS Sub Category Information object
+          allOf:
+            - $ref: '#/components/schemas/NaicsSubCategoryInfo'
+        tags:
+          description: NAICS Tags
+          type: array
+          items:
+            type: string
+      required:
+        - naicsCodeId
+        - naicsCode
+        - description
+        - category
+        - subCategory
+        - tags
+    GetNaicsCodesOutput:
+      type: object
+      properties:
+        naicsCodeInfos:
+          description: NAICS Code Info Object
+          type: array
+          items:
+            $ref: '#/components/schemas/NaicsCodeInfo'
+      required:
+        - naicsCodeInfos
+    WCLiabilityLimits:
+      type: object
+      properties:
+        wcPerAccidentLimit:
+          type: string
+          description: Per accident limit for WC
+          example: '150000'
+        wcPerDiseasePolicyLimit:
+          type: string
+          description: Per disease policy limit for WC
+          example: '150000'
+        wcPerDiseaseEmployeeLimit:
+          type: string
+          description: Per disease employee limit for WC
+          example: '150000'
+      required:
+        - wcPerAccidentLimit
+        - wcPerDiseasePolicyLimit
+        - wcPerDiseaseEmployeeLimit
+    BOPLiabilityLimits:
+      type: object
+      properties:
+        bopPerOccurrenceLimit:
+          type: string
+          description: Per occurence limit for BOP
+          example: '150000'
+        bopAggregateLimit:
+          type: string
+          description: Aggregate limit for BOP
+          example: '150000'
+      required:
+        - bopPerOccurrenceLimit
+        - bopAggregateLimit
+    CGLLiabilityLimits:
+      type: object
+      properties:
+        cglPerOccurrenceLimit:
+          type: string
+          description: Per occurence limit for CGL
+          example: '150000'
+        cglAggregateLimit:
+          type: string
+          description: Aggregate limit for CGL
+          example: '150000'
+      required:
+        - cglPerOccurrenceLimit
+        - cglAggregateLimit
+    CyberLiabilityLimits:
+      type: object
+      properties:
+        cyberRetentionLimit:
+          type: string
+          description: Retention limit for Cyber
+          example: '150000'
+        cyberAggregateLimit:
+          type: string
+          description: Aggregate limit for Cyber
+          example: '150000'
+      required:
+        - cyberRetentionLimit
+        - cyberAggregateLimit
+    Quote:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          description: Application Id
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+        quoteId:
+          type: string
+          description: Quote Id
+          example: QN-3507c567-33df-4961-a09e-61409e5c682a
+        carrierQuoteId:
+          type: string
+          description: Carrier Quote Id
+          example: '9366327'
+        carrierBridgingLink:
+          type: string
+          description: Carrier Quote Link
+          example: 'https://www.carrier.com/quote/123456789'
+        carrierPurchaseLink:
+          type: string
+          description: Carrier Purchase Link
+          example: 'https://www.carrier.com/purchase/123456789'
+        insuranceEffectiveDate:
+          type: string
+          description: Quote Effective Date
+          example: '2023-01-03'
+        insuranceExpiryDate:
+          type: string
+          description: Quote Expiration Date
+          example: '2023-01-03'
+        premiumAmount:
+          type: number
+          description: Premium Amount
+          example: 11000
+        taxAmount:
+          type: number
+          description: Tax Amount
+          example: 1100
+        totalAmount:
+          type: number
+          description: Total Amount
+          example: 12100
+        policyType:
+          $ref: '#/components/schemas/PolicyType'
+          example: WC
+        quoteType:
+          type: string
+          description: Quote Type
+          enum:
+            - DECLINE
+            - BIND_ONLINE
+            - BRIDGE
+            - REFER
+            - FAILED
+          example: BIND_ONLINE
+        carrierId:
+          description: Carrier
+          $ref: '#/components/schemas/InsuranceProvider'
+          example: AMTRUST
+        liabilityLimits:
+          description: Liability Limits
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/WCLiabilityLimits'
+            - $ref: '#/components/schemas/BOPLiabilityLimits'
+            - $ref: '#/components/schemas/CGLLiabilityLimits'
+            - $ref: '#/components/schemas/CyberLiabilityLimits'
+        quoteStatus:
+          type: string
+          description: Quote Status
+          enum:
+            - QUOTED
+            - BOUND
+            - REFERRED
+            - FAILED
+            - DECLINED
+        failures:
+          description: Quote Failure Reasons along with Codes
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: Failure Code
+              reason:
+                type: string
+                description: Failure Reason
+      required:
+        - applicationId
+        - quoteId
+        - carrierQuoteId
+        - carrierBridgingLink
+        - carrierPurchaseLink
+        - insuranceEffectiveDate
+        - insuranceExpiryDate
+        - premiumAmount
+        - taxAmount
+        - totalAmount
+        - policyType
+        - quoteType
+        - carrierId
+        - liabilityLimits
+        - quoteStatus
+    GetJobCodesByIndustryInput:
+      type: object
+      properties:
+        naicsCodeId:
+          type: string
+          description: NAICS Code Extended
+          example: 8zRcA5bjAxybiFNdtZj2Mh
+        state:
+          $ref: '#/components/schemas/USState'
+          example: AK
+      required:
+        - naicsCodeId
+        - state
+    JobCodeInfo:
+      type: object
+      properties:
+        jobCodeId:
+          type: string
+          description: Job Code Identifier
+          example: 8zRcA5bjAxybiFNdtZj2Mh
+        jobCode:
+          type: string
+          description: WC Job Code
+          example: '0005'
+        description:
+          type: string
+          description: Job Code Description
+          example: SOY FARMING
+      required:
+        - jobCodeId
+        - description
+        - jobCode
+    IndustryJobCodeInfo:
+      type: object
+      x-stoplight:
+        id: 7jsvg7qh8prpm
+      properties:
+        jobCodeId:
+          type: string
+          description: Job Code Identifier
+          example: 8zRcA5bjAxybiFNdtZj2Mh
+        description:
+          type: string
+          description: Job Code Description
+          example: SOY FARMING
+      required:
+        - jobCodeId
+        - description
+    GetJobCodesByIndustryOutput:
+      type: object
+      properties:
+        naicsCodeId:
+          type: string
+          description: NAICS Code Extended
+          example: 8zRcA5bjAxybiFNdtZj2Mh
+        jobCodeInfos:
+          description: Job Code Info Object
+          type: array
+          items:
+            $ref: '#/components/schemas/IndustryJobCodeInfo'
+      required:
+        - naicsCodeId
+        - jobCodeInfos
+    Carrier:
+      type: object
+      properties:
+        id:
+          description: Carrier ID
+          $ref: '#/components/schemas/InsuranceProvider'
+          example: AMTRUST
+        displayName:
+          type: string
+          description: Carrier Display Name
+          example: AmTrust Financial Group
+        shortName:
+          type: string
+          description: Carrier Short Name
+          example: AmTrust
+        amBestRating:
+          type: string
+          description: AmBest Rating
+          example: A++
+        logoUrl:
+          type: string
+          description: Carrier Logo URL
+          example: 'https://cdn.cdnlogo.com/logos/a/42/amtrust.svg'
+      required:
+        - id
+        - displayName
+        - shortName
+        - amBestRating
+        - logoUrl
+    GetCarriersOutput:
+      type: object
+      properties:
+        carriers:
+          description: Carrier Object
+          type: array
+          items:
+            $ref: '#/components/schemas/Carrier'
+      required:
+        - carriers
+    LegalEntityInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Legal entity ID
+          example: ASSOCIATION
+        description:
+          type: string
+          description: Legal entity Description
+          example: ASSOCIATION
+      required:
+        - id
+        - description
+    GetLegalEntitiesOutput:
+      type: object
+      properties:
+        legalEntityInfos:
+          description: legal entity objects array
+          type: array
+          items:
+            $ref: '#/components/schemas/LegalEntityInfo'
+      required:
+        - legalEntityInfos
+    CreateAgencyInput:
+      type: object
+      properties:
+        agencyName:
+          type: string
+          description: CF Agency Name
+          example: Test Agency
+        primaryContactDetails:
+          description: Primary Contact Details
+          allOf:
+            - $ref: '#/components/schemas/ContactPersonInfo'
+        primaryAddress:
+          description: Primary Address
+          allOf:
+            - $ref: '#/components/schemas/Address'
+        networkRelationshipManager:
+          description: Network Relationship Manager
+          allOf:
+            - $ref: '#/components/schemas/ContactPersonInfo'
+      required:
+        - agencyName
+        - primaryContactDetails
+        - primaryAddress
+    CreateAgencyOutput:
+      type: object
+      properties:
+        agencyId:
+          type: string
+          description: CF Agency ID
+          example: AY-1c3200a8-1201-436b-0b31-18beea85da30
+        agencyName:
+          type: string
+          description: CF Agency Name
+          example: Test Agency
+        primaryContactDetails:
+          description: Primary Contact Details
+          allOf:
+            - $ref: '#/components/schemas/ContactPersonInfo'
+        primaryAddress:
+          description: Primary Address
+          allOf:
+            - $ref: '#/components/schemas/Address'
+        networkRelationshipManager:
+          description: Network Relationship Manager
+          allOf:
+            - $ref: '#/components/schemas/ContactPersonInfo'
+      required:
+        - agencyId
+        - agencyName
+        - primaryContactDetails
+        - primaryAddress
+    UpdateAgencyInput:
+      type: object
+      properties:
+        agencyId:
+          type: string
+          description: CF Agency ID
+          example: AY-1c3200a8-1201-436b-0b31-18beea85da30
+        agencyName:
+          type: string
+          description: CF Agency Name
+          example: Test Agency
+        primaryContactDetails:
+          description: Primary Contact Details
+          allOf:
+            - $ref: '#/components/schemas/ContactPersonInfo'
+        primaryAddress:
+          description: Primary Address
+          allOf:
+            - $ref: '#/components/schemas/Address'
+        networkRelationshipManager:
+          description: Network Relationship Manager
+          allOf:
+            - $ref: '#/components/schemas/ContactPersonInfo'
+      required:
+        - agencyId
+        - agencyName
+        - primaryContactDetails
+        - primaryAddress
+    UpdateAgencyOutput:
+      type: object
+      properties:
+        agencyId:
+          type: string
+          description: CF Agency ID
+          example: AY-1c3200a8-1201-436b-0b31-18beea85da30
+        agencyName:
+          type: string
+          description: CF Agency Name
+          example: Test Agency
+        primaryContactDetails:
+          description: Primary Contact Details
+          allOf:
+            - $ref: '#/components/schemas/ContactPersonInfo'
+        primaryAddress:
+          description: Primary Address
+          allOf:
+            - $ref: '#/components/schemas/Address'
+        networkRelationshipManager:
+          description: Network Relationship Manager
+          allOf:
+            - $ref: '#/components/schemas/ContactPersonInfo'
+      required:
+        - agencyId
+        - agencyName
+        - primaryContactDetails
+        - primaryAddress
+    GetLiabilityLimitsOutput:
+      type: object
+      properties:
+        policyType:
+          $ref: '#/components/schemas/PolicyType'
+          example: WC
+        state:
+          example: AK
+          $ref: '#/components/schemas/USState'
+        liabilityLimits:
+          description: Liability Limit Info Object
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/WCLiabilityLimits'
+              - $ref: '#/components/schemas/BOPLiabilityLimits'
+              - $ref: '#/components/schemas/CGLLiabilityLimits'
+              - $ref: '#/components/schemas/CyberLiabilityLimits'
+      required:
+        - policyType
+        - state
+        - liabilityLimits
+    GetJobCodesByStateInput:
+      type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/USState'
+          description: State
+      required:
+        - state
+    GetJobCodesByStateOutput:
+      type: object
+      properties:
+        jobCodeInfos:
+          description: Job Code Info Object
+          type: array
+          items:
+            $ref: '#/components/schemas/JobCodeInfo'
+      required:
+        - jobCodeInfos
+    GetPaymentPlansOutput:
+      type: object
+      properties:
+        cfQuoteId:
+          type: string
+          description: Quote Id
+          example: QOT-5a61cb1b-2140-4c63-b32d-ce9c5135fc1f
+        applicationId:
+          type: string
+          description: Application Id
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+        policyType:
+          $ref: '#/components/schemas/PolicyType'
+          example: WC
+        carrierId:
+          description: Carrier
+          $ref: '#/components/schemas/InsuranceProvider'
+          example: AMTRUST
+        paymentPlans:
+          description: Payment Plan
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentPlan'
+      required:
+        - cfQuoteId
+        - applicationId
+        - policyType
+        - carrierId
+        - paymentPlans
+    PaymentPlan:
+      type: object
+      properties:
+        paymentPlanType:
+          type: string
+          description: Payment Plan Type
+          enum:
+            - DEFERRED
+            - NON_DEFERRED
+        carrierPaymentPlanId:
+          type: string
+          description: Carrier Payment Plan ID
+        carrierPlanDescription:
+          type: string
+          description: Carrier Payment Plan Description
+        cfPaymentPlanId:
+          type: string
+          description: CoverForce Payment Plan ID
+        isDownPaymentMandatory:
+          type: boolean
+          description: Is Down Payment Mandatory
+        downPaymentDetails:
+          description: Down Payment Details
+          allOf:
+            - $ref: '#/components/schemas/DownPaymentDetails'
+        isRecurringPayment:
+          type: boolean
+          description: Is Recurring Payment
+        recurringPaymentPlans:
+          description: Recurring Payment Plan Details
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/RecurringPaymentDetails'
+        availablePaymentNotificationMethods:
+          description: Available Payment Notification Methods
+          type: array
+          items:
+            enum:
+              - MAIL
+              - EMAIL
+        preferredPaymentNotificationMethods:
+          description: Preferred Payment Notification Methods
+          type: array
+          items:
+            enum:
+              - MAIL
+              - EMAIL
+        paymentInitiationMethod:
+          description: Payment Initiation Method
+          type: string
+          enum:
+            - AUTOMATIC
+            - MANUAL
+        maxAllowedNotificationMethods:
+          description: 'Max Allowed Notification Methods, out of total available methods'
+          type: number
+        numberOfPayments:
+          description: Number Of Payments
+          type: number
+        invoiceDetails:
+          description: Invoice Details
+          type: array
+          items:
+            $ref: '#/components/schemas/InvoiceDetails'
+      required:
+        - paymentPlanType
+        - carrierPaymentPlanId
+        - isDownPaymentMandatory
+        - isRecurringPayment
+        - downPaymentDetails
+    DownPaymentDetails:
+      type: object
+      properties:
+        downPaymentAmount:
+          description: Down Payment Amount
+          type: number
+        availableDownPaymentModes:
+          description: Available Down Payment Modes
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentMode'
+        preferredDownPaymentMode:
+          description: Preferred Down Payment Mode
+          type: string
+          $ref: '#/components/schemas/PaymentMode'
+        preferredPaymentInstrumentId:
+          description: Preferred Payment Instrument ID
+          type: string
+      required:
+        - downPaymentAmount
+    RecurringPaymentDetails:
+      type: object
+      properties:
+        availableRecurringPaymentModes:
+          description: Available Recurring Payment Modes
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentMode'
+        preferredRecurringPaymentMode:
+          description: Preferred Recurring Payment Mode
+          type: string
+          $ref: '#/components/schemas/PaymentMode'
+        preferredPaymentInstrumentId:
+          description: Preferred Payment Instrument ID
+          type: string
+    PaymentMode:
+      type: string
+      enum:
+        - DIRECT_DEBIT
+        - ELECTRONIC_FUND_TRANSFER
+        - CREDIT_CARD
+    InvoiceDetails:
+      type: object
+      properties:
+        premiumAmount:
+          description: Premium Amount
+          type: number
+        taxAmount:
+          description: Tax Amount
+          type: number
+        totalAmount:
+          description: Total Amount
+          type: number
+        billDate:
+          description: Bill Date
+          type: string
+        dueDate:
+          description: Bill Date
+          type: string
+        isDownPayment:
+          description: Is Down Payment
+          type: boolean
+        additionalCharges:
+          type: object
+          additionalProperties:
+            type: number
+      required:
+        - premiumAmount
+        - taxAmount
+        - totalAmount
+        - billDate
+        - dueDate
+        - isDownPayment
+    SelectPaymentPlanInput:
+      type: object
+      properties:
+        cfQuoteId:
+          type: string
+          description: Quote Id
+          example: QOT-5a61cb1b-2140-4c63-b32d-ce9c5135fc1f
+        applicationId:
+          type: string
+          description: Application Id
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+        cfPaymentPlanId:
+          type: string
+          description: Payment Plan Id
+          example: PP-5c25ec13-d027-44cc-b82b-fe7a191f24a4
+        preferredDownPaymentMethod:
+          type: object
+          description: Preferred DownPayment Method
+          $ref: '#/components/schemas/PaymentMode'
+        preferredRecurringPaymentMethod:
+          type: string
+          description: Preferred Recurring Payment Method
+          $ref: '#/components/schemas/PaymentMode'
+        preferredPaymentNotificationMethods:
+          type: array
+          description: Preferred Payment Notification Methods
+          items:
+            enum:
+              - MAIL
+              - EMAIL
+            example: MAIL
+      required:
+        - cfQuoteId
+        - applicationId
+        - cfPaymentPlanId
+    SelectPaymentPlanOutput:
+      type: object
+      properties:
+        cfQuoteId:
+          type: string
+          description: Quote Id
+          example: QOT-5a61cb1b-2140-4c63-b32d-ce9c5135fc1f
+        applicationId:
+          type: string
+          description: Application Id
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+        selectedPaymentPlanId:
+          type: string
+          description: Selected Payment Plan Id
+          example: PP-5c25ec13-d027-44cc-b82b-fe7a191f24a4
+      required:
+        - cfQuoteId
+        - applicationId
+        - selectedPaymentPlanId
+    BindQuoteInput:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          description: Application Id
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+        cfQuoteId:
+          type: string
+          description: Quote Id
+          example: QOT-8ef6a644-1c8a-44b0-91f3-cfe63a1fcc92
+      required:
+        - applicationId
+        - cfQuoteId
+    BindQuoteOutput:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          description: Application Id
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+        cfQuoteId:
+          type: string
+          description: Quote Id
+          example: QOT-8ef6a644-1c8a-44b0-91f3-cfe63a1fcc92
+        cfPolicyId:
+          type: string
+          description: CF Policy Id
+          example: PL-ab72782b-c3a6-4c0a-9278-6ef1b1d87854
+      required:
+        - applicationId
+        - cfQuoteId
+        - cfPolicyId
+    UWStatements:
+      type: object
+      properties:
+        provider:
+          description: Provider/Carrier that have this statement/declaration
+          example: CNA
+          $ref: '#/components/schemas/InsuranceProvider'
+        type:
+          type: string
+          description: Type of UW Statement
+        statementGroups:
+          description: StatementGroup containing the actual statement
+          type: array
+          items:
+            $ref: '#/components/schemas/StatementGroup'
+      required:
+        - provider
+        - type
+        - statementGroups
+    StatementGroup:
+      type: object
+      properties:
+        heading:
+          description: UW Statement Heading
+          type: object
+          $ref: '#/components/schemas/Statement'
+        statements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Statement'
+        statementGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatementGroup'
+      required:
+        - heading
+        - statements
+        - statementGroups
+    Statement:
+      type: object
+      properties:
+        statementText:
+          type: string
+      required:
+        - statementText
+    BrokerCode:
+      type: object
+      properties:
+        brokerConfigurationId:
+          type: string
+          description: Broker Configuration Id
+          example: BC-50512e97-1f87-4b8e-a08b-f1f6ed3859b3
+        carrierId:
+          description: Carrier
+          example: AMTRUST
+          $ref: '#/components/schemas/InsuranceProvider'
+        configurationName:
+          type: string
+          description: Configuration Name
+          example: Amtrust Configuration
+        configuration:
+          type: object
+          description: Broker Code Configuration
+      required:
+        - brokerConfigurationId
+        - carrierId
+        - configurationName
+        - configuration
+    GetAllBrokerCodesOutput:
+      type: object
+      properties:
+        brokerCodes:
+          description: All Broker Codes
+          type: array
+          items:
+            $ref: '#/components/schemas/BrokerCode'
+      required:
+        - brokerCodes
+    CreateBrokerCodeInput:
+      type: object
+      properties:
+        carrierId:
+          description: Carrier
+          example: AMTRUST
+          $ref: '#/components/schemas/InsuranceProvider'
+        configurationName:
+          type: string
+          description: Configuration Name
+          example: Amtrust Configuration
+        configuration:
+          type: object
+          description: Broker Code Configuration
+      required:
+        - carrierId
+        - configurationName
+        - configuration
+    UpdateBrokerCodeInput:
+      type: object
+      properties:
+        brokerConfigurationId:
+          type: string
+          description: Broker Configuration Id
+          example: BC-50512e97-1f87-4b8e-a08b-f1f6ed3859b3
+        carrierId:
+          description: Carrier
+          example: AMTRUST
+          $ref: '#/components/schemas/InsuranceProvider'
+        configurationName:
+          type: string
+          description: Configuration Name
+          example: Amtrust Configuration
+        configuration:
+          type: object
+          description: Broker Code Configuration
+      required:
+        - brokerConfigurationId
+        - carrierId
+        - configurationName
+        - configuration
+    GetPolicyInput:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          description: Application Id
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+        cfQuoteId:
+          type: string
+          description: Quote Id
+          example: QOT-8ef6a644-1c8a-44b0-91f3-cfe63a1fcc92
+        cfPolicyId:
+          type: string
+          description: CF Policy Id
+          example: PL-ab72782b-c3a6-4c0a-9278-6ef1b1d87854
+      required:
+        - applicationId
+        - cfQuoteId
+        - cfPolicyId
+    GetPolicyOutput:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          description: Application Id
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+        cfQuoteId:
+          type: string
+          description: Quote Id
+          example: QOT-8ef6a644-1c8a-44b0-91f3-cfe63a1fcc92
+        cfPolicyId:
+          type: string
+          description: CF Policy Id
+          example: PL-ab72782b-c3a6-4c0a-9278-6ef1b1d87854
+        provider:
+          type: string
+          description: Carrier
+          $ref: '#/components/schemas/InsuranceProvider'
+          example: AMTRUST
+        policyType:
+          $ref: '#/components/schemas/PolicyType'
+          example: WC
+        policyStatus:
+          type: string
+          description: Policy Status
+          example: BIND_IN_PROGRESS
+        policyNumber:
+          type: string
+          description: Policy Number
+          example: '4010808'
+        totalPremium:
+          type: number
+          description: Total premium
+          example: 20000
+        effectiveDate:
+          type: string
+          description: Policy Number
+          example: '4010808'
+        expiryDate:
+          type: string
+          description: Policy Number
+          example: '4010808'
+        failures:
+          description: Policy Failure reason
+          type: array
+          items:
+            $ref: '#/components/schemas/PolicyFailureInfo'
+      required:
+        - applicationId
+        - cfQuoteId
+        - cfPolicyId
+        - provider
+        - policyType
+        - policyStatus
+    PolicyFailureInfo:
+      type: object
+      example:
+        code: CF_GENERIC_ERROR
+        reason: 'Something went wrong, please retry in some time.'
+      properties:
+        code:
+          type: string
+        reason:
+          type: string
+      required:
+        - code
+        - reason
+    GetPolicyDocumentInput:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          description: Application Id
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+        cfQuoteId:
+          type: string
+          description: Quote Id
+          example: QOT-8ef6a644-1c8a-44b0-91f3-cfe63a1fcc92
+        cfPolicyId:
+          type: string
+          description: CF Policy Id
+          example: PL-ab72782b-c3a6-4c0a-9278-6ef1b1d87854
+      required:
+        - applicationId
+        - cfQuoteId
+        - cfPolicyId
+    GetPolicyDocumentOutput:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          description: Application Id
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+        cfPolicyId:
+          type: string
+          description: CF Policy Id
+          example: PL-ab72782b-c3a6-4c0a-9278-6ef1b1d87854
+        policyNumber:
+          type: string
+          description: Policy Number
+          example: '4010808'
+        policyDocument:
+          type: string
+          description: Base64 Encoded String for the Policy Document
+          example: LS0tCnN0b3BsaWdodC1pZDogdXRyaXlnZG9yaGNxZAp0Y
+        fileFormat:
+          type: string
+          description: Quote Proposal Document File Format
+          enum:
+            - pdf
+            - png
+            - jpg
+            - docx
+            - zip
+            - txt
+            - xlsx
+            - pptx
+            - xls
+            - doc
+            - ppt
+          example: pdf
+      required:
+        - applicationId
+        - cfPolicyId
+        - policyNumber
+        - policyDocument
+        - fileFormat
+    ReferQuoteInput:
+      type: object
+      required:
+        - applicationId
+        - cfQuoteId
+      properties:
+        applicationId:
+          type: string
+          description: Application Id
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+        cfQuoteId:
+          type: string
+          description: Quote Id
+          example: QOT-8ef6a644-1c8a-44b0-91f3-cfe63a1fcc92
+        noteToUnderwriter:
+          type: string
+          description: 'Please pass any Notes to Underwriter, Agency Name, Agency Network Name in this field.'
+          example: Note to Underwriter
+        agentDetails:
+          type: object
+          x-stoplight:
+            id: d0odftjtzcl50
+          additionalProperties: false
+          description: Agent Details
+          properties:
+            name:
+              type: string
+              x-stoplight:
+                id: wbjupp3gu0n7u
+              example: Agent Name
+            email:
+              type: string
+              x-stoplight:
+                id: m4vth0r4in2ri
+              example: agent@coverforce.com
+    GetQuoteProposalOutput:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          description: Application ID
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+        cfQuoteId:
+          type: string
+          description: Quote ID
+          example: QOT-8ef6a644-1c8a-44b0-91f3-cfe63a1fcc92
+        quoteProposal:
+          type: string
+          description: Base64 Encoded String for the Quote Proposal Document
+          example: LS0tCnN0b3BsaWdodC1pZDogdXRyaXlnZG9yaGNxZAp0Y
+        fileFormat:
+          type: string
+          description: Quote Proposal Document File Format
+          enum:
+            - pdf
+            - png
+            - jpg
+            - docx
+            - zip
+            - txt
+            - xlsx
+            - pptx
+            - xls
+            - doc
+            - ppt
+          example: pdf
+      required:
+        - applicationId
+        - cfQuoteId
+        - quoteProposal
+        - fileFormat
+    AuthorizationInput:
+      type: object
+      properties:
+        grant_type:
+          type: string
+          description: Grant Type for the credentials
+          example: client_credentials
+    AuthorizationOutput:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: JWT Access Token to be used in APIs
+          example: eyJraWQiOiJ6S2pvSU0xZ0V0cFJNcWF2MzRHdVRHUWVuVms3VUxCVDVQSndFU3FBRFcwPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIycWpmZWdtMWV2MTI2ZzhmbjBrZWt1Zmx1MCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiY29tLmNmLmFjY291bnRzc2VydmljZVwvYWNjb3VudHNTZXJ2aWNlLndyaXRlIGNvbS5jZi5hcHBsaGVscGVyc2VydmljZVwvYXBwbEhlbHBlclNlcnZpY2Uud3JpdGUiLCJhdXRoX3RpbWUiOjE2OTUzODg2MzAsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy13ZXN0LTIuYW1hem9uYXdzLmNvbVwvdXMtd2VzdC0yXzVvOXRuRzNSTSIsImV4cCI6MTY5NTM5MjIzMCwiaWF0IjoxNjk1Mzg4NjMwLCJ2ZXJzaW9uIjoyLCJqdGkiOiJiMjM5YTdjOC05YjhlLTQyNzgtODkxYS03MmMyODk0NzAxYTQiLCJjbGllbnRfaWQiOiIycWpmZWdtMWV2MTI2ZzhmbjBrZWt1Zmx1MCJ9.de4wnOWC4jE7loHMZX6prlwm1QcAKwuONclElaKNElAGfjJyKrDY2J7t5sGsbmhdrpJGUjJ3JIa8JPPWdJV8cOmArn2Q2BclP-EJWCGD5xoBgaKkWwBGn9Z_QBpfx1ukMgbVKxOvUGCzJ1Fk-1dGhEf_BzyHXAGkvUAg7MevJ5vTM8_qtveEDyjxvkRWbyPgRVtfrcN57cuez8IPznscesoRBrotMcZmaia5gnNp0bELD5_GQ5_BiLu-Nst5-fRKNWdfHLxo9cpigr0qFAqyGdy9FyklxcLpHUjJkv3DvlzDKNKoAH18qZqXo5G2TkXaABg4VCd2uqsE-LztyDmaeQ
+        expires_in:
+          type: number
+          description: 'Expiry for the token, in seconds'
+          example: 3600
+        token_type:
+          type: string
+          description: Token Type for the access token
+          example: Bearer
+    CheckAppetiteInput:
+      title: CheckAppetiteInput
+      x-stoplight:
+        id: elrq6323bqe6z
+      type: object
+      properties:
+        carriers:
+          x-stoplight:
+            id: beia70barlqi3
+          type: array
+          items:
+            $ref: '#/components/schemas/InsuranceProvider'
+        policyType:
+          $ref: '#/components/schemas/PolicyType'
+          example: WC
+        state:
+          example: AK
+          $ref: '#/components/schemas/USState'
+        naicsCode:
+          type: string
+          x-stoplight:
+            id: ezt9n92lkpr2a
+      required:
+        - carriers
+    AppetiteInfo:
+      title: AppetiteInfo
+      x-stoplight:
+        id: yufqyxgvj4uwl
+      type: object
+      properties:
+        carrier:
+          $ref: '#/components/schemas/InsuranceProvider'
+        policyType:
+          example: WC
+          $ref: '#/components/schemas/PolicyType'
+        state:
+          example: AK
+          $ref: '#/components/schemas/USState'
+        hasAppetite:
+          x-stoplight:
+            id: jhqsldihfxi5o
+          enum:
+            - IN_APPETITE
+            - NOT_IN_APPETITE
+            - MAYBE_IN_APPETITE
+        naicsCode:
+          type: string
+          x-stoplight:
+            id: eii4sz4ony8cn
+      required:
+        - carrier
+        - policyType
+        - state
+        - hasAppetite
+    CheckAppetiteOutput:
+      title: CheckAppetiteOutput
+      x-stoplight:
+        id: s5nnk7p93ynsj
+      type: object
+      properties:
+        appetiteInfos:
+          type: array
+          description: Appetite Info
+          x-stoplight:
+            id: t4z85lx6ch688
+          items:
+            $ref: '#/components/schemas/AppetiteInfo'
+      required:
+        - appetiteInfos
+    ApplicationEmployeeInfo:
+      title: ApplicationEmployeeInfo
+      x-stoplight:
+        id: 8finov646lkyk
+      type: object
+      properties:
+        numPartTimeEmployees:
+          type: number
+          description: Total number of Full Time Employees
+          example: 200
+          x-stoplight:
+            id: 4wecufilbo5zp
+        numFullTimeEmployees:
+          type: number
+          description: Total number of Part Time Employees
+          example: 100
+          x-stoplight:
+            id: 2z5dv36ofk9i2
+        totalEmployeePayroll:
+          type: number
+          description: Total Payroll Amount for Employees
+          example: 1000000
+          x-stoplight:
+            id: 8jbdv8fde9kw8
+      required:
+        - numPartTimeEmployees
+        - numFullTimeEmployees
+        - totalEmployeePayroll
+    BuildingInfo:
+      title: BuildingInfo
+      x-stoplight:
+        id: yg2g1zwduk0s8
+      type: object
+      required:
+        - constructionTypeCode
+        - totalStories
+      properties:
+        businessPersonalPropertyCoverage:
+          type: string
+          x-stoplight:
+            id: xerxubzwi8hti
+        buildingCoverage:
+          type: string
+          description: Building Coverage
+          example: '5000'
+        buildingAndBusinessCoverageDetails:
+          description: Building and Business Coverage Details
+          type: array
+          items:
+            $ref: '#/components/schemas/BuildingAndBusinessCoverageDetails'
+        totalArea:
+          type: number
+          description: Total Area of the Location (sq ft)
+          example: 1500
+        areaOccupied:
+          type: number
+          description: Area Occupied by the Business (sq ft)
+          example: 1000
+        areaOccupiedByOthers:
+          type: number
+          description: Area Occupied by Others (sq ft)
+          example: 100
+        constructionTypeCode:
+          type: string
+          description: Building Construction Type
+          example: FIRE_RESISTIVE
+          enum:
+            - FRAME
+            - JOISTED_MASONRY
+            - NON_COMBUSTIBLE
+            - MASONRY_NON_COMBUSTIBLE
+            - MODIFIED_FIRE_RESISTIVE
+            - FIRE_RESISTIVE
+        annualSales:
+          type: number
+          description: Current or Expected Annual Sales
+          example: 1000
+        yearBuilt:
+          type: string
+          description: Year Built
+          example: '2020'
+        totalStories:
+          type: number
+          description: Total Stories
+          example: 6
+        isOwner:
+          type: boolean
+          description: Does the insured own the property?
+          example: false
+        burglarAlarmTypeCode:
+          type: string
+          description: Burglar Alarm Type
+          example: BURGLAR_CENTRAL
+          enum:
+            - BURGLAR_CENTRAL
+            - BURGLAR_POLICE_FIRE
+            - BURGLAR_LOCAL
+            - BURGLAR_NONE
+        sprinkleredPercentage:
+          type: number
+          description: Percentage of the building having sprinklers installed
+          example: 50
+        roofType:
+          type: string
+          description: Roof Type
+          example: ASPHALT_SHINGLES
+          enum:
+            - ASPHALT_SHINGLES
+            - BUILT_UP_GRAVEL
+            - BUILT_UP_WITHOUT_GRAVEL
+            - CLAY_TILES
+            - METAL
+            - FOAM
+            - MODIFIED_BITUMEN
+            - SINGLE_PLY_BALLASTED
+            - SINGLE_PLY_SPDM_RUBBER
+            - SINGLE_PLY_PVC_TPO
+            - WOOD_SHINGLES
+        roofUpdateYear:
+          type: string
+          description: Year in which Roof was updated
+          example: '2020'
+        electricalWiringUpdateYear:
+          type: string
+          description: Year in which Electric Wiring was updated
+          example: '2020'
+        heatingUpdateYear:
+          type: string
+          description: Year in which Heating was updated
+          example: '2020'
+        plumbingUpdateYear:
+          type: string
+          description: Year in which Plumbing was updated
+          example: '2020'
+        areaOfConstructionProject:
+          type: number
+          x-stoplight:
+            id: 47nw117c2yotw
+          minimum: 0
+          exclusiveMinimum: true
+          example: 5000
+          description: Total area of the project under construction including all stories for Builder's Risk
+        totalConstructionProjectValue:
+          type: number
+          x-stoplight:
+            id: jtqkjz4zi78km
+          example: 500000
+          minimum: 0
+          description: Total value of the project under construction for Builder's Risk
+    BuildingAndBusinessCoverageDetails:
+      type: object
+      properties:
+        carrier:
+          description: Carrier ID
+          example: AMTRUST
+          $ref: '#/components/schemas/InsuranceProvider'
+        buildingCoverageClassId:
+          type: string
+          description: Personal Property Coverage Class Id
+          example: '1003'
+        businessPersonalPropertyCoverageClassId:
+          type: string
+          description: Building Coverage Class Id
+          example: '1004'
+      required:
+        - carrier
+        - businessPersonalPropertyCoverageClassId
+        - buildingCoverageClassId
+    GetCarrierIndustryCodeDetailsInput:
+      type: object
+      properties:
+        carrierId:
+          description: Carrier ID
+          example: AMTRUST
+          $ref: '#/components/schemas/InsuranceProvider'
+        policyType:
+          example: WC
+          $ref: '#/components/schemas/PolicyType'
+        carrierIndustryCode:
+          type: string
+          description: Carrier Industry Code Id
+          example: '61226'
+        naicsCode:
+          type: string
+          description: NAICS Code
+          example: '111111'
+        carrierIndustryCodeDescription:
+          type: string
+          description: Carrier Industry Code Description
+          example: BUILDINGS OR PREMISES - OFFICE NOC - FOR PROFIT
+        state:
+          example: AK
+          $ref: '#/components/schemas/USState'
+      required:
+        - carrierId
+        - policyType
+        - carrierIndustryCode
+    GetCarrierIndustryCodeDetailsOutput:
+      type: object
+      properties:
+        carrierId:
+          description: Carrier ID
+          example: AMTRUST
+          $ref: '#/components/schemas/InsuranceProvider'
+        policyType:
+          example: WC
+          $ref: '#/components/schemas/PolicyType'
+        carrierIndustryCode:
+          type: string
+          description: Carrier Industry Code Id
+          example: '61226'
+        industryCodeDetails:
+          type: object
+          description: Carrier Industry Code Id
+          example: {}
+        state:
+          example: AK
+          $ref: '#/components/schemas/USState'
+      required:
+        - carrierId
+        - policyType
+        - carrierIndustryCode
+    GetCarrierIndustryCodesInput:
+      type: object
+      properties:
+        carrierId:
+          description: Carrier ID
+          example: AMTRUST
+          $ref: '#/components/schemas/InsuranceProvider'
+        policyType:
+          example: WC
+          $ref: '#/components/schemas/PolicyType'
+        industryCodeCategory:
+          type: string
+          description: Industry Code Category
+          example: PRIMARY
+          enum:
+            - PRIMARY
+            - SECONDARY
+        state:
+          example: AK
+          $ref: '#/components/schemas/USState'
+      required:
+        - carrierId
+        - policyType
+    CarrierIndustryCodeInfo:
+      type: object
+      properties:
+        industryCodeId:
+          type: string
+          description: Carrier Industry Code ID
+          example: '00'
+        industryCodeDescriptionId:
+          type: string
+          description: Carrier Industry Code Description ID
+          example: '00'
+        naicsCodes:
+          description: NAICS Codes
+          example:
+            - '111111'
+          type: array
+          items:
+            type: string
+      required:
+        - industryCodeId
+        - industryCodeDescriptionId
+        - naicsCodes
+    GetCarrierIndustryCodesOutput:
+      type: object
+      properties:
+        carrierId:
+          description: Carrier ID
+          example: AMTRUST
+          $ref: '#/components/schemas/InsuranceProvider'
+        policyType:
+          example: WC
+          $ref: '#/components/schemas/PolicyType'
+        industryCodeInfos:
+          description: Carrier Industry Code Infos
+          example:
+            - industryCodeId: '111111'
+              industryCodeDescriptionId: 'Farming, Soyabean'
+              naicsCodes:
+                - '111111'
+          type: array
+          items:
+            $ref: '#/components/schemas/CarrierIndustryCodeInfo'
+      required:
+        - carrierId
+        - policyType
+        - industryCodeInfos
+    GetCarrierJobCodesInput:
+      type: object
+      properties:
+        carrierId:
+          description: Carrier ID
+          example: AMTRUST
+          $ref: '#/components/schemas/InsuranceProvider'
+        state:
+          example: AK
+          $ref: '#/components/schemas/USState'
+        jobCodeId:
+          type: string
+          description: Job Code ID
+          example: 8zRcA5bjAxybiFNdtZj2Mh
+      required:
+        - carrierId
+        - state
+        - jobCodeId
+    CarrierJobCodeInfo:
+      type: object
+      properties:
+        carrierJobCodeId:
+          type: string
+          description: Carrier Job Code ID
+          example: '152304'
+        description:
+          type: string
+          description: Carrier Job Code Description
+          example: Soyabean Farming and driver
+      required:
+        - carrierJobCodeId
+        - description
+    GetCarrierJobCodesOutput:
+      type: object
+      properties:
+        state:
+          example: AK
+          $ref: '#/components/schemas/USState'
+        jobCodeId:
+          type: string
+          description: Job Code ID
+          example: 8zRcA5bjAxybiFNdtZj2Mh
+        carrierJobCodeInfos:
+          description: Carrier Job Code Info
+          type: array
+          items:
+            $ref: '#/components/schemas/CarrierJobCodeInfo'
+      required:
+        - state
+        - jobCodeId
+        - carrierJobCodeInfos
+    LocationEmployeeInfoWithCarrierCodes:
+      type: object
+      properties:
+        numPartTimeEmployees:
+          type: number
+          description: Total number of Full Time Employees
+          example: 200
+        numFullTimeEmployees:
+          type: number
+          description: Total number of Part Time Employees
+          example: 100
+        totalEmployeePayroll:
+          type: number
+          description: Total Payroll Amount for Employees
+          example: 1000000
+        jobCodeId:
+          type: string
+          description: Job Code ID
+          example: apzw8baez5megDn4GJ6RoS
+        carrierJobCodes:
+          description: Carrier specific Job Codes
+          type: array
+          items:
+            $ref: '#/components/schemas/CarrierJobCode'
+      required:
+        - numPartTimeEmployees
+        - numFullTimeEmployees
+        - totalEmployeePayroll
+        - jobCodeId
+        - carrierJobCodes
+    CarrierJobCode:
+      type: object
+      properties:
+        carrierId:
+          description: Carrier ID
+          example: AMTRUST
+          $ref: '#/components/schemas/InsuranceProvider'
+        jobCodeId:
+          type: string
+          description: Carrier Job Code ID
+          example: '00'
+      required:
+        - carrierId
+        - jobCodeId
+    BusinessLocationWithCarrierCodes:
+      type: object
+      properties:
+        locationId:
+          type: string
+          description: Location ID
+          example: LOC-410b0436-9048-48e0-835b-9d57c9719a34
+        address:
+          description: Address
+          allOf:
+            - $ref: '#/components/schemas/Address'
+        isPrimary:
+          type: boolean
+          description: Is Primary
+          example: true
+        employeeInfos:
+          description: 'Employee Info, with carrier specific Job Codes'
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationEmployeeInfoWithCarrierCodes'
+        locationUWInformation:
+          description: Location Specific Underwriting Answers
+          type: array
+          items:
+            $ref: '#/components/schemas/UWQAnswers'
+        buildingInfo:
+          description: Building Information
+          allOf:
+            - $ref: '#/components/schemas/BuildingInfo'
+      required:
+        - locationId
+        - address
+        - isPrimary
+        - employeeInfos
+    ApplicationWithCarrierCodes:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          description: Application ID
+          readOnly: true
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+        businessInfo:
+          description: Business Details
+          allOf:
+            - $ref: '#/components/schemas/BusinessInfoWithCarrierCodes'
+        pastPolicyLossInfo:
+          description: Past Policy Loss Information
+          type: array
+          items:
+            $ref: '#/components/schemas/PastPolicyLossInfo'
+        insuranceInfo:
+          description: Insurance Information
+          allOf:
+            - $ref: '#/components/schemas/InsuranceInfo'
+        uwqAnswers:
+          description: Underwriting Question Answers
+          type: array
+          items:
+            $ref: '#/components/schemas/UWQAnswers'
+        uwsAnswers:
+          description: Underwriting Statement Answers
+          type: array
+          items:
+            $ref: '#/components/schemas/UWSAnswers'
+        policyType:
+          $ref: '#/components/schemas/PolicyType'
+          example: WC
+        applicationStatus:
+          description: Application Status
+          readOnly: true
+          allOf:
+            - $ref: '#/components/schemas/PublicApplicationStatus'
+        selectedLiabilityLimits:
+          type: object
+          description: Selected Liability Limits
+          oneOf:
+            - $ref: '#/components/schemas/WCLiabilityLimits'
+            - $ref: '#/components/schemas/BOPLiabilityLimits'
+            - $ref: '#/components/schemas/CGLLiabilityLimits'
+            - $ref: '#/components/schemas/CyberLiabilityLimits'
+        businessLocations:
+          description: Business Locations
+          readOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessLocationWithCarrierCodes'
+        employeeInfo:
+          description: Employee Information
+          readOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationEmployeeInfo'
+      required:
+        - applicationId
+        - businessInfo
+        - policyType
+        - applicationStatus
+    BusinessInfoWithCarrierCodes:
+      type: object
+      properties:
+        owners:
+          description: Company Owners
+          type: array
+          items:
+            $ref: '#/components/schemas/OfficerInfo'
+        contacts:
+          description: Company Contact Persons
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactPersonInfo'
+        mailingAddress:
+          description: Company Address
+          allOf:
+            - $ref: '#/components/schemas/Address'
+        yearOfFounding:
+          type: string
+          description: Year of Founding
+          example: '2019'
+        businessWebsite:
+          type: string
+          description: Company Website
+          example: 'https://coverforce.com'
+        businessName:
+          type: string
+          description: Company Name
+          example: CoverForce LLC
+        fein:
+          type: string
+          description: Federal Employer ID Number
+          example: 12-3456789
+          format: XX-XXXXXXX
+        naicsExtendedId:
+          type: string
+          description: NAICS Extended ID
+          example: 8zRcA5bjAxybiFNdtZj2Mh
+        natureOfBusiness:
+          type: string
+          description: Nature of Business
+          example: Insurance
+        annualRevenue:
+          type: number
+          description: Annual Revenue
+          example: 20000000
+        yearsOfManagementExperience:
+          type: number
+          description: Total years Of Management Experience
+          example: 10
+        isNonProfit:
+          type: boolean
+          description: Is Non Profit Business ?
+          example: false
+        dba:
+          type: string
+          description: Doing Business As
+          example: CoverForce
+        legalEntityType:
+          type: string
+          description: Legal Entity Type
+          enum:
+            - ASSOCIATION
+            - CORPORATION
+            - INDIVIDUAL
+            - JOINT_VENTURE
+            - GENERAL_PARTNERSHIP
+            - LIMITED_PARTNERSHIP
+            - LIMITED_LIABILITY_COMPANY
+            - LIMITED_LIABILITY_PARTNERSHIP
+            - GOVERNMENT_ENTITY
+            - TRUST
+            - ESTATE
+            - S_CORPORATION
+            - NON_PROFIT_CORPORATION
+            - NON_PROFIT_ASSOCIATION
+            - EXECUTOR
+            - LABOR_UNION
+            - MULTIPLE_STATUS
+            - TENANTS_IN_COMMON
+            - JOINT_EMPLOYERS
+          example: CORPORATION
+        carrierIndustryCodes:
+          description: Carrier Specific Industry Codes
+          type: array
+          items:
+            $ref: '#/components/schemas/CarrierIndustryCode'
+      required:
+        - businessName
+        - carrierIndustryCodes
+    CarrierIndustryCode:
+      type: object
+      properties:
+        carrierId:
+          description: Carrier ID
+          example: AMTRUST
+          $ref: '#/components/schemas/InsuranceProvider'
+        industryCodeId:
+          type: string
+          description: Carrier Industry Code ID
+          example: '00'
+        industryCodeDescriptionId:
+          type: string
+          description: Carrier Industry Code Description ID
+          example: '00'
+        additionalIndustryCodes:
+          type: array
+          description: Additional Carrier Industry Codes
+          items:
+            $ref: '#/components/schemas/AdditionalIndustryCode'
+      required:
+        - carrierId
+        - industryCodeId
+        - industryCodeDescriptionId
+    AdditionalIndustryCode:
+      type: object
+      properties:
+        industryCode:
+          type: string
+          description: Carrier Industry Code ID
+          example: '61226'
+        industryCodeDescription:
+          description: Carrier Industry Code Description ID
+          type: string
+          example: CONSULTANT- COMPENSATION & BENEFITS
+      required:
+        - industryCode
+        - industryCodeDescription
+    UpdateLocationEmployeeInfosInput:
+      type: object
+      properties:
+        locationId:
+          type: string
+          description: Location ID
+          example: LOC-410b0436-9048-48e0-835b-9d57c9719a34
+        employeeInfos:
+          description: 'Employee Info, with carrier specific Job Codes'
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationEmployeeInfoWithCarrierCodes'
+      required:
+        - locationId
+        - employeeInfos
+    UpdateLocationEmployeeInfosOutput:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          description: Application ID
+          example: APP-053396ca-f87a-43bf-bd55-44b5f65791c2
+        locationId:
+          type: string
+          description: Location ID
+          example: LOC-410b0436-9048-48e0-835b-9d57c9719a34
+        employeeInfos:
+          description: 'Location Employee Infos, with carrier specific Job Codes'
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationEmployeeInfoWithCarrierCodes'
+      required:
+        - applicationId
+        - locationId
+        - employeeInfos
+    UpdateCarrierIndustryCodesInput:
+      type: object
+      properties:
+        carrierIndustryCodes:
+          description: Carrier Specific Industry Codes
+          type: array
+          items:
+            $ref: '#/components/schemas/CarrierIndustryCode'
+      required:
+        - carrierIndustryCodes
+    UpdateCarrierIndustryCodesOutput:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          description: Application ID
+          readOnly: false
+        carrierIndustryCodes:
+          description: Carrier Specific Industry Codes
+          type: array
+          items:
+            $ref: '#/components/schemas/CarrierIndustryCode'
+      required:
+        - applicationId
+        - carrierIndustryCodes
+    WCLossType:
+      type: string
+      enum:
+        - MEDICAL
+        - INDEMNITY
+        - MEDICAL_AND_INDEMNITY
+    BOPLossType:
+      type: string
+      enum:
+        - FIRE
+        - THEFT
+        - WATER_NON_WEATHER_RELATED
+        - HAIL
+        - WINDSTORM
+        - PROPERTY_DAMAGE_OTHER
+        - PERSONAL_INJURY
+        - GENERAL_LIABILITY_PRODUCTS
+        - PROFESSIONAL_LIABILITY
+        - OTHER
+        - VANDALISM
+        - PROPERTY_DAMAGE_COLLAPSE
+        - SLIP_FALL_INSIDE
+        - SLIP_FALL_OUTSIDE
+        - FOOD_SPOILAGE
+        - EMPLOYEE_PRACTICES
+        - INLAND_MARINE
+        - BODILY_INJURY_OTHER
+        - ERRORS_AND_OMISSIONS
+        - LIABILITY_MEDICAL_PAYMENTS
+        - GL_PROPERTY_DAMAGE
+    CGLLossType:
+      type: string
+      enum:
+        - PERSONAL_INJURY
+        - GENERAL_LIABILITY_PRODUCTS
+        - PROFESSIONAL_LIABILITY
+        - OTHER
+        - SLIP_FALL_INSIDE
+        - SLIP_FALL_OUTSIDE
+        - EMPLOYEE_PRACTICES
+        - INLAND_MARINE
+        - ERRORS_AND_OMISSIONS
+        - LIABILITY_MEDICAL_PAYMENTS
+        - BODILY_INJURY_OTHER
+        - GL_PROPERTY_DAMAGE
+    CyberLossType:
+      type: string
+      enum:
+        - TECHNOLOGY_ERRORS_AND_OMISSIONS
+        - CYBER_INCIDENT
+        - BUSINESS_INTERRUPTION
+        - CONTINGENT_BUSINESS_INTERRUPTION
+        - DIGITAL_DATA
+        - NETWORK_EXTORTION
+        - PRIVACY_AND_NETWORK_SECURITY
+        - PAYMENT_CARD
+        - REGULATORY_PROCEEDING
+        - MEDIA_LIABILITY
+        - COMPUTER_FRAUD
+        - FUND_TRANSFER_FRAUD
+        - SOCIAL_ENGINEERING_FRAUD

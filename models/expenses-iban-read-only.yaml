@@ -1,0 +1,12 @@
+$ref: ./iban-read-only.yaml
+x-stoplight:
+  id: e3be6qo7oc02t
+x-bpi-field-metadata:
+  type: numeroConta
+  properties:
+    - name: formatoConta
+      value: iban
+    - name: tipoUtilizacao
+      value: despesa
+x-tags:
+  - expenses-iban

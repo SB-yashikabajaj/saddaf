@@ -1,0 +1,60 @@
+allOf:
+  - type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: Address identifier
+        readOnly: true
+        x-stoplight:
+          id: 6utquznf866xt
+      isPrimary:
+        type: boolean
+        description: Indicates if this is the preferred address or primary address
+        default: true
+        x-stoplight:
+          id: 9kebcripnoru1
+      verificationDate:
+        type: string
+        format: date-time
+        description: The date this address was verified
+        readOnly: true
+        x-stoplight:
+          id: g521ytcpynbz3
+      verificationMethod:
+        type: string
+        description: The method used to verify this address
+        readOnly: true
+        x-stoplight:
+          id: geto8i42icmja
+      active:
+        type: boolean
+        description: A value indicating if the address is enabled in the system
+        default: true
+        x-stoplight:
+          id: scy1dkvdg378w
+      type:
+        type: string
+        description: The address type assigned. can be a personal or business.
+        enum:
+          - home
+          - work
+          - other
+        x-stoplight:
+          id: 75zkqbb044xzg
+    required:
+      - id
+      - isPrimary
+      - active
+    x-stoplight:
+      id: oic9pxdj34yln
+  - $ref: ./BasicAddress.yaml
+    x-stoplight:
+      id: lctxs97i5x82i
+  - $ref: ./CoreModel.yaml
+    x-stoplight:
+      id: r7puovoxs1qtt
+x-stoplight:
+  id: rsgpv7xpkikml
+description: Represents an address
+title: Address

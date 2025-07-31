@@ -1,0 +1,104 @@
+title: error-block-400
+x-stoplight:
+  id: qkxo0vhkemha4
+description: The Rfc7807 specification for exceptions
+x-tags:
+  - v1
+allOf:
+  - properties:
+      type:
+        type: string
+        description: 'A URI reference that identifies the problem type.  This specification encourages that, when dereferenced, it provide human-readable documentation for the problem type.'
+        format: uri
+        example: 'https://api.bancobpi.pt/validation-error'
+        maxLength: 150
+        x-stoplight:
+          id: q1u1obee5r9mn
+      title:
+        type: string
+        description: 'A short, human-readable summary of the problem type'
+        example: bad-request
+        maxLength: 30
+        x-stoplight:
+          id: fwp6edz4n40by
+      status:
+        type: integer
+        description: The HTTP status code
+        example: 400
+        maximum: 999
+        x-stoplight:
+          id: ooz4rr76gy6t7
+      detail:
+        type: string
+        description: A human-readable explanation specific to this occurrence of the problem
+        example: Invalid values in the request
+        maxLength: 200
+        x-stoplight:
+          id: 11nstdo468f8f
+      instance:
+        type: string
+        description: A URI reference that identifies the specific occurrence of the problem
+        format: uri-reference
+        example: /simulations
+        maxLength: 150
+        x-stoplight:
+          id: 7efs5shyuxhbt
+      language:
+        type: string
+        default: en
+        pattern: '^[a-z]{2}(-[a-zA-Z]+)?$'
+        example: en-US
+        description: Language
+        maxLength: 10
+        x-stoplight:
+          id: iiwmqh3wnlhw5
+      requestId:
+        type: string
+        description: Trace id of the current request
+        example: c4ea66ad-0caa-4e0a-99b1-5fc47dd3b723
+        maxLength: 36
+        x-stoplight:
+          id: 75nn6job9bo5n
+      errors:
+        type: array
+        description: List of subtype errors
+        maxItems: 20
+        items:
+          type: object
+          properties:
+            field:
+              type: string
+              description: Field which contains an invalid value
+              example: term
+              maxLength: 40
+              x-stoplight:
+                id: tt5ruwxhp7qdl
+            rejectedValue:
+              type: string
+              description: Rejected field value
+              example: 'null'
+              maxLength: 150
+              x-stoplight:
+                id: xzok4xlwxk8dy
+            description:
+              type: string
+              description: A human-readable explanation specific to this occurrence of the subtype problem
+              example: term field must not be null or empty
+              maxLength: 150
+              x-stoplight:
+                id: tbqqungrzl0p1
+          required:
+            - description
+          x-stoplight:
+            id: eynajh2oan0sy
+        x-stoplight:
+          id: nji9hrfjtyrc8
+    required:
+      - type
+      - title
+      - status
+      - detail
+      - requestId
+    x-stoplight:
+      id: elhjnz93v5zwa
+type: object

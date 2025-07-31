@@ -1,0 +1,251 @@
+openapi: 3.1.0
+x-stoplight:
+  id: 1f36flvcbbcdz
+info:
+  title: Banking
+  version: '1.0'
+  license:
+    url: 'https://opensource.org/licenses/MIT'
+    name: MIT
+  contact:
+    name: Support
+    url: 'https://www.flex.one'
+    email: support@flex.one
+  description: Endpoints for Banking
+  summary: Flex Banking
+servers:
+  - url: 'http://localhost:3000'
+    description: Local
+  - url: 'https://platform.flex.dev'
+    description: Development
+  - url: 'https://platform.flex.one'
+    description: Production
+paths:
+  /banking:
+    get:
+      summary: List all banking accounts (for internal use only)
+      tags:
+        - Banking
+      operationId: list-banking-accounts
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/startDate'
+        - $ref: '#/components/parameters/endDate'
+        - $ref: '#/components/parameters/dateAggregation'
+        - $ref: '#/components/parameters/byBusiness'
+        - $ref: '#/components/parameters/bankAccountType'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metadata:
+                    $ref: ./models/PaginationMetadata.yaml
+                    x-stoplight:
+                      id: mk9k36e4dxasv
+                  data:
+                    type: array
+                    x-stoplight:
+                      id: dq6gfvxj4xckp
+                    items:
+                      allOf:
+                        - $ref: ./models/BankingDepositAccount.yaml
+                        - type: object
+                          properties:
+                            asOf:
+                              type: string
+                              format: date-time
+                            businessId:
+                              type: string
+                              format: uuid
+                            personId:
+                              type: string
+                              format: uuid
+                      x-stoplight:
+                        id: rfzyfdmtvtwnr
+      description: Retrieve a list of accounts
+  /banking/balances:
+    get:
+      summary: List all banking account balances (for internal use only)
+      tags:
+        - Banking
+      operationId: list-banking-account-balances
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/startDate'
+        - $ref: '#/components/parameters/endDate'
+        - $ref: '#/components/parameters/dateAggregation'
+        - $ref: '#/components/parameters/byBusiness'
+        - $ref: '#/components/parameters/bankAccountType'
+        - $ref: '#/components/parameters/historical'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metadata:
+                    $ref: ./models/PaginationMetadata.yaml
+                    x-stoplight:
+                      id: mk9k36e4dxasv
+                  data:
+                    type: array
+                    x-stoplight:
+                      id: dq6gfvxj4xckp
+                    items:
+                      type: object
+                      properties:
+                        accountId:
+                          type: string
+                          format: uuid
+                        asOf:
+                          type: string
+                          format: date-time
+                        businessId:
+                          type: string
+                          format: uuid
+                        balance:
+                          type: number
+                        hold:
+                          type: number
+      description: Retrieve a list of all banking account balances
+components:
+  schemas: {}
+  securitySchemes:
+    token:
+      type: http
+      scheme: bearer
+  parameters:
+    personId:
+      name: personId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The person identifier
+    businessId:
+      name: businessId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The business identifier
+    accountId:
+      name: accountId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The account identifier
+    startDate:
+      name: startDate
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date
+      description: Minimum date to include in response
+    endDate:
+      name: endDate
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date
+      description: Maximum date to include in response
+    dateAggregation:
+      name: dateAggregation
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - year
+          - quarter
+          - month
+          - week
+          - day
+          - hour
+          - minute
+          - second
+        example: year
+      description: 'Unit of aggregation data across dates (daily, weekly, etc...)'
+    byBusiness:
+      name: byBusiness
+      in: query
+      required: false
+      schema:
+        type: boolean
+      description: Whether or not to roll up responses by Flex businessIds (common servicing/analytics request pattern)
+    bankAccountType:
+      name: bankAccountType
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - deposit
+      description: Specific account type for banking product (i.e. banking subproduct)
+    historical:
+      name: historical
+      in: query
+      required: false
+      schema:
+        type: boolean
+      description: 'Whether or not to provide a full history, i.e. reporting on banking balances for each company for each day between the start and end date'
+    page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: Which page of results to request
+    pageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+        exclusiveMinimum: 0
+      description: The number of resources returned per page
+    sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: asc
+      description: The sort order of results
+    sortDesc:
+      name: sort
+      in: query
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: desc
+      description: The sort order of results
+security:
+  - token: []
+tags:
+  - name: Banking
+    description: Banking
+x-internal: true
